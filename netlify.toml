@@ -2,5 +2,15 @@
   command = "npm run build"
   publish = ".next"
 
-[functions]
-  directory = "netlify/functions"
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NODE_VERSION = "16" # Or whichever version you're using
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# This ensures all routes are handled correctly
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
