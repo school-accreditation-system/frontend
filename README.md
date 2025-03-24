@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ✨ School Accreditation System
 
-## Getting Started
+A modern, responsive web application for school authentication and accreditation management built with Next.js 14.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-4.9-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.3-38B2AC?style=for-the-badge&logo=tailwind-css)
+
+## 🌟 Features
+
+- **🔐 Multi-step Authentication System**
+  - School search & verification
+  - Staff email authentication
+  - OTP verification process
+
+- **📱 Responsive Design**
+  - Optimized for mobile, tablet, and desktop
+  - Tailwind CSS with custom theme
+
+- **🚀 Modern Tech Stack**
+  - Next.js 15 App Router
+  - React Server Components
+  - TypeScript for type safety
+  - Form validation with React Hook Form & Zod
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js 18.x or later
+- npm, yarn, pnpm, or bun
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone https://github.com/your-organization/nesa-frontend.git
+cd nesa-frontend
+
+# Install dependencies
+
+pnpm install
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development Server
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+pnpm dev
 
-## Learn More
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧩 Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                 # App Router pages
+├── components/          # React components
+│   ├── ui/              # Shared UI components
+│   ├── auth/            # Authentication components
+│   └── accreditation/   # Accreditation-specific components
+├── lib/                 # Utility functions
+├── types/               # TypeScript type definitions
+└── styles/              # Global styles
+```
 
-## Deploy on Vercel
+## 🧪 Testing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Run tests
+npm run test
+# or
+yarn test
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Deployment
+
+The easiest way to deploy this application is with [Vercel](https://vercel.com):
+
+```bash
+npm run build
+# or
+yarn build
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📚 Documentation
+
+- [Component Documentation](docs/components.md)
+- [API Documentation](docs/api.md)
+- [Authentication Flow](docs/auth-flow.md)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org)
+- [Tailwind CSS](https://tailwindcss.com)
+- [React Hook Form](https://react-hook-form.com)
+- [Zod](https://github.com/colinhacks/zod)
+- [Framer Motion](https://www.framer.com/motion/)
+
+---
+
+Built with ❤️ by the Logic HD Team
