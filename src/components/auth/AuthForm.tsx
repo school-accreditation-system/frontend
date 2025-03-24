@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
+import { Label } from '../ui/label';
 
 interface AuthFormProps {
   type: 'school' | 'staff';
@@ -156,12 +157,12 @@ export const AuthForm = ({ type }: AuthFormProps) => {
             // School form
             <form onSubmit={schoolForm.handleSubmit(handleSchoolSubmit)} className="space-y-5">
               <div>
-                <label 
+                <Label 
                   htmlFor="schoolName" 
                   className="block text-sm font-medium text-gray-700 mb-1.5"
                 >
                   School Name
-                </label>
+                </Label>
                 
                 <Input
                   id="schoolName"
@@ -205,12 +206,12 @@ export const AuthForm = ({ type }: AuthFormProps) => {
             // Staff form
             <form onSubmit={staffForm.handleSubmit(handleStaffSubmit)} className="space-y-5">
               <div>
-                <label 
+                <Label 
                   htmlFor="email" 
                   className="block text-sm font-medium text-gray-700 mb-1.5"
                 >
                   Email Address
-                </label>
+                </Label>
                 
                 <Input
                   id="email"
@@ -254,9 +255,9 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         ) : (
           <form onSubmit={otpForm.handleSubmit(handleOtpSubmit)} className="space-y-5">
             <div>
-              <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <Label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Enter the verification code sent to:
-              </label>
+              </Label>
               <p className="text-sm font-medium text-primary mb-4">
                 {type === 'school' ? 'Your school email address' : searchTerm}
               </p>
