@@ -2,16 +2,14 @@
 import React, { useEffect, useState } from "react";
 
 import { schoolsData } from "../../../utils/schoolsData";
-import SchoolIdentification from "./SchoolIdentification";
-import SelfAssessment from "./SelfAssessment";
-import SummaryPage from "./SummaryPage";
-import CombinationSelector from "./CombinationSelector";
-import ConfirmationModal from "./ConfirmationModal";
-import FormSteps from "./FormSteps";
-
+import SchoolIdentification from "./_components/SchoolIdentification";
+import SelfAssessment from "./_components/SelfAssessment";
+import SummaryPage from "./_components/SummaryPage";
+import CombinationSelector from "./_components/CombinationSelector";
+import ConfirmationModal from "./_components/ConfirmationModal";
+import FormSteps from "./_components/FormSteps";
 
 const Page = () => {
-
   const [schoolData, setSchoolData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredSchools, setFilteredSchools] = useState([]);
@@ -22,7 +20,6 @@ const Page = () => {
 
   useEffect(() => {
     setSchoolData(schoolsData);
-    setFilteredSchools(schoolsData);
   }, []);
 
   const handleSearch = (e) => {
@@ -42,9 +39,21 @@ const Page = () => {
     setSelectedSchool(school);
     setIsModalOpen(true);
   };
-  
+
   const handleConfirmSelection = () => {
     setIsModalOpen(false);
+    if (selectedSchool.schoolIdentification && selectedSchool.selfAssessment) {
+      setCurrentStep("combination");
+      return;
+    }
+    if (selectedSchool.schoolIdentification) {
+      setCurrentStep("assessment");
+      return;
+    }
+    if (selectedSchool.selfAssessment) {
+      setCurrentStep("combination");
+      return;
+    }
     setCurrentStep("identification");
   };
 
@@ -57,15 +66,18 @@ const Page = () => {
     setFormData(completeData);
     setCurrentStep("summary");
   };
-  
+
   const handleSummaryComplete = () => {
     setCurrentStep("combination");
   };
-  
+
   const handleCombinationComplete = (completeData) => {
     setFormData(completeData);
     // In the future: Submit data to backend
-    alert("Data ready to be sent to database. Combination selected: " + completeData.combination);
+    // alert(
+    //   "Data ready to be sent to database. Combination selected: " +
+    //     completeData.combination
+    // );
     // Optionally reset the form or redirect
     // setCurrentStep("search");
   };
@@ -114,7 +126,9 @@ const Page = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-center text-gray-500 py-4">No schools found</p>
+                <p className="text-center text-gray-500 py-4">
+                  No schools found
+                </p>
               )}
             </div>
           </div>
@@ -134,7 +148,9 @@ const Page = () => {
           />
         );
       case "summary":
-        return <SummaryPage data={formData} onContinue={handleSummaryComplete} />;
+        return (
+          <SummaryPage data={formData} onContinue={handleSummaryComplete} />
+        );
       case "combination":
         return (
           <CombinationSelector
@@ -149,11 +165,9 @@ const Page = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {currentStep !== "search" && (
-        <FormSteps currentStep={currentStep} />
-      )}
+      {currentStep !== "search" && <FormSteps currentStep={currentStep} />}
       {renderCurrentStep()}
-      
+
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
