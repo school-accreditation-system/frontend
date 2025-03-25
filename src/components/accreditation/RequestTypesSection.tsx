@@ -23,7 +23,7 @@ const REQUEST_TYPES = [
   {
     title: 'General Combinations',
     description: 'Choose general education combinations to expand your school\'s offerings.',
-    requestType: 'General Combinations',
+    requestType: 'apply-for-combinations',
   },
   {
     title: 'Professional Combinations',
@@ -60,7 +60,7 @@ export const RequestTypesSection = () => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('accreditationRequestType', requestType);
       // Navigate to school identification
-      router.push('/school-identification');
+      router.push('/'+requestType);
     }
   };
 
