@@ -28,7 +28,7 @@ export const REQUEST_TYPES = [
     {
       title: 'Ordinary Level',
       description: 'Apply to offer or update ordinary level education at your school.',
-      requestType: 'Ordinary Level',
+      requestType: 'ordinary-level',
     },
     {
       title: 'Primary Level',
