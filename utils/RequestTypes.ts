@@ -7,7 +7,8 @@ export const REQUEST_TYPES = [
     {
       title: 'Submit a Claim',
       description: 'Have concerns about an accredited institution? Submit a formal claim for investigation and resolution.',
-      href: '/submit_claim',
+      href: 'submit-claim',
+      requestType:'submit-claim'
     },
     {
       title: 'TVET Trades',
