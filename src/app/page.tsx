@@ -3,10 +3,12 @@ import { ProcessStepsSection } from '@/components/accreditation/ProcessStepsSect
 import { RequestTypesSection } from '@/components/accreditation/RequestTypesSection';
 import { ServicesSection } from '@/components/accreditation/ServicesSection';
 import { AboutSection } from '@/components/accreditation/AboutSection';
+import Header from '@/components/Header';
 
 export default function HomePage() {
   return (
     <main className="flex flex-col min-h-screen">
+
       <HeroSection />
       <ProcessStepsSection />
       <RequestTypesSection />
