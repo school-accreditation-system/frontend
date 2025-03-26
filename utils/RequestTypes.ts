@@ -38,7 +38,7 @@ export const REQUEST_TYPES = [
     {
       title: 'Pre-primary Level',
       description: 'Initiate or enhance pre-primary level education for early childhood development.',
-      requestType: 'Pre-primary Level',
+      requestType: 'pre-primary-level',
     },
     {
       title: 'Boarding Status',
