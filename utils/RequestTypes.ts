@@ -12,7 +12,7 @@ export const REQUEST_TYPES = [
     {
       title: 'TVET Trades',
       description: 'Apply for accreditation of specific TVET trades in sectors like Construction, ICT, Agriculture, and more. Expand your institution\'s vocational offerings.',
-      requestType: 'TVET Trades',
+      requestType: 'tvet-trades',
     },
     {
       title: 'General Combinations',
