@@ -8,6 +8,8 @@ export const schoolsData = [
     website: "www.lyceekigali.edu.rw",
     schoolIdentification: true,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 2,
@@ -18,6 +20,8 @@ export const schoolsData = [
     website: "www.collegesaintandre.edu.rw",
     schoolIdentification: false,
     selfAssessment: false,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 3,
@@ -28,6 +32,8 @@ export const schoolsData = [
     website: "www.fawegirls.edu.rw",
     schoolIdentification: true,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 4,
@@ -38,6 +44,8 @@ export const schoolsData = [
     website: "www.rivierahighschool.edu.rw",
     schoolIdentification: true,
     selfAssessment: false,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 5,
@@ -48,6 +56,8 @@ export const schoolsData = [
     website: "www.gsobutare.edu.rw",
     schoolIdentification: false,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 6,
@@ -58,6 +68,8 @@ export const schoolsData = [
     website: "www.wellspringacademy.edu.rw",
     schoolIdentification: true,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 7,
@@ -68,6 +80,8 @@ export const schoolsData = [
     website: "www.greenhillsacademy.edu.rw",
     schoolIdentification: true,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 8,
@@ -78,6 +92,8 @@ export const schoolsData = [
     website: "www.christroi.edu.rw",
     schoolIdentification: false,
     selfAssessment: false,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 9,
@@ -88,6 +104,8 @@ export const schoolsData = [
     website: "www.kagaram.edu.rw",
     schoolIdentification: false,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 10,
@@ -98,6 +116,8 @@ export const schoolsData = [
     website: "www.apacope.edu.rw",
     schoolIdentification: true,
     selfAssessment: false,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 11,
@@ -108,6 +128,8 @@ export const schoolsData = [
     website: "www.gashoragirlsacademy.rw",
     schoolIdentification: true,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 12,
@@ -118,6 +140,8 @@ export const schoolsData = [
     website: "www.amides.edu.rw",
     schoolIdentification: false,
     selfAssessment: false,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 13,
@@ -128,6 +152,8 @@ export const schoolsData = [
     website: "www.sonrisehigh.edu.rw",
     schoolIdentification: true,
     selfAssessment: false,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 14,
@@ -138,6 +164,8 @@ export const schoolsData = [
     website: "www.maranyundo.edu.rw",
     schoolIdentification: true,
     selfAssessment: true,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
   {
     id: 15,
@@ -148,5 +176,7 @@ export const schoolsData = [
     website: "www.gsremerarukoma.edu.rw",
     schoolIdentification: false,
     selfAssessment: false,
+    hasOrdinaryLevel:true,
+    hasAdvancedLevel:true,
   },
 ];
