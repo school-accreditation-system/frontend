@@ -4,8 +4,6 @@ import { useRouter } from "next/navigation";
 import SuccessModal from "./SuccessModal";
 import { CATEGORY_ICONS, COMBINATIONS_DATA } from "../../../../utils/CombinationsData";
 
-
-
 // Helper to extract abbreviation from a combination string
 const getAbbreviation = (combinationString) => {
   const match = combinationString.match(/\(([^)]+)\)/);
@@ -61,20 +59,23 @@ const CombinationSelector = ({ onComplete, formData }) => {
     return Object.values(combinationDetails);
   };
   
-  // Filter combinations based on search text
+  // Filter combinations based on search text and selected category
   const getFilteredCombinations = () => {
     const allCombos = getAllCombinations();
-    if (!searchText) return allCombos;
     
-    return allCombos.filter(combo => 
-      combo.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
-      combo.subjects.some(subject => 
-        subject.toLowerCase().includes(searchText.toLowerCase())
-      )
-    );
+    // If there's search text, filter by search across all categories
+    if (searchText) {
+      return allCombos.filter(combo => 
+        combo.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
+        combo.subjects.some(subject => 
+          subject.toLowerCase().includes(searchText.toLowerCase())
+        )
+      );
+    }
+    
+    // Otherwise, filter by selected category
+    return allCombos.filter(combo => combo.category === selectedCategory);
   };
-  
-
   
   // Toggle selection of a combination
   const toggleCombination = (combinationId) => {
@@ -157,6 +158,12 @@ const CombinationSelector = ({ onComplete, formData }) => {
     router.push("/");
   };
   
+  // Handle category selection
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSearchText(""); // Clear search text when changing categories
+  };
+  
   return (
     <div className="bg-white shadow-md rounded-lg p-6 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold mb-2">Choose Your Combinations</h1>
@@ -186,7 +193,7 @@ const CombinationSelector = ({ onComplete, formData }) => {
                     ? "border-blue-500 bg-blue-50" 
                     : "hover:bg-gray-50"
                 }`}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleCategoryChange(category)}
               >
                 <span className="text-2xl mr-3">{CATEGORY_ICONS[category]}</span>
                 <div>
