@@ -10,6 +10,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 3,
@@ -34,6 +36,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 4,
@@ -46,6 +49,7 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 5,
@@ -58,6 +62,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 6,
@@ -70,6 +75,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 7,
@@ -82,6 +88,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 8,
@@ -94,6 +101,7 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 9,
@@ -106,6 +114,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 10,
@@ -118,6 +127,7 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 11,
@@ -130,6 +140,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 12,
@@ -142,6 +153,7 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 13,
@@ -154,6 +166,7 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 14,
@@ -166,6 +179,7 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
   {
     id: 15,
@@ -178,5 +192,6 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
+    hasBoardingStatus: true
   },
 ];
