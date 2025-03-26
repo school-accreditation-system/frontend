@@ -29,9 +29,9 @@ const Header = () => {
       {" "}
       {/* Navigation Bar - Sticky */}
       <div
-        className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 
-          bg-secondary shadow-md
-        `}
+        className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? 'bg-secondary shadow-md' : 'bg-transparent'
+        }`}
       >
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo */}

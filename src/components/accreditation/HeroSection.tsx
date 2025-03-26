@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 
-
 import { Input } from "../ui/input";
 import { useEffect, useState, useRef } from "react";
 
 import { REQUEST_TYPES } from "../../../utils/RequestTypes";
-import { Search, X } from "lucide-react";
+import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
+import logo from "../../../public/nesa-logo.png";
+import Image from "next/image";
 
 export const HeroSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,7 +16,22 @@ export const HeroSection = () => {
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Handle scroll event to change navbar appearance
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Handle click outside search results to close them
   useEffect(() => {
@@ -53,8 +69,91 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="bg-gradient-to-br from-primary to-secondary py-0 pb-24 relative overflow-hidden min-h-[50vh]">
-   
+    <section className="bg-gradient-to-br from-primary to-secondary py-0 pb-24 relative overflow-hidden">
+      {/* Navigation Bar - Sticky */}
+      <div
+        className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? "bg-secondary shadow-md" : "bg-transparent"
+        }`}
+      >
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <div className="relative h-10 w-40 bg-white rounded-sm p-1 overflow-hidden shadow-sm">
+              <Image
+                src={logo}
+                alt="NESA Logo"
+                className="object-contain p-0.5"
+                fill
+                priority="true"
+              />
+            </div>
+          </Link>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden text-white rounded-full p-1 transition-all duration-200 hover:border hover:border-white hover:bg-white/10"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <Menu size={22} />
+          </button>
+
+          {/* Desktop Navigation Items */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/signup"
+              className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
+            >
+              <User className="h-4 w-4 mr-2" />
+              Sign Up
+            </Link>
+
+            <Link
+              href="/login"
+              className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
+            >
+              <LogIn className="h-4 w-4 mr-2" />
+              Log In
+            </Link>
+
+            <div className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm">
+              <Globe className="h-4 w-4 mr-2" />
+              English
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-primary py-2 px-4 shadow-md">
+            <div className="flex flex-col space-y-2">
+              <Link
+                href="/signup"
+                className="flex items-center text-white px-3 py-2 rounded-sm border border-transparent hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Sign Up
+              </Link>
+
+              <Link
+                href="/login"
+                className="flex items-center text-white px-3 py-2 rounded-sm border border-transparent hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Log In
+              </Link>
+
+              <div className="flex items-center text-white px-3 py-2 rounded-sm border border-transparent hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm cursor-pointer">
+                <Globe className="h-4 w-4 mr-2" />
+                English
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Empty space to compensate for fixed navbar */}
+      <div className="h-16"></div>
 
       {/* Hero Content */}
       <div className="container mx-auto px-4">
@@ -95,7 +194,7 @@ export const HeroSection = () => {
             {showResults && filteredRequests.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg overflow-hidden max-h-48 overflow-y-auto z-50">
                 <div className="p-2">
-                  {filteredRequests.map((request,index) => (
+                  {filteredRequests.map((request, index) => (
                     <div key={index}>
                       <Link
                         href={`/${request.requestType}`}
