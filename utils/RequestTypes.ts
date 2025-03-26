@@ -23,7 +23,7 @@ export const REQUEST_TYPES = [
     {
       title: 'Professional Combinations',
       description: 'Opt for professional education paths to enhance your institution\'s curriculum.',
-      requestType: 'Professional Combinations',
+      requestType: 'professional-combination',
     },
     {
       title: 'Ordinary Level',
