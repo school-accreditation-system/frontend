@@ -43,6 +43,6 @@ export const REQUEST_TYPES = [
     {
       title: 'Boarding Status',
       description: 'Update or apply for boarding status to accommodate students on campus.',
-      requestType: 'Boarding Status',
+      requestType: 'boarding-status',
     },
   ];

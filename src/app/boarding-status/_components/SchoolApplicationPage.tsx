@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
-import SuccessModal from "../_components/SuccessModal";
+import SuccessModal from "./SuccessModal";
 import { schoolsData } from "../../../../utils/schoolsData";
 
 const SchoolApplicationPage = () => {
@@ -11,7 +11,7 @@ const SchoolApplicationPage = () => {
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [hasIdentification, setHasIdentification] = useState(false);
   const [hasSelfAssessment, setHasSelfAssessment] = useState(false);
-  const [hasOrdinaryLevel, setHasOrdinaryLevel] = useState(null);
+  const [hasBoardingStatus, sethasBoardingStatus] = useState(null);
 
   const [schools, setSchools] = useState([]);
   useEffect(() => {
@@ -32,7 +32,7 @@ const SchoolApplicationPage = () => {
     setSelectedSchool(school);
     setHasIdentification(school.schoolIdentification);
     setHasSelfAssessment(school.selfAssessment);
-    setHasOrdinaryLevel(school.hasOrdinaryLevel)
+    sethasBoardingStatus(school.hasBoardingStatus)
   };
 
 
@@ -137,7 +137,7 @@ const SchoolApplicationPage = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Ordinary Level Application Dashboard
+          Boarding Status Application Dashboard
         </h1>
         <p className="text-gray-600 mb-8">
           Search for your school and manage applications
@@ -236,10 +236,10 @@ const SchoolApplicationPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-gray-800">
-                    Ordinary Level Application
+                  Boarding Status Application
                   </h2>
                   <p className="text-gray-500">
-                    Apply for Ordinary Level certification and programs
+                    Apply for Boarding Status certification and programs
                   </p>
                 </div>
 
@@ -254,9 +254,9 @@ const SchoolApplicationPage = () => {
                 >
                   {!hasIdentification
                     ? "Complete Identification First"
-                    : hasOrdinaryLevel
-                    ? "You already have ordinary level"
-                    : "Apply for Ordinary Level"}
+                    : hasBoardingStatus
+                    ? "You already have Boarding Status"
+                    : "Apply for Boarding Status"}
                 </button>
               </div>
 
@@ -264,7 +264,7 @@ const SchoolApplicationPage = () => {
                 <div className="mt-4 bg-yellow-50 border border-yellow-100 rounded-lg p-3">
                   <p className="text-sm text-yellow-700">
                     You need to complete the School Identification process
-                    before applying for Ordinary Level.
+                    before applying for Boarding Status.
                   </p>
                 </div>
               )}
