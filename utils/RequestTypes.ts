@@ -33,7 +33,7 @@ export const REQUEST_TYPES = [
     {
       title: 'Primary Level',
       description: 'Start or expand primary level education to build a strong foundation for students.',
-      requestType: 'Primary Level',
+      requestType: 'primary-level',
     },
     {
       title: 'Pre-primary Level',
