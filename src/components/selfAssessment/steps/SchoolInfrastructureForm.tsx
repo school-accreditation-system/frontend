@@ -7,6 +7,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { schoolInfrastructureSchema, type SchoolInfrastructureFormData } from '../types/schema';
 
 interface SchoolInfrastructureFormProps {
     onSubmit: (data: FormData) => void;
@@ -138,7 +140,8 @@ export function SchoolInfrastructureForm({ onSubmit }: SchoolInfrastructureFormP
         watch,
         setValue,
         formState: { errors, isValid }
-    } = useForm<FormData>({
+    } = useForm<SchoolInfrastructureFormData>({
+        resolver: zodResolver(schoolInfrastructureSchema),
         mode: 'onChange',
         defaultValues: {
             classrooms: '',

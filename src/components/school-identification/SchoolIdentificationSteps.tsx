@@ -19,7 +19,7 @@ const SchoolIdentificationForm = () => {
     goToPreviousStep,
     handleSubmit
   } = useFormContext();
-  
+
   const currentStepData = IDENTIFICATION_STEPS[currentStep];
   const CurrentStepComponent = currentStepData.component;
 
@@ -33,21 +33,21 @@ const SchoolIdentificationForm = () => {
             Step {currentStep + 1} of {IDENTIFICATION_STEPS.length}
           </span>
         </div>
-        
+
         <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-primary transition-all duration-300 ease-in-out"
             style={{ width: `${((currentStep + 1) / IDENTIFICATION_STEPS.length) * 100}%` }}
           />
         </div>
-        
+
         {/* Step indicators */}
         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
           {IDENTIFICATION_STEPS.map((step, index) => {
             const hasError = stepsWithErrors.includes(step.id);
-            
+
             return (
-              <button 
+              <button
                 key={step.id}
                 onClick={() => setCurrentStep(index)}
                 className={`
@@ -59,12 +59,12 @@ const SchoolIdentificationForm = () => {
               >
                 <span className={`
                   w-6 h-6 flex items-center justify-center rounded-full mb-1 
-                  ${hasError 
-                    ? 'bg-red-100 border-2 border-red-500 text-red-500' 
-                    : index < currentStep 
-                      ? 'bg-primary text-white' 
-                      : index === currentStep 
-                        ? 'border-2 border-primary text-primary' 
+                  ${hasError
+                    ? 'bg-red-100 border-2 border-red-500 text-red-500'
+                    : index < currentStep
+                      ? 'bg-primary text-white'
+                      : index === currentStep
+                        ? 'border-2 border-primary text-primary'
                         : 'border border-muted-foreground'
                   }
                 `}>
@@ -121,13 +121,13 @@ const SchoolIdentificationForm = () => {
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
         >
-          <CurrentStepComponent 
-            formData={formData} 
+          <CurrentStepComponent
+            formData={formData}
             updateFormData={(data) => updateFormData(currentStepData.id, data)}
             errors={formErrors[currentStepData.id] || []}
           />
         </motion.div>
-        
+
         {/* Navigation buttons */}
         <div className="mt-8 flex justify-between">
           <Button
@@ -138,9 +138,9 @@ const SchoolIdentificationForm = () => {
           >
             <ChevronLeft size={16} /> Previous
           </Button>
-          
+
           {currentStep === IDENTIFICATION_STEPS.length - 1 ? (
-            <Button 
+            <Button
               onClick={handleSubmit}
               disabled={isSubmitting || stepsWithErrors.length > 0}
               className={`flex items-center gap-2 ${stepsWithErrors.length > 0 ? 'bg-gray-300 cursor-not-allowed hover:bg-gray-300' : ''}`}

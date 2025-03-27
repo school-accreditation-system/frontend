@@ -24,9 +24,9 @@ import { BasicInfoFormValues, basicInfoSchema } from "../types/schema";
 
 export const BasicInfoForm = () => {
   const { formData, updateFormData, formErrors } = useFormContext();
-  
+
   const stepErrors = formErrors['basic-info'] || [];
-  
+
   const form = useForm<BasicInfoFormValues>({
     resolver: zodResolver(basicInfoSchema),
     defaultValues: {
@@ -59,7 +59,7 @@ export const BasicInfoForm = () => {
         yearOfEstablishment: formData.yearOfEstablishment || ""
       }, { keepValues: true });
     }
-  }, [formData]); 
+  }, [formData]);
 
   useEffect(() => {
     if (stepErrors.length > 0) {
@@ -80,14 +80,14 @@ export const BasicInfoForm = () => {
 
   const hasFieldError = useCallback((fieldName: keyof BasicInfoFormValues) => {
     return (
-      form.formState.errors[fieldName] || 
+      form.formState.errors[fieldName] ||
       stepErrors.some(e => e.toLowerCase().includes(fieldName.toLowerCase()))
     );
   }, [form.formState.errors, stepErrors]);
 
   return (
     <Form {...form}>
-      <div className="space-y-6">        
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <FormField
@@ -97,13 +97,13 @@ export const BasicInfoForm = () => {
                 <FormItem>
                   <FormLabel>School Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter school name" 
+                    <Input
+                      placeholder="Enter school name"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("schoolName", e.target.value);
-                      }} 
+                      }}
                       className={hasFieldError("schoolName") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -112,7 +112,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -121,13 +121,13 @@ export const BasicInfoForm = () => {
                 <FormItem>
                   <FormLabel>School Code</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter school code" 
+                    <Input
+                      placeholder="Enter school code"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("schoolCode", e.target.value);
-                      }} 
+                      }}
                       className={hasFieldError("schoolCode") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -136,7 +136,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -145,14 +145,14 @@ export const BasicInfoForm = () => {
                 <FormItem>
                   <FormLabel>School Email</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="email"
-                      placeholder="Enter school email" 
+                      placeholder="Enter school email"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("schoolEmail", e.target.value);
-                      }} 
+                      }}
                       className={hasFieldError("schoolEmail") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -161,7 +161,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -169,7 +169,7 @@ export const BasicInfoForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                       onFieldChange("status", value as "public" | "private" | "Government Aided");
@@ -177,7 +177,7 @@ export const BasicInfoForm = () => {
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger 
+                      <SelectTrigger
                         className={hasFieldError("status") ? "border-red-500 focus-visible:ring-red-500" : ""}
                       >
                         <SelectValue placeholder="Select status" />
@@ -194,7 +194,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -202,7 +202,7 @@ export const BasicInfoForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Type of School</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                       onFieldChange("typeOfSchool", value as "TVET" | "General Education");
@@ -210,7 +210,7 @@ export const BasicInfoForm = () => {
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger 
+                      <SelectTrigger
                         className={hasFieldError("typeOfSchool") ? "border-red-500 focus-visible:ring-red-500" : ""}
                       >
                         <SelectValue defaultValue={field.value} placeholder="Select type" />
@@ -226,7 +226,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -235,13 +235,13 @@ export const BasicInfoForm = () => {
                 <FormItem>
                   <FormLabel>School Owner</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter school owner" 
+                    <Input
+                      placeholder="Enter school owner"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("schoolOwner", e.target.value);
-                      }} 
+                      }}
                       className={hasFieldError("schoolOwner") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -250,7 +250,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -259,13 +259,13 @@ export const BasicInfoForm = () => {
                 <FormItem>
                   <FormLabel>Contact</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter contact number" 
+                    <Input
+                      placeholder="Enter contact number"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("contact", e.target.value);
-                      }} 
+                      }}
                       className={hasFieldError("contact") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -274,7 +274,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -282,7 +282,7 @@ export const BasicInfoForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Accommodation Status</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                       onFieldChange("accommodationStatus", value as "day" | "boarding" | "mixed");
@@ -290,7 +290,7 @@ export const BasicInfoForm = () => {
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger 
+                      <SelectTrigger
                         className={hasFieldError("accommodationStatus") ? "border-red-500 focus-visible:ring-red-500" : ""}
                       >
                         <SelectValue placeholder="Select accommodation status" />
@@ -307,7 +307,7 @@ export const BasicInfoForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -316,13 +316,13 @@ export const BasicInfoForm = () => {
                 <FormItem>
                   <FormLabel>Year of Establishment</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="YYYY" 
+                    <Input
+                      placeholder="YYYY"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("yearOfEstablishment", e.target.value);
-                      }} 
+                      }}
                       className={hasFieldError("yearOfEstablishment") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>

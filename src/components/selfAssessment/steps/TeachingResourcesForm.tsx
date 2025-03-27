@@ -7,6 +7,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { teachingResourcesSchema, type TeachingResourcesFormData } from '../types/schema';
 
 interface TeachingResourcesFormProps {
     onSubmit: (data: FormData) => void;
@@ -132,34 +134,9 @@ const scoreConfigs: Record<keyof FormData, ScoreConfig> = {
 };
 
 export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) {
-    const {
-        handleSubmit,
-        watch,
-        setValue,
-        formState: { errors, isValid }
-    } = useForm<FormData>({
-        mode: 'onChange',
-        defaultValues: {
-            strategicPlan: '',
-            annualActionPlan: '',
-            annualBudgetPlan: '',
-            registrationDocuments: '',
-            landOwnership: '',
-            materialsToolsEquipment: '',
-            approvedCurriculum: '',
-            readingMaterials: '',
-            projectors: '',
-            desks: '',
-            teacherChairs: '',
-            teacherTables: '',
-            shelves: '',
-            dustbins: '',
-            sufficientTeachers: '',
-            qualifiedTeachers: '',
-            adminStaffQualification: '',
-            adminStaffAvailability: '',
-            staffFiles: '',
-        }
+    const form = useForm<TeachingResourcesFormData>({
+        resolver: zodResolver(teachingResourcesSchema),
+        mode: 'onChange'
     });
 
     const [isEquipmentOpen, setEquipmentOpen] = useState(true);
@@ -168,7 +145,7 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
     const [isStrategicPlanOpen, setStrategicPlanOpen] = useState(true);
 
     // Watch all form fields for real-time updates
-    const formData = watch();
+    const formData = form.watch();
 
     // Calculate score for each section and show it next to the section title
     const calculateSectionScore = (field: keyof FormData) => {
@@ -217,7 +194,7 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                         </span>
                     )}
                 </div>
-                {errors[field] && (
+                {form.formState.errors[field] && (
                     <span className="text-sm text-red-500">Required</span>
                 )}
             </div>
@@ -257,7 +234,7 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmitForm)} className="space-y-6">
             <ScoreDisplay />
 
             {/* Equipment, Tools, and Materials Section */}
@@ -274,17 +251,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                 </div>
                 {isEquipmentOpen && (
                     <>
-                        <Card className={`p-6 ${errors.materialsToolsEquipment ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.materialsToolsEquipment ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability of Materials, Tools, and Equipment</Label>
-                                    {errors.materialsToolsEquipment && (
+                                    {form.formState.errors.materialsToolsEquipment && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.materialsToolsEquipment}
-                                    onValueChange={(value) => setValue('materialsToolsEquipment', value)}
+                                    onValueChange={(value) => form.setValue('materialsToolsEquipment', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -311,17 +288,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.approvedCurriculum ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.approvedCurriculum ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability of Approved Curriculum</Label>
-                                    {errors.approvedCurriculum && (
+                                    {form.formState.errors.approvedCurriculum && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.approvedCurriculum}
-                                    onValueChange={(value) => setValue('approvedCurriculum', value)}
+                                    onValueChange={(value) => form.setValue('approvedCurriculum', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -336,17 +313,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.readingMaterials ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.readingMaterials ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability of Students Textbooks and Other Reading Materials</Label>
-                                    {errors.readingMaterials && (
+                                    {form.formState.errors.readingMaterials && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.readingMaterials}
-                                    onValueChange={(value) => setValue('readingMaterials', value)}
+                                    onValueChange={(value) => form.setValue('readingMaterials', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -373,17 +350,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.projectors ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.projectors ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of A Projector In Each Level</Label>
-                                    {errors.projectors && (
+                                    {form.formState.errors.projectors && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.projectors}
-                                    onValueChange={(value) => setValue('projectors', value)}
+                                    onValueChange={(value) => form.setValue('projectors', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -427,17 +404,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                 </div>
                 {isFurnitureOpen && (
                     <>
-                        <Card className={`p-6 ${errors.desks ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.desks ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of One Desk Per Two Students</Label>
-                                    {errors.desks && (
+                                    {form.formState.errors.desks && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.desks}
-                                    onValueChange={(value) => setValue('desks', value)}
+                                    onValueChange={(value) => form.setValue('desks', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -464,17 +441,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.teacherChairs ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.teacherChairs ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of One Chair For Teacher In Each Classroom</Label>
-                                    {errors.teacherChairs && (
+                                    {form.formState.errors.teacherChairs && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.teacherChairs}
-                                    onValueChange={(value) => setValue('teacherChairs', value)}
+                                    onValueChange={(value) => form.setValue('teacherChairs', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -501,17 +478,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.teacherTables ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.teacherTables ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of One Table For Teacher In Each Classroom</Label>
-                                    {errors.teacherTables && (
+                                    {form.formState.errors.teacherTables && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.teacherTables}
-                                    onValueChange={(value) => setValue('teacherTables', value)}
+                                    onValueChange={(value) => form.setValue('teacherTables', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -538,17 +515,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.shelves ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.shelves ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of Shelves To Store Materials In Each Classroom</Label>
-                                    {errors.shelves && (
+                                    {form.formState.errors.shelves && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.shelves}
-                                    onValueChange={(value) => setValue('shelves', value)}
+                                    onValueChange={(value) => form.setValue('shelves', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -575,17 +552,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.dustbins ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.dustbins ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of Dustbin In Each Classroom And Workshop/Laboratory/Library</Label>
-                                    {errors.dustbins && (
+                                    {form.formState.errors.dustbins && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.dustbins}
-                                    onValueChange={(value) => setValue('dustbins', value)}
+                                    onValueChange={(value) => form.setValue('dustbins', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -629,17 +606,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                 </div>
                 {isTeachingStaffOpen && (
                     <>
-                        <Card className={`p-6 ${errors.sufficientTeachers ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.sufficientTeachers ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability of Sufficient Teachers</Label>
-                                    {errors.sufficientTeachers && (
+                                    {form.formState.errors.sufficientTeachers && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.sufficientTeachers}
-                                    onValueChange={(value) => setValue('sufficientTeachers', value)}
+                                    onValueChange={(value) => form.setValue('sufficientTeachers', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -658,17 +635,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.qualifiedTeachers ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.qualifiedTeachers ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of Qualified Teachers</Label>
-                                    {errors.qualifiedTeachers && (
+                                    {form.formState.errors.qualifiedTeachers && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.qualifiedTeachers}
-                                    onValueChange={(value) => setValue('qualifiedTeachers', value)}
+                                    onValueChange={(value) => form.setValue('qualifiedTeachers', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -695,17 +672,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.adminStaffQualification ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.adminStaffQualification ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of Administrative Staff With Relevant Qualification</Label>
-                                    {errors.adminStaffQualification && (
+                                    {form.formState.errors.adminStaffQualification && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.adminStaffQualification}
-                                    onValueChange={(value) => setValue('adminStaffQualification', value)}
+                                    onValueChange={(value) => form.setValue('adminStaffQualification', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -732,17 +709,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.adminStaffAvailability ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.adminStaffAvailability ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability Of All Administrative Staff According To Organisational Structure</Label>
-                                    {errors.adminStaffAvailability && (
+                                    {form.formState.errors.adminStaffAvailability && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.adminStaffAvailability}
-                                    onValueChange={(value) => setValue('adminStaffAvailability', value)}
+                                    onValueChange={(value) => form.setValue('adminStaffAvailability', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -769,17 +746,17 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                             </div>
                         </Card>
 
-                        <Card className={`p-6 ${errors.staffFiles ? 'border-red-200' : ''}`}>
+                        <Card className={`p-6 ${form.formState.errors.staffFiles ? 'border-red-200' : ''}`}>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-lg font-medium">Availability of Complete Staff Files at School</Label>
-                                    {errors.staffFiles && (
+                                    {form.formState.errors.staffFiles && (
                                         <span className="text-sm text-red-500">Required</span>
                                     )}
                                 </div>
                                 <RadioGroup
                                     value={formData.staffFiles}
-                                    onValueChange={(value) => setValue('staffFiles', value)}
+                                    onValueChange={(value) => form.setValue('staffFiles', value)}
                                     className="space-y-3"
                                 >
                                     <div className="flex items-center space-x-2">
@@ -822,12 +799,12 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
                     </button>
                 </div>
                 {isStrategicPlanOpen && (
-                    <Card className={`p-6 ${errors.strategicPlan ? 'border-red-200' : ''}`}>
+                    <Card className={`p-6 ${form.formState.errors.strategicPlan ? 'border-red-200' : ''}`}>
                         <div className="space-y-4">
                             <SectionHeader field="strategicPlan" label="Strategic Plan" />
                             <RadioGroup
                                 value={formData.strategicPlan}
-                                onValueChange={(value) => setValue('strategicPlan', value)}
+                                onValueChange={(value) => form.setValue('strategicPlan', value)}
                                 className="space-y-3"
                             >
                                 <div className="flex items-center space-x-2">
@@ -859,19 +836,19 @@ export function TeachingResourcesForm({ onSubmit }: TeachingResourcesFormProps) 
             {/* Form Status */}
             <div className="flex items-center justify-between pt-6">
                 <div className="text-sm text-gray-500">
-                    {Object.keys(errors).length > 0 && (
+                    {Object.keys(form.formState.errors).length > 0 && (
                         <div className="flex items-center gap-2 text-red-600">
                             <AlertCircle className="w-4 h-4" />
                             <span>
-                                {Object.keys(errors).length} section(s) need attention
+                                {Object.keys(form.formState.errors).length} section(s) need attention
                             </span>
                         </div>
                     )}
                 </div>
                 <Button
                     type="submit"
-                    className={`px-6 ${isValid ? 'bg-blue-600' : 'bg-gray-400'}`}
-                    disabled={!isValid}
+                    className={`px-6 ${form.formState.isValid ? 'bg-blue-600' : 'bg-gray-400'}`}
+                    disabled={!form.formState.isValid}
                 >
                     Submit Assessment
                 </Button>
