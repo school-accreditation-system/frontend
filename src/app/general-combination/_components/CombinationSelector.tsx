@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import SuccessModal from "./SuccessModal";
-import { CATEGORY_ICONS, COMBINATIONS_DATA } from "../../../../utils/CombinationsData";
+import { CATEGORY_ICONS, COMBINATIONS_DATA } from "../../../constants/CombinationsData";
 
 // Helper to extract abbreviation from a combination string
 const getAbbreviation = (combinationString) => {

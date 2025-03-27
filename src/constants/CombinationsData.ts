@@ -7,7 +7,7 @@ export const COMBINATIONS_DATA = {
         "Mathematics - Economics - Geography (MEG)",
         "Mathematics - Computer Science - Economics (MCE)",
         "Mathematics - Physics - Computer Science (MPC)",
-        "Mathematics - Chemistry - Biology (MCB)"
+        "Mathematics - Chemistry - Biology (MCB)"     
       ],
       "Humanities": [
         "History - Literature in English - Psychology (HLP)",

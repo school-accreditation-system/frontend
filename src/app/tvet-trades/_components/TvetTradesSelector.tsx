@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { TVET_DATA, SECTOR_DETAILS } from "../../../../utils/tvetData";
+import { TVET_DATA, SECTOR_DETAILS } from "../../../constants/tvetData";
 import SuccessModal from "./SuccessModal";
 import { generateTradeDetails } from "./generateTradeDetails";
 

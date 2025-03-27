@@ -1,8 +1,8 @@
-export const REQUEST_TYPES = [
+const REQUEST_TYPES = [
     {
       title: 'New School Registration',
       description: 'Start your journey in education by registering a new school. Get guidance on requirements and standards for establishing an educational institution.',
-      requestType: 'New School',
+      requestType: 'new-school-registration',
     },
     {
       title: 'Submit a Claim',
@@ -45,4 +45,6 @@ export const REQUEST_TYPES = [
       description: 'Update or apply for boarding status to accommodate students on campus.',
       requestType: 'boarding-status',
     },
-  ];
+];
+  
+export default REQUEST_TYPES;

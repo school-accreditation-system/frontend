@@ -1,4 +1,4 @@
-import { SECTOR_DETAILS, TVET_DATA } from "../../../../utils/tvetData";
+import { SECTOR_DETAILS, TVET_DATA } from "../../../constants/tvetData";
 
 // Generate trade details with descriptions
 export const generateTradeDetails = () => {

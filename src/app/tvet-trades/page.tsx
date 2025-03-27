@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { schoolsData } from "../../../utils/schoolsData";
+import { schoolsData } from "../../constants/schoolsData";
 import ConfirmationModal from "./_components/ConfirmationModal";
 import FormSteps from "./_components/FormSteps";
 import SummaryPage from "./_components/SummaryPage";

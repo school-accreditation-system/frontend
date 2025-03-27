@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import SuccessModal from "./SuccessModal";
-import { schoolsData } from "../../../../utils/schoolsData";
+import { schoolsData } from "@/constants/schoolsData";
 
 const SchoolApplicationPage = () => {
   const router = useRouter();
