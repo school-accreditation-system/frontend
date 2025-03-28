@@ -9,13 +9,16 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.5 0.2 230); /* Blue similar to #078ece */
+  --primary: oklch(0.5 0.2 230);
+  /* Blue similar to #078ece */
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.35 0.15 230); /* Darker blue similar to #054d6f */
+  --secondary: oklch(0.35 0.15 230);
+  /* Darker blue similar to #054d6f */
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.65 0.25 140); /* Green similar to #24a148 */
+  --accent: oklch(0.65 0.25 140);
+  /* Green similar to #24a148 */
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
@@ -144,6 +147,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
