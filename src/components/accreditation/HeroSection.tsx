@@ -85,7 +85,7 @@ export const HeroSection = () => {
                 alt="NESA Logo"
                 className="object-contain p-0.5"
                 fill
-                priority="true"
+                priority={true}
               />
             </div>
           </Link>
