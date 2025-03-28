@@ -1,21 +1,32 @@
 'use client';
 
-import { CheckCircle } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle, School, Award, HomeIcon } from 'lucide-react';
 import { FeatureCard } from '@/components/ui/FeatureCard';
 import { useRouter } from 'next/navigation';
-import { REQUEST_TYPES } from '../../../utils/RequestTypes';
-
-
+import { SchoolFinderDialog, School as SchoolType } from '@/components/school-finder';
+import REQUEST_TYPES from '@/constants/RequestTypes';
 
 export const RequestTypesSection = () => {
   const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedRequestType, setSelectedRequestType] = useState("");
 
   const startAccreditationFlow = (requestType: string) => {
-    // Store the request type in localStorage
+    if (requestType === 'new-school-registration') {
+      router.push('/register-school');
+      return;
+    }
+    setSelectedRequestType(requestType);
+    setIsDialogOpen(true);
+  };
+
+  const handleSchoolSelect = (school: SchoolType) => {
+    // Store the school and request type in localStorage
     if (typeof window !== 'undefined') {
-      localStorage.setItem('accreditationRequestType', requestType);
-      // Navigate to school identification
-      router.push('/'+requestType);
+      localStorage.setItem('selectedSchoolId', school.id.toString());
+      localStorage.setItem('accreditationRequestType', selectedRequestType);
+      router.push(`/${selectedRequestType}?schoolId=${school.id}`);
     }
   };
 
@@ -30,15 +41,23 @@ export const RequestTypesSection = () => {
               key={type.title}
               title={type.title}
               description={type.description}
-              icon={<CheckCircle className="w-6 h-6" />}
-              actionLabel={type.href ? 'Submit Claim' : `Apply for ${type.title}`}
-              href={type.href}
-              onClick={type.requestType ? () => startAccreditationFlow(type.requestType) : undefined}
+              icon={type.icon || <CheckCircle className="w-6 h-6" />}
+              actionLabel={`Apply for ${type.title}`}
+              onClick={() => startAccreditationFlow(type.requestType)}
               index={index}
             />
           ))}
         </div>
       </div>
+
+      {/* School Finder Dialog - only shown for non-direct requests */}
+      <SchoolFinderDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSchoolSelect={handleSchoolSelect}
+        title={`${selectedRequestType?.toUpperCase().replace('-', ' ')}`}
+        description={`We need to know which school you are applying for.`}
+      />
     </section>
   );
 }; 

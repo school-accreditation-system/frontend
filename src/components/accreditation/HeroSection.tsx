@@ -5,9 +5,8 @@ import Link from "next/link";
 import { Input } from "../ui/input";
 import { useEffect, useState, useRef } from "react";
 
-import { REQUEST_TYPES } from "../../../utils/RequestTypes";
+import  REQUEST_TYPES  from "@/constants/RequestTypes";
 import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
-import logo from "../../../public/nesa-logo.png";
 import Image from "next/image";
 
 export const HeroSection = () => {
@@ -81,7 +80,7 @@ export const HeroSection = () => {
           <Link href="/" className="flex items-center">
             <div className="relative h-10 w-40 bg-white rounded-sm p-1 overflow-hidden shadow-sm">
               <Image
-                src={logo}
+                src="/nesa-logo.png"
                 alt="NESA Logo"
                 className="object-contain p-0.5"
                 fill
@@ -158,7 +157,7 @@ export const HeroSection = () => {
       {/* Hero Content */}
       <div className="container mx-auto px-4">
         <div className="relative z-10 text-center max-w-3xl mx-auto mt-16 md:mt-24">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
             School Accreditation Portal
           </h1>
 
@@ -183,7 +182,7 @@ export const HeroSection = () => {
               {searchTerm && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 hover:cursor-pointer text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -238,7 +237,7 @@ export const HeroSection = () => {
                 <button
                   key={term}
                   onClick={() => setSearchTerm(term)}
-                  className="text-white text-sm px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                  className="text-white text-sm px-3 py-1 hover:cursor-pointer rounded-full bg-white/20 hover:bg-white/30 transition-colors"
                 >
                   {term}
                 </button>
