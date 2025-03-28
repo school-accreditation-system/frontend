@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import  REQUEST_TYPES  from "@/constants/RequestTypes";
 import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
 import Image from "next/image";
+import logo from "../../../public/nesa-logo.png"
 
 export const HeroSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,11 +81,11 @@ export const HeroSection = () => {
           <Link href="/" className="flex items-center">
             <div className="relative h-10 w-40 bg-white rounded-sm p-1 overflow-hidden shadow-sm">
               <Image
-                src="/nesa-logo.png"
+                src={logo}
                 alt="NESA Logo"
                 className="object-contain p-0.5"
                 fill
-                priority="true"
+                priority={true}
               />
             </div>
           </Link>
