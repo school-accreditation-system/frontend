@@ -4,7 +4,8 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ZodError, ZodObject, ZodSchema } from 'zod';
 import { toast } from '@/components/ui/use-toast';
 import { SchoolIdentificationFormValues } from '../types/schema';
-import { IDENTIFICATION_STEPS } from '../constants';
+import { IDENTIFICATION_STEPS } from '../constants';;
+import { useSearchParams,useRouter } from 'next/navigation';
 
 type FormContextType = {
   currentStep: number;
@@ -28,6 +29,11 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [stepsWithErrors, setStepsWithErrors] = useState<string[]>([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const schoolId = searchParams.get('schoolId');
+  const returnTo = searchParams.get('returnTo') || '/';
 
   // a function that updates the form data
   const updateFormData = (stepId: string, data: Partial<SchoolIdentificationFormValues>) => {
@@ -146,6 +152,8 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
         description: "School information submitted successfully!",
         variant: "default"
       });
+    
+  router.push(`${returnTo}?schoolId=${schoolId}&formCompleted=true`);
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
