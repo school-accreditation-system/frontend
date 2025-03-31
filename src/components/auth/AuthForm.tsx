@@ -7,32 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
 import { Label } from '../ui/label';
+import { schoolSchema, staffSchema, otpSchema, SchoolFormValues, StaffFormValues, OtpFormValues } from './types/schema';
 
 interface AuthFormProps {
   type: 'school' | 'staff';
 }
-
-// Schema for school search
-const schoolSchema = z.object({
-  schoolName: z.string().min(3, { message: "School name must be at least 3 characters" })
-});
-
-// Schema for staff email
-const staffSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" })
-});
-
-// Schema for OTP verification
-const otpSchema = z.object({
-  otp: z.string()
-    .min(6, { message: "Verification code must be 6 digits" })
-    .max(6, { message: "Verification code must be 6 digits" })
-    .regex(/^\d+$/, { message: "Verification code must contain only numbers" })
-});
-
-type SchoolFormValues = z.infer<typeof schoolSchema>;
-type StaffFormValues = z.infer<typeof staffSchema>;
-type OtpFormValues = z.infer<typeof otpSchema>;
 
 export const AuthForm = ({ type }: AuthFormProps) => {
   const [step, setStep] = useState<'initial' | 'otp'>('initial');
@@ -40,21 +19,21 @@ export const AuthForm = ({ type }: AuthFormProps) => {
   const [countdown, setCountdown] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // School form
+  // School form resolver
   const schoolForm = useForm<SchoolFormValues>({
     resolver: zodResolver(schoolSchema),
     defaultValues: { schoolName: '' },
     mode: 'onChange'
   });
 
-  // Staff form
+  // Staff form resolver
   const staffForm = useForm<StaffFormValues>({
     resolver: zodResolver(staffSchema),
     defaultValues: { email: '' },
     mode: 'onChange'
   });
 
-  // OTP form
+  // OTP form resolver
   const otpForm = useForm<OtpFormValues>({
     resolver: zodResolver(otpSchema),
     defaultValues: { otp: '' },
@@ -75,7 +54,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
     setIsLoading(true);
     setSearchTerm(data.schoolName);
     
-    // Simulate API call
+    // TODO: Implement API call here
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     setStep('otp');
@@ -88,7 +67,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
     setIsLoading(true);
     setSearchTerm(data.email);
     
-    // Simulate API call
+    // TODO: Implement API call here
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     setStep('otp');
@@ -145,11 +124,6 @@ export const AuthForm = ({ type }: AuthFormProps) => {
               'Enter Verification Code'
             }
           </h2>
-          
-          <Link href="/" className="text-gray-600 hover:text-primary flex items-center gap-1 text-sm font-medium transition-colors">
-            <Home className="h-4 w-4" />
-            <span>Home</span>
-          </Link>
         </div>
 
         {step === 'initial' ? (

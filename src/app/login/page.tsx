@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { AuthSteps } from '@/components/auth/AuthSteps';
 import { AuthForm } from '@/components/auth/AuthForm';
+import { StaffLoginForm } from '@/components/auth/StaffLoginForm';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function Login() {
-  const [authType, setAuthType] = useState<'school' | 'staff'>('school');
+  const [authType, setAuthType] = useState<'school' | 'staff'>('staff');
 
   return (
     <main className="flex flex-col lg:flex-row min-h-screen">
@@ -24,19 +26,6 @@ export default function Login() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setAuthType('school')}
-              className={cn(
-                "flex-1 py-3 px-4 rounded-md font-medium transition-all cursor-pointer text-center",
-                authType === 'school'
-                  ? "bg-primary text-white shadow-md"
-                  : "bg-transparent text-gray-600 hover:bg-gray-200/80"
-              )}
-            >
-              School Login
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               onClick={() => setAuthType('staff')}
               className={cn(
                 "flex-1 py-3 px-4 rounded-md font-medium transition-all cursor-pointer text-center",
@@ -47,14 +36,31 @@ export default function Login() {
             >
               Staff Login
             </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setAuthType('school')}
+              className={cn(
+                "flex-1 py-3 px-4 rounded-md font-medium transition-all cursor-pointer text-center",
+                authType === 'school'
+                  ? "bg-primary text-white shadow-md"
+                  : "bg-transparent text-gray-600 hover:bg-gray-200/80"
+              )}
+            >
+              School Verification
+            </motion.button>
           </div>
           
-          <AuthForm type={authType} />
+          {authType === 'staff' ? (
+            <StaffLoginForm />
+          ) : (
+            <AuthForm type={authType} />
+          )}
         </div>
         
         {/* Footer note */}
         <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>Need help? <a href="#" className="text-primary hover:underline">Contact Support</a></p>
+          <p>Don't have an account? <Link href="/signup" className="text-primary hover:underline">Create an account</Link></p>
         </div>
       </div>
     </main>
