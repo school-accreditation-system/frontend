@@ -14,12 +14,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { SchoolSearchStep } from './steps/SchoolSearchStep';
 import { VerifyOtpStep } from './steps/VerifyOtpStep';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeDialog, resetDialog } from '@/app/slicers/DialogSlice';
+import { stat } from 'fs';
 
 type Step = 'search' | 'verify';
 
 interface SchoolFinderDialogProps {
   isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange?: () => void;
   onSchoolSelect: (school: School) => void;
   title?: string;
   description?: string;
@@ -35,9 +38,13 @@ export const SchoolFinderDialog = ({
   const [step, setStep] = useState<Step>('search');
   const [verificationEmail, setVerificationEmail] = useState<string>('');
   const [pendingSchool, setPendingSchool] = useState<School | null>(null);
-  
+  const dispatch = useDispatch()
+  const dialog = useSelector((state) => state.dialog.isOpen)
+
   const handleClose = () => {
-    onOpenChange(false);
+    // onOpenChange(dispatch(closeDialog()));
+    dispatch(resetDialog());
+
     // Reset state after dialog closes
     setTimeout(() => {
       setStep('search');
@@ -76,7 +83,7 @@ export const SchoolFinderDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={dialog} onOpenChange={() => dispatch(closeDialog())} >
       <DialogContent 
         className="sm:max-w-[625px] max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6"
         onInteractOutside={handleInteractOutside}

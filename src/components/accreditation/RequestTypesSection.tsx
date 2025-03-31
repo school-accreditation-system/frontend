@@ -6,25 +6,45 @@ import { FeatureCard } from '@/components/ui/FeatureCard';
 import { useRouter } from 'next/navigation';
 import { SchoolFinderDialog, School as SchoolType } from '@/components/school-finder';
 import REQUEST_TYPES from '@/constants/RequestTypes';
+import { useDispatch, useSelector } from 'react-redux';
+import { openDialog } from '@/app/slicers/DialogSlice';
+import { useEffect } from 'react';
+import { selectRequestType, setRequestType } from '@/app/slicers/RequestTypeSlice';
 
 export const RequestTypesSection = () => {
   const router = useRouter();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedRequestType, setSelectedRequestType] = useState("");
+  // const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // const [selectedRequestType, setSelectedRequestType] = useState("");
+  const dialog = useSelector((state) => state.dialog)
+  const selectedRequestType = useSelector(selectRequestType)
+
+
+  
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    console.log(selectedRequestType)
+
+  },[])
 
   const startAccreditationFlow = (requestType: string) => {
     if (requestType === 'new-school-registration') {
       router.push('/register-school');
       return;
     }
-    setSelectedRequestType(requestType);
-    setIsDialogOpen(true);
+
+    // setSelectedRequestType(requestType);
+    dispatch(setRequestType(requestType))
+    // setIsDialogOpen(true);
+    dispatch(openDialog())
+
   };
 
   const handleSchoolSelect = (school: SchoolType) => {
     // Store the school and request type in localStorage
     if (typeof window !== 'undefined') {
       localStorage.setItem('selectedSchoolId', school.id.toString());
+      localStorage.setItem("selectedSchoolEmail",school.email);
       localStorage.setItem('accreditationRequestType', selectedRequestType);
       router.push(`/${selectedRequestType}?schoolId=${school.id}`);
     }
@@ -52,8 +72,9 @@ export const RequestTypesSection = () => {
 
       {/* School Finder Dialog - only shown for non-direct requests */}
       <SchoolFinderDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
+        isOpen={dialog.isOpen}
+        // onOpenChange={() => dispatch(openDialog())}
+        // onOpenChange={setIsDialogOpen}
         onSchoolSelect={handleSchoolSelect}
         title={`${selectedRequestType?.toUpperCase().replace('-', ' ')}`}
         description={`We need to know which school you are applying for.`}
