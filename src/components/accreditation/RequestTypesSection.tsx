@@ -37,6 +37,14 @@ export const RequestTypesSection = () => {
       router.push("/register-school");
       return;
     }
+  if( requestType == "self-assessment"){
+      router.push("/self-assessment")
+      return
+    }
+    if( requestType == "school-identification") {
+      router.push("/school-identification")
+      return
+    }
 
     // setSelectedRequestType(requestType);
     dispatch(setRequestType(requestType));

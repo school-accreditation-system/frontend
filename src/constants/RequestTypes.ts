@@ -11,6 +11,7 @@ const REQUEST_TYPES = [
       "Provide essential information about your institution. This step is crucial for accurate assessment and personalized accreditation guidance.",
     href: "/school-identification",
     actionLabel: "Fill School Information",
+    requestType: "school-identification",
   },
   {
     title: "Self-Assessment",
@@ -18,6 +19,7 @@ const REQUEST_TYPES = [
       "Empower your institution's growth! Our comprehensive self-assessment is your first step towards excellence. Discover your strengths, uncover opportunities, and pave the way for successful accreditation.",
     href: "/self-assessment",
     actionLabel: "Start Self-Assessment",
+    requestType: "self-assessment",
   }
 ];
 
