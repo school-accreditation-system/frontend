@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { School } from './types';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogDescription,
   DialogFooter,
   DialogClose
@@ -52,17 +52,17 @@ export const SchoolFinderDialog = ({
       setPendingSchool(null);
     }, 300);
   };
-  
+
   const handleBack = () => {
     setStep('search');
   };
-  
+
   const handleStartVerification = (email: string, school: School | null) => {
     setVerificationEmail(email);
     setPendingSchool(school);
     setStep('verify');
   };
-  
+
   const handleVerification = (school: School) => {
     // If we're verifying an existing school that was selected
     if (pendingSchool) {
@@ -84,8 +84,8 @@ export const SchoolFinderDialog = ({
 
   return (
     <Dialog open={dialog} onOpenChange={() => dispatch(closeDialog())} >
-      <DialogContent 
-        className="sm:max-w-[625px] max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+      <DialogContent
+        className="sm:max-w-[625px] max-h-[85vh] sm:max-h-[90vh] overflow-y-hidden p-4 sm:p-6"
         onInteractOutside={handleInteractOutside}
       >
         <DialogHeader className="space-y-2 sm:space-y-3">
@@ -101,7 +101,7 @@ export const SchoolFinderDialog = ({
 
         <div className="mt-4 sm:mt-6">
           {step === 'search' && (
-            <SchoolSearchStep 
+            <SchoolSearchStep
               onSchoolSelect={onSchoolSelect}
               onStartVerification={handleStartVerification}
               closeDialog={handleClose}
@@ -109,7 +109,7 @@ export const SchoolFinderDialog = ({
           )}
 
           {step === 'verify' && (
-            <VerifyOtpStep 
+            <VerifyOtpStep
               email={verificationEmail}
               onVerify={handleVerification}
               onBack={handleBack}
@@ -120,9 +120,9 @@ export const SchoolFinderDialog = ({
         {step === 'search' && (
           <DialogFooter className="mt-4 sm:mt-6">
             <DialogClose asChild>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="w-full hover:cursor-pointer hover:bg-red-700 sm:w-auto text-xs sm:text-sm"
               >
                 Cancel
