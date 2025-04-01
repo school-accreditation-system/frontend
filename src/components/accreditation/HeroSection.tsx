@@ -5,10 +5,19 @@ import Link from "next/link";
 import { Input } from "../ui/input";
 import { useEffect, useState, useRef } from "react";
 
-import  REQUEST_TYPES  from "@/constants/RequestTypes";
+import REQUEST_TYPES from "@/constants/RequestTypes";
 import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
 import Image from "next/image";
-import logo from "../../../public/nesa-logo.png"
+import logo from "../../../public/nesa-logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { openDialog, resetDialog } from "@/app/slicers/DialogSlice";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+import {
+  resetRequestType,
+  selectRequestType,
+  setRequestType,
+} from "@/app/slicers/RequestTypeSlice";
 
 export const HeroSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +27,12 @@ export const HeroSection = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const dispatch = useDispatch();
+  const dialog = useSelector((state) => state.dialog);
+  const router = useRouter();
+
+  const selectedRequestType = useSelector(selectRequestType);
 
   // Handle scroll event to change navbar appearance
   useEffect(() => {
@@ -61,12 +76,29 @@ export const HeroSection = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+
+    if (filteredRequests.length > 0) {
+      const requestType = filteredRequests[0].requestType;
+      dispatch(setRequestType(requestType));
+
+      // if(selectedRequestType === "new-school-registration") router.push("/register-school")
+    }
   };
 
   const clearSearch = () => {
     setSearchTerm("");
     setShowResults(false);
   };
+  const handleRequestNavigation = useCallback(() => {
+    setShowResults(false);
+    dispatch(openDialog());
+  }, [dispatch]);
+  useEffect(() => {
+    if (!dialog.isOpen && dialog.wasOpened) {
+      dispatch(resetDialog());
+      dispatch(resetRequestType());
+    }
+  }, [dialog, router]);
 
   return (
     <section className="bg-gradient-to-br from-primary to-secondary py-0 pb-24 relative overflow-hidden">
@@ -196,10 +228,10 @@ export const HeroSection = () => {
                 <div className="p-2">
                   {filteredRequests.map((request, index) => (
                     <div key={index}>
-                      <Link
-                        href={`/${request.requestType}`}
+                      <div
+                        // href={`/${request.requestType}`}
                         className="flex items-center p-3 hover:bg-gray-100 rounded-md transition-colors"
-                        onClick={() => setShowResults(false)}
+                        onClick={handleRequestNavigation}
                       >
                         <div className="text-left">
                           <h3 className="font-medium text-gray-800">
@@ -211,7 +243,7 @@ export const HeroSection = () => {
                             </p>
                           )}
                         </div>
-                      </Link>
+                      </div>
                     </div>
                   ))}
                 </div>
