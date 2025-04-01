@@ -1,17 +1,19 @@
-'use client';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, LayoutDashboard, User, LogOut, Menu } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, LayoutDashboard, User, LogOut, Menu } from "lucide-react";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import logo from "../../../public/nesa-logo.png";
+import Image from "next/image";
 
 export const NavBar = () => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   const links = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: "/", label: "Home", icon: Home },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   ];
 
   return (
@@ -20,17 +22,23 @@ export const NavBar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo and site name */}
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="bg-white text-blue-600 p-1.5 rounded-md font-bold text-xl shadow-sm group-hover:shadow-md transition-all duration-300">
+            {/* <span className="bg-white text-blue-600 p-1.5 rounded-md font-bold text-xl shadow-sm group-hover:shadow-md transition-all duration-300">
               NESA
             </span>
             <span className="font-semibold text-white hidden sm:inline-block group-hover:text-blue-100 transition-colors duration-200">
               School Management
-            </span>
+            </span> */}
+            <Image
+              src={logo}
+              alt="NESA Logo"
+              className="object-cover w-14 h-12"
+
+            />
           </Link>
 
           {/* Mobile menu button */}
-          <button 
-            className="sm:hidden text-white hover:text-blue-200 transition-colors p-2" 
+          <button
+            className="sm:hidden text-white hover:text-blue-200 transition-colors p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <Menu size={24} />
@@ -46,9 +54,10 @@ export const NavBar = () => {
                   key={link.href}
                   href={link.href}
                   className={`relative px-4 py-2 rounded-md flex items-center gap-2 font-medium transition-all duration-200
-                    ${isActive
-                      ? 'text-blue-600 bg-white shadow-sm'
-                      : 'text-white hover:bg-white/10'
+                    ${
+                      isActive
+                        ? "text-blue-600 bg-white shadow-sm"
+                        : "text-white hover:bg-white/10"
                     }`}
                 >
                   <Icon size={18} />
@@ -84,9 +93,9 @@ export const NavBar = () => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
+          animate={{ opacity: 1, height: "auto" }}
           className="sm:hidden bg-indigo-800 shadow-inner"
         >
           <div className="container mx-auto px-4 py-2 space-y-1">
@@ -98,9 +107,10 @@ export const NavBar = () => {
                   key={link.href}
                   href={link.href}
                   className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors
-                    ${isActive
-                      ? 'bg-white text-blue-600 font-medium'
-                      : 'text-white hover:bg-white/10'
+                    ${
+                      isActive
+                        ? "bg-white text-blue-600 font-medium"
+                        : "text-white hover:bg-white/10"
                     }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >

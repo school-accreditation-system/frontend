@@ -1,51 +1,55 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { CheckCircle, School, Award, HomeIcon } from 'lucide-react';
-import { FeatureCard } from '@/components/ui/FeatureCard';
-import { useRouter } from 'next/navigation';
-import { SchoolFinderDialog, School as SchoolType } from '@/components/school-finder';
-import REQUEST_TYPES from '@/constants/RequestTypes';
-import { useDispatch, useSelector } from 'react-redux';
-import { openDialog } from '@/app/slicers/DialogSlice';
-import { useEffect } from 'react';
-import { selectRequestType, setRequestType } from '@/app/slicers/RequestTypeSlice';
+import { useState } from "react";
+import { CheckCircle, School, Award, HomeIcon } from "lucide-react";
+import { FeatureCard } from "@/components/ui/FeatureCard";
+import { useRouter } from "next/navigation";
+import {
+  SchoolFinderDialog,
+  School as SchoolType,
+} from "@/components/school-finder";
+import REQUEST_TYPES, {
+  ACCREDITATION_APPLICATION_TYPES,
+} from "@/constants/RequestTypes";
+import { useDispatch, useSelector } from "react-redux";
+import { openDialog } from "@/app/slicers/DialogSlice";
+import { useEffect } from "react";
+import {
+  selectRequestType,
+  setRequestType,
+} from "@/app/slicers/RequestTypeSlice";
 
 export const RequestTypesSection = () => {
   const router = useRouter();
   // const [isDialogOpen, setIsDialogOpen] = useState(false);
   // const [selectedRequestType, setSelectedRequestType] = useState("");
-  const dialog = useSelector((state) => state.dialog)
-  const selectedRequestType = useSelector(selectRequestType)
+  const dialog = useSelector((state) => state.dialog);
+  const selectedRequestType = useSelector(selectRequestType);
 
-
-  
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(selectedRequestType)
-
-  },[])
+    console.log(selectedRequestType);
+  }, []);
 
   const startAccreditationFlow = (requestType: string) => {
-    if (requestType === 'new-school-registration') {
-      router.push('/register-school');
+    if (requestType === "new-school-registration") {
+      router.push("/register-school");
       return;
     }
 
     // setSelectedRequestType(requestType);
-    dispatch(setRequestType(requestType))
+    dispatch(setRequestType(requestType));
     // setIsDialogOpen(true);
-    dispatch(openDialog())
-
+    dispatch(openDialog());
   };
 
   const handleSchoolSelect = (school: SchoolType) => {
     // Store the school and request type in localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('selectedSchoolId', school.id.toString());
-      localStorage.setItem("selectedSchoolEmail",school.email);
-      localStorage.setItem('accreditationRequestType', selectedRequestType);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedSchoolId", school.id.toString());
+      localStorage.setItem("selectedSchoolEmail", school.email);
+      localStorage.setItem("accreditationRequestType", selectedRequestType);
       router.push(`/${selectedRequestType}?schoolId=${school.id}`);
     }
   };
@@ -53,10 +57,28 @@ export const RequestTypesSection = () => {
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-secondary mb-12">Select Your Request Type</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-secondary mb-12">
+          Select Your Request Type
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3   gap-4">
           {REQUEST_TYPES.map((type, index) => (
+            <FeatureCard
+              key={type.title}
+              title={type.title}
+              description={type.description}
+              icon={type.icon || <CheckCircle className="w-6 h-6" />}
+              actionLabel={`Apply for ${type.title}`}
+              onClick={() => startAccreditationFlow(type.requestType)}
+              index={index}
+            />
+          ))}
+        </div>
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-secondary my-12">
+          Accreditation Application Types
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 py-10">
+          {ACCREDITATION_APPLICATION_TYPES.map((type, index) => (
             <FeatureCard
               key={type.title}
               title={type.title}
@@ -76,9 +98,9 @@ export const RequestTypesSection = () => {
         // onOpenChange={() => dispatch(openDialog())}
         // onOpenChange={setIsDialogOpen}
         onSchoolSelect={handleSchoolSelect}
-        title={`${selectedRequestType?.toUpperCase().replace('-', ' ')}`}
+        title={`${selectedRequestType?.toUpperCase().replace("-", " ")}`}
         description={`We need to know which school you are applying for.`}
       />
     </section>
   );
-}; 
+};
