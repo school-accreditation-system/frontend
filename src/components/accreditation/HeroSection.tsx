@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Input } from "../ui/input";
 import { useEffect, useState, useRef } from "react";
 
-import REQUEST_TYPES from "@/constants/RequestTypes";
+import REQUEST_TYPES, { ALL_REQUEST_TYPES } from "@/constants/RequestTypes";
 import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
 import Image from "next/image";
 import logo from "../../../public/nesa-logo.png";
@@ -66,7 +66,7 @@ export const HeroSection = () => {
       setFilteredRequests([]);
       setShowResults(false);
     } else {
-      const filtered = REQUEST_TYPES.filter((service) =>
+      const filtered = ALL_REQUEST_TYPES.filter((service) =>
         service.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredRequests(filtered);
