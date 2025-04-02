@@ -168,7 +168,6 @@ export const infrastructureSchema = z.object({
 export const schoolIdentificationSchema = z.object({
   ...basicInfoSchema.shape,
   ...locationDetailsSchema.shape,
-  ...headTeacherSchema.shape,
   ...studentInfoSchema.shape,
   ...teachingStaffBaseSchema.shape,
   ...supportingStaffSchema.shape,

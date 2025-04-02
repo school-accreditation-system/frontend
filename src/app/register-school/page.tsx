@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { SchoolRegistrationForm } from '@/components/school-registration/SchoolRegistrationForm';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,7 +6,7 @@ import { Building } from 'lucide-react';
 export default function RegisterSchoolPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Building className="h-8 w-8 text-primary" />

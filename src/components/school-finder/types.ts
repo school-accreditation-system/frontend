@@ -34,9 +34,15 @@ export interface VerifyOtpStepProps {
 
 export interface SchoolRegistrationFormData {
   name: string;
-  address: string;
+  province: string;
+  district: string;
+  sector: string;
+  cell: string;
+  village: string;
   email: string;
   phone: string;
-  contactPersonName: string;
-  contactPersonEmail: string;
+  htName: string;
+  htEmail: string;
+  qualification: "Diploma A2" | "Associate Degree" | "Bachelor's Degree" | "Master's Degree" | "PhD";
+  telephone: string;
 } 
