@@ -11,6 +11,7 @@ import FormSteps from "./_components/FormSteps";
 import { useEmail } from "@/lib";
 import SchoolIdentificationPage from "../school-identification/page";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [filteredSchools, setFilteredSchools] = useState([]);
@@ -21,6 +22,7 @@ const Page = () => {
   const email = useEmail();
   const params = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter()
   const url = params + "/" + "?schoolId=" + searchParams.get("schoolId");
   console.log("params", params);
   console.log("search params", searchParams.get("schoolId"));
@@ -217,10 +219,12 @@ const Page = () => {
                           </svg>
                           Start Identification Process
                         </a>
+                        
                       </div>
                     )}
 
                     {school.selfAssessment ? (
+                      <div>
                       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-4 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-16 h-16 opacity-10">
                           <svg
@@ -287,6 +291,8 @@ const Page = () => {
                               : "Assessment score: 80%"}
                           </p>
                         </div>
+                      </div>
+                        <button className="bg-primary py-2 px-4 rounded-md my-2 text-white hover:cursor-pointer" onClick={() => router.push(`/self-assessment?schoolId=${school.id}&returnTo=${params}`)}>Do another self-assessment</button>
                       </div>
                     ) : (
                       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center text-center">
@@ -394,7 +400,7 @@ const Page = () => {
                 <div className="bg-gray-50 px-5 py-4 border-t border-gray-100">
                   <button
                     onClick={() => handleSchoolSelect(school)}
-                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center font-medium"
+                    className="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-500 transition-colors duration-300 flex items-center justify-center font-medium"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
