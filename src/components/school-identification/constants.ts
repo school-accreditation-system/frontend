@@ -1,6 +1,5 @@
 import { BasicInfoForm } from "./steps/BasicInfoForm";
 import { LocationDetailsForm } from "./steps/LocationDetailsForm";
-import { HeadTeacherForm } from "./steps/HeadTeacherForm";
 import { StudentInfoForm } from "./steps/StudentInfoForm";
 import { TeachingStaffForm } from "./steps/TeachingStaffForm";
 import { SupportingStaffForm } from "./steps/SupportingStaffForm";
@@ -9,7 +8,6 @@ import { SummaryForm } from "./steps/SummaryForm";
 import { 
   basicInfoSchema, 
   locationDetailsSchema,
-  headTeacherSchema,
   studentInfoSchema,
   teachingStaffSchema, 
   supportingStaffSchema,
@@ -31,13 +29,6 @@ export const IDENTIFICATION_STEPS: Step[] = [
     description: 'Provide information about the school location',
     component: LocationDetailsForm,
     validationSchema: locationDetailsSchema,
-  },
-  {
-    id: 'head-teacher',
-    title: 'Head Teacher',
-    description: 'Information about the school head teacher',
-    component: HeadTeacherForm,
-    validationSchema: headTeacherSchema,
   },
   {
     id: 'student-info',

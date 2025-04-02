@@ -21,25 +21,27 @@ export const NavBar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo and site name */}
-          <Link href="/" className="flex items-center gap-2 group">
-            {/* <span className="bg-white text-blue-600 p-1.5 rounded-md font-bold text-xl shadow-sm group-hover:shadow-md transition-all duration-300">
-              NESA
-            </span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-12 h-12 flex items-center justify-center">
+              <Image
+                src={logo}
+                alt="NESA Logo"
+                className="object-contain"
+                fill
+                sizes="(max-width: 768px) 40px, 48px"
+                priority
+              />
+            </div>
             <span className="font-semibold text-white hidden sm:inline-block group-hover:text-blue-100 transition-colors duration-200">
-              School Management
-            </span> */}
-            <Image
-              src={logo}
-              alt="NESA Logo"
-              className="object-cover w-14 h-12"
-
-            />
+              School Accreditation
+            </span>
           </Link>
 
           {/* Mobile menu button */}
           <button
             className="sm:hidden text-white hover:text-blue-200 transition-colors p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             <Menu size={24} />
           </button>
@@ -74,16 +76,16 @@ export const NavBar = () => {
           </nav>
 
           {/* User menu */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <button className="p-2 rounded-full text-white hover:bg-white/10 transition-all duration-200 relative group">
               <User size={20} />
-              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <span className="absolute -bottom-10 right-0 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
                 Profile
               </span>
             </button>
             <button className="p-2 rounded-full text-white hover:bg-white/10 transition-all duration-200 relative group">
               <LogOut size={20} />
-              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <span className="absolute -bottom-10 right-0 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
                 Log Out
               </span>
             </button>
@@ -96,6 +98,7 @@ export const NavBar = () => {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
           className="sm:hidden bg-indigo-800 shadow-inner"
         >
           <div className="container mx-auto px-4 py-2 space-y-1">

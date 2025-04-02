@@ -8,7 +8,6 @@ import { useEffect, useState, useRef } from "react";
 import REQUEST_TYPES, { ALL_REQUEST_TYPES } from "@/constants/RequestTypes";
 import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
 import Image from "next/image";
-import logo from "../../../public/nesa-logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { openDialog, resetDialog } from "@/app/slicers/DialogSlice";
 import { useRouter } from "next/navigation";
@@ -113,7 +112,7 @@ export const HeroSection = () => {
           <Link href="/" className="flex items-center">
             <div className="relative h-10 w-40 bg-white rounded-sm p-1 overflow-hidden shadow-sm">
               <Image
-                src={logo}
+                src="/nesa-logo.png"
                 alt="NESA Logo"
                 className="object-contain p-0.5"
                 fill
