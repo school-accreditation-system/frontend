@@ -7,6 +7,8 @@ import { SchoolAssessmentFormValues } from '../types/schema';
 import { ASSESSMENT_STEPS } from '../constanst';
 import type { FormContextType } from '../types/schema';
 import { selfAssessmentSchema } from '../types/schema';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
@@ -16,6 +18,11 @@ export function FormProvider({ children }: { children: ReactNode }) {
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [stepsWithErrors, setStepsWithErrors] = useState<number[]>([]);
+      const router = useRouter();
+      const searchParams = useSearchParams();
+      
+      const schoolId = searchParams.get('schoolId');
+      const returnTo = searchParams.get('returnTo') || '/';
 
     const updateFormData = (step: number, data: any) => {
         setFormData(prev => ({
@@ -70,6 +77,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
             // Add your API call here
             console.log("Form data", formData)
             setIsSubmitting(false);
+            router.push(`${returnTo}?schoolId=${schoolId}&formCompleted=true`);
         } catch (error) {
             setIsSubmitting(false);
             console.log("Error", error)

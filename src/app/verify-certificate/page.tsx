@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { handlePrintCertificate } from './_components/printCertificate';
 
 const CertificateVerificationPage = () => {
   // State for the certificate ID input
@@ -123,11 +124,13 @@ const CertificateVerificationPage = () => {
       </span>
     );
   };
+ 
+
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="bg-green-600 py-6 px-6">
+        <div className="bg-primary py-6 px-6">
           <h1 className="text-2xl font-bold text-white">Certificate Verification</h1>
           <p className="text-green-100 mt-1">Verify the authenticity of school accreditation certificates</p>
         </div>
@@ -142,7 +145,7 @@ const CertificateVerificationPage = () => {
               <button
                 className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   verificationMethod === 'id'
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-primary text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
                 onClick={() => setVerificationMethod('id')}
@@ -152,7 +155,7 @@ const CertificateVerificationPage = () => {
               <button
                 className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   verificationMethod === 'qr'
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-primary text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
                 onClick={() => setVerificationMethod('qr')}
@@ -180,7 +183,7 @@ const CertificateVerificationPage = () => {
                   />
                   <button
                     type="submit"
-                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Verifying...' : 'Verify'}
@@ -288,20 +291,30 @@ const CertificateVerificationPage = () => {
                     <a
                       href="#"
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.print();
-                      }}
+                        onClick={() =>
+                                              handlePrintCertificate({
+                                                logo: "/nesalogo-removebg.png",
+                                                sealImage: "/accredited-logo.jpg",
+                                                waterMark: "/nesa-logo.png",
+                                                schoolName: "Ecole Primaire et Maternelle LADIVINE",
+                                                schoolType: "Primary Level Education",
+                                                issuerName: "Names...",
+                                                issuerPosition: "Director General",
+                                                validFromDate: "April 2025",
+                                                validToDate: "31st August 2026",
+                                                certificateNumber: "NESA/2025/0001",
+                                              })
+                                            }
                     >
                       Print Verification
                     </a>
-                    <a
+                    {/* <a
                       href="#"
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                       onClick={(e) => e.preventDefault()}
                     >
                       Download PDF
-                    </a>
+                    </a> */}
                   </div>
                 </div>
               </div>
