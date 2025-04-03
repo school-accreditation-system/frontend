@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface PaginationProps {
@@ -8,97 +11,124 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export const Pagination = ({
+export const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
-  onPageChange,
-}: PaginationProps) => {
+  onPageChange
+}) => {
+  // Don't render pagination if there's only one page
   if (totalPages <= 1) return null;
-
-  // Create an array of page numbers to show
+  
+  // Generate page numbers to display
   const getPageNumbers = () => {
     const pages = [];
-
-    // Always show the first page
+    const maxVisiblePages = 5; // Maximum number of page links to show
+    
+    // Always show first page
     pages.push(1);
-
-    // If we have more than 7 pages, we need ellipses
-    if (totalPages > 7) {
-      // If current page is close to start
-      if (currentPage <= 3) {
-        pages.push(2, 3, 4, '...', totalPages);
-      } 
-      // If current page is close to end
-      else if (currentPage >= totalPages - 2) {
-        pages.push('...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-      } 
-      // If current page is in the middle
-      else {
-        pages.push('...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
-      }
-    } else {
-      // If we have 7 or fewer pages, show all
-      for (let i = 2; i <= totalPages; i++) {
-        pages.push(i);
-      }
+    
+    // Calculate start and end of the visible page range
+    let startPage = Math.max(2, currentPage - 1);
+    let endPage = Math.min(totalPages - 1, currentPage + 1);
+    
+    // Adjust if at the beginning
+    if (currentPage <= 3) {
+      endPage = Math.min(maxVisiblePages - 1, totalPages - 1);
     }
-
+    
+    // Adjust if at the end
+    if (currentPage >= totalPages - 2) {
+      startPage = Math.max(2, totalPages - maxVisiblePages + 2);
+    }
+    
+    // Add ellipsis before middle pages if needed
+    if (startPage > 2) {
+      pages.push('ellipsis-start');
+    }
+    
+    // Add middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    
+    // Add ellipsis after middle pages if needed
+    if (endPage < totalPages - 1) {
+      pages.push('ellipsis-end');
+    }
+    
+    // Always show last page if there are multiple pages
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+    
     return pages;
   };
-
+  
+  const pageNumbers = getPageNumbers();
+  
   return (
-    <div className="flex items-center justify-center">
-      {/* Previous button */}
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={cn(
-          "flex items-center justify-center h-10 w-10 rounded-lg border mr-2",
-          currentPage === 1
-            ? "border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50"
-            : "border-gray-300 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 hover:cursor-pointer"
-        )}
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </button>
-      
-      {/* Page numbers */}
-      <div className="flex items-center">
-        {getPageNumbers().map((page, index) => (
-          typeof page === 'number' ? (
-            <button
-              key={index}
-              onClick={() => onPageChange(page)}
-              className={cn(
-                "h-10 w-10 rounded-lg mx-1 flex items-center justify-center text-sm font-medium transition-all hover:cursor-pointer",
-                currentPage === page
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-              )}
-            >
-              {page}
-            </button>
-          ) : (
-            <span key={index} className="mx-1 text-gray-400 w-10 text-center">
-              …
-            </span>
-          )
+    <nav className="flex items-center justify-center">
+      <ul className="flex items-center gap-1">
+        {/* Previous button */}
+        <li>
+          <Button
+            variant="outline"
+            size="icon"
+            className={cn(
+              "h-9 w-9 rounded-md border",
+              currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
+            )}
+            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            aria-label="Previous page"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        </li>
+        
+        {/* Page numbers */}
+        {pageNumbers.map((page, index) => (
+          <li key={`page-${index}`}>
+            {page === 'ellipsis-start' || page === 'ellipsis-end' ? (
+              <span className="flex items-center justify-center h-9 w-9">
+                <MoreHorizontal className="h-4 w-4 text-gray-400" />
+              </span>
+            ) : (
+              <Button
+                variant={currentPage === page ? "default" : "outline"}
+                className={cn(
+                  "h-9 w-9 rounded-md",
+                  currentPage === page 
+                    ? "bg-primary text-white hover:bg-primary/90" 
+                    : "hover:bg-gray-100"
+                )}
+                onClick={() => typeof page === 'number' && onPageChange(page)}
+                aria-label={`Page ${page}`}
+                aria-current={currentPage === page ? 'page' : undefined}
+              >
+                {page}
+              </Button>
+            )}
+          </li>
         ))}
-      </div>
-      
-      {/* Next button */}
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className={cn(
-          "flex items-center justify-center h-10 w-10 rounded-lg border ml-2",
-          currentPage === totalPages
-            ? "border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50"
-            : "border-gray-300 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 hover:cursor-pointer"
-        )}
-      >
-        <ChevronRight className="h-5 w-5" />
-      </button>
-    </div>
+        
+        {/* Next button */}
+        <li>
+          <Button
+            variant="outline"
+            size="icon"
+            className={cn(
+              "h-9 w-9 rounded-md border",
+              currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
+            )}
+            onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            aria-label="Next page"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </li>
+      </ul>
+    </nav>
   );
 }; 

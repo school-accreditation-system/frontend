@@ -1,29 +1,20 @@
-import React, { useState } from 'react';
-import { Search, X, Filter as FilterIcon } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { AccreditationField } from '@/types/accredited-schools';
-import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { Search, X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
+import React, { useState } from 'react';
 
-interface SearchFiltersProps {
-  searchQuery: string;
-  selectedField: string;
-  accreditationFields: AccreditationField[];
-  onSearchChange: (query: string) => void;
-  onFieldChange: (fieldId: string) => void;
-  totalSchools: number;
-  clearFilters: () => void;
-}
 
-export const SearchFilters: React.FC<SearchFiltersProps> = ({
+
+export const SearchFilters= ({
   searchQuery,
   selectedField,
   accreditationFields,
   onSearchChange,
   onFieldChange,
-  totalSchools,
+  // totalSchools,
   clearFilters
 }) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -40,8 +31,13 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   const handleFieldChange = (fieldId: string) => {
-    setFieldParam(fieldId);
-    onFieldChange(fieldId);
+    if (fieldParam === fieldId) {
+      setFieldParam('');
+      onFieldChange('');
+    } else {
+      setFieldParam(fieldId);
+      onFieldChange(fieldId);
+    }
   };
 
   return (
@@ -54,9 +50,9 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           </div>
           <Input
             type="text"
-            placeholder="Search for schools by name or location..."
+            placeholder="Search for schools by name..."
             className="pl-10 py-2 pr-4 h-12 border border-gray-200 rounded-lg w-full text-base text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 focus:outline-none shadow-sm"
-            value={searchParam}
+            value={searchParam || ''}
             onChange={handleSearchChange}
           />
           {searchParam && (
@@ -71,16 +67,26 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           )}
         </div>
 
-        {/* Mobile filter toggle */}
-        <div className="md:hidden mb-4">
-          <Button 
-            variant="outline"
-            className="w-full flex items-center justify-center gap-2"
-            onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-          >
-            <FilterIcon className="h-4 w-4" />
-            {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
-          </Button>
+        {/* Combinations filter */}
+        <div className="mb-4">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Filter by Combination</h3>
+          <div className="flex flex-wrap gap-2">
+            {accreditationFields.map((field) => (
+              <Badge
+                key={field.id}
+                variant="outline"
+                className={cn(
+                  "cursor-pointer py-1.5 px-3 border transition-colors",
+                  fieldParam === field.id
+                    ? field.color || "bg-blue-100 text-blue-700 border-blue-200"
+                    : "hover:bg-gray-50"
+                )}
+                onClick={() => handleFieldChange(field.id)}
+              >
+                {field.name || field.id}
+              </Badge>
+            ))}
+          </div>
         </div>
 
         {/* Active filters display */}
@@ -103,7 +109,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                   variant="secondary" 
                   className="flex items-center gap-1 px-2 py-1"
                 >
-                  <span>Subject: {accreditationFields.find(f => f.id === fieldParam)?.name || fieldParam}</span>
+                  <span>Combination: {accreditationFields.find(f => f.id === fieldParam)?.name || fieldParam}</span>
                   <X className="h-3 w-3 cursor-pointer" onClick={() => handleFieldChange('')} />
                 </Badge>
               </div>
@@ -121,12 +127,12 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
         )}
       </div>
 
-      {/* Results count */}
+      {/* Results count
       <div className="px-6 pb-4">
         <h3 className="text-lg font-medium text-gray-800 flex items-center gap-2">
           {totalSchools} {totalSchools === 1 ? 'School' : 'Schools'} Found
         </h3>
-      </div>
+      </div> */}
     </div>
   );
 }; 

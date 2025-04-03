@@ -1,11 +1,6 @@
-import { SchoolIdentificationSteps } from "@/components/school-identification/SchoolIdentificationSteps";
-import { Metadata } from "next";
 import { NavBar } from "@/components/navigation/NavBar";
+import { SchoolIdentificationSteps } from "@/components/school-identification/SchoolIdentificationSteps";
 
-const metadata: Metadata = {
-  title: "School Identification",
-  description: "Complete your school's identification process",
-};
 
 export default function SchoolIdentificationPage() {
   return (

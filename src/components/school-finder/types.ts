@@ -1,3 +1,5 @@
+import { SchoolDTO } from "@/hooks/useSchool";
+
 export interface School {
   id: number;
   name: string;
@@ -21,9 +23,9 @@ export interface SchoolFinderDialogProps {
 }
 
 export interface SchoolSearchStepProps {
-  onSchoolSelect: (school: School) => void;
-  onStartVerification: (email: string, school: School) => void;
-  closeDialog: () => void;
+  onSchoolSelect: (school: SchoolDTO) => void;
+  onStartVerification: (email: string, school: SchoolDTO) => void;
+  closeDialog?: () => void;
 }
 
 export interface VerifyOtpStepProps {
@@ -43,6 +45,21 @@ export interface SchoolRegistrationFormData {
   phone: string;
   htName: string;
   htEmail: string;
-  qualification: "Diploma A2" | "Associate Degree" | "Bachelor's Degree" | "Master's Degree" | "PhD";
+  qualification:
+    | "Diploma A2"
+    | "Associate Degree"
+    | "Bachelor's Degree"
+    | "Master's Degree"
+    | "PhD";
   telephone: string;
-} 
+}
+
+export interface VerificationStepProps {
+  email: string;
+  school: SchoolDTO;
+  onVerificationComplete: (otp: string) => void;
+  onBack: () => void;
+}
+
+// Using SchoolDTO from our hooks instead of duplicating the type
+export type School = SchoolDTO;

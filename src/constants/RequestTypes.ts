@@ -13,14 +13,14 @@ const REQUEST_TYPES = [
     actionLabel: "Fill School Information",
     requestType: "school-identification",
   },
-  // {
-  //   title: "Self-Assessment",
-  //   description:
-  //     "Empower your institution's growth! Our comprehensive self-assessment is your first step towards excellence. Discover your strengths, uncover opportunities, and pave the way for successful accreditation.",
-  //   href: "/self-assessment",
-  //   actionLabel: "Start Self-Assessment",
-  //   requestType: "self-assessment",
-  // }
+  {
+    title: "Check Accredited Schools",
+    description:
+      "Find accredited schools in your area. This tool helps you locate institutions that meet the required standards and regulations.",
+    href: "/accredited-schools",
+    actionLabel: "Check Accredited Schools",
+    requestType: "accredited-schools",
+  },
 ];
 
 export const ACCREDITATION_APPLICATION_TYPES = [
@@ -72,12 +72,12 @@ export const ACCREDITATION_APPLICATION_TYPES = [
       "Have concerns about an accredited institution? Submit a formal claim for investigation and resolution.",
     href: "submit-claim",
     requestType: "submit-claim",
-  }
-]
+  },
+];
 
 export const ALL_REQUEST_TYPES = [
   ...REQUEST_TYPES,
   ...ACCREDITATION_APPLICATION_TYPES,
-]
+];
 
 export default REQUEST_TYPES;

@@ -1,22 +1,25 @@
 'use client';
-import React from 'react';
+import { useGetAreas } from '@/hooks/useStandard';
+import { Standard } from '@/types/Standard';
+import { saveFormData } from '@/utils/storage';
 import { motion } from 'framer-motion';
-import { Check, ChevronLeft, ChevronRight, Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { FormProvider, useFormContext } from './context/index'
-import { TypeOfRequestForm } from '@/components/selfAssessment/steps/TypeofRequestForm';
-import { LandOwnershipForm } from '@/components/selfAssessment/steps/LandOwnershipForm';
-import { SchoolInfrastructureForm } from '@/components/selfAssessment/steps/SchoolInfrastructureForm';
-import { TeachingResourcesForm } from '@/components/selfAssessment/steps/TeachingResourcesForm';
-import { ProvisionalResults } from '@/components/selfAssessment/steps/ProvisionalResults';
-import { ASSESSMENT_STEPS } from './constanst';
+import { AlertCircle, Check } from 'lucide-react';
+import React, { useEffect, useState, ReactNode } from 'react';
+import { FormProvider, useFormContext } from './context/index';
+import ApplicantInformation from './steps/ApplicantInformation';
+import { LandOwnershipForm } from './steps/LandOwnershipForm';
+import { ProvisionalResults } from './steps/ProvisionalResults';
+import { TypeOfRequestForm } from './steps/TypeofRequestForm';
 
-
-interface SchoolAssessmentFormProps {
-    children: React.ReactNode;
+interface Step {
+    id: number;
+    title: string;
+    description: string;
+    component?: React.ComponentType<any>;
+    areaId?: string;
 }
 
-const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
+const SchoolAssessmentForm = () => {
     const {
         currentStep,
         setCurrentStep,
@@ -25,24 +28,71 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
         isSubmitting,
         stepsWithErrors,
         updateFormData,
-        validateStep,
         goToNextStep,
         goToPreviousStep,
-        handleSubmit
+        handleSubmit,
+        setAssessmentSteps
     } = useFormContext();
+    const { data: areas, isLoading: areasLoading } = useGetAreas();
+    const [assessmentSteps, setStepsArray] = useState<Step[]>([
+        {
+            id: 0,
+            title: "Type of Request",
+            description: "Select the type of request you want to make",
+            component: TypeOfRequestForm
+        },
+        {
+            id: 1,
+            title: "Provisional results",
+            description: "Review provisional results",
+            component: ProvisionalResults
+        }
+    ]);
 
-    const currentStepData = ASSESSMENT_STEPS[currentStep];
+    useEffect(() => {
+        if (areas && areas.length > 0) {
+            const newSteps: Step[] = [
+                {
+                    id: 0,
+                    title: "Type of Request",
+                    description: "Select the type of request you want to make",
+                    component: TypeOfRequestForm
+                },
+                ...areas.map((area: Standard, index: number) => ({
+                    id: index + 1,
+                    title: area.name,
+                    description: `Complete assessment for ${area.name}`,
+                    component: LandOwnershipForm,
+                    areaId: area.id
+                })),
+                {
+                    id: areas.length + 1,
+                    title: "Applicant Information",
+                    description: "Complete your information and submit the application",
+                    component: ApplicantInformation
+                }
+            ];
+
+            setStepsArray(newSteps);
+            setAssessmentSteps(areas.length + 1);
+        }
+    }, [areas, setAssessmentSteps]);
+
+    const currentStepData = assessmentSteps[currentStep] || assessmentSteps[0];
     const CurrentStepComponent = currentStepData.component;
 
+    if (areasLoading) {
+        return <div className="flex justify-center items-center min-h-[400px]">Loading assessment steps...</div>;
+    }
 
     return (
-        <div className="container mx-auto px-4 max-w-6xl">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="container mx-auto md:px-4 max-w-8xl pb-20">
+            <div className="bg-white/50 rounded-xs md:p-6">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-5">
-                    <h1 className="text-xl font-bold">School Self Assessment</h1>
+                    <h1 className="text-xl font-bold">Accreditation Application</h1>
                     <span className="text-sm text-muted-foreground">
-                        Step {currentStep + 1} of {ASSESSMENT_STEPS.length}
+                        Step {currentStep + 1} of {assessmentSteps.length}
                     </span>
                 </div>
                 <div className="space-y-6">
@@ -51,11 +101,11 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
                         <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-primary transition-all duration-300 ease-in-out"
-                                style={{ width: `${((currentStep + 1) / ASSESSMENT_STEPS.length) * 100}%` }}
+                                style={{ width: `${((currentStep + 1) / assessmentSteps.length) * 100}%` }}
                             />
                         </div>
                         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                            {ASSESSMENT_STEPS.map((step, index) => {
+                            {assessmentSteps.map((step, index) => {
                                 const hasError = stepsWithErrors.includes(step.id);
 
                                 return (
@@ -90,25 +140,43 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
 
                         {/* Right side content area */}
                         <div className="w-full bg-gray-50 rounded-lg p-6">
-                            <motion.div
-                                key={currentStepData.id}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <CurrentStepComponent
-                                    formData={formData}
-                                    updateFormData={(data) => updateFormData(currentStepData.id, data)}
-                                    errors={formErrors[currentStepData.id] || []}
-                                    currentStep={currentStep}
-                                    isSubmitting={isSubmitting}
-                                    onPrevious={goToPreviousStep}
-                                    onNext={goToNextStep}
-                                    onSubmit={handleSubmit}
-                                    totalSteps={ASSESSMENT_STEPS.length}
-                                />
-                            </motion.div>
+                            {CurrentStepComponent ? (
+                                <motion.div
+                                    key={currentStepData.id}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <CurrentStepComponent
+                                        formData={formData[currentStepData.id] || {}}
+                                        updateFormData={(data) => updateFormData(currentStepData.id, data)}
+                                        errors={formErrors[currentStepData.id] || []}
+                                        currentStep={currentStep}
+                                        isSubmitting={isSubmitting}
+                                        onPrevious={goToPreviousStep}
+                                        onNext={currentStepData.component === LandOwnershipForm
+                                            ? () => {
+                                                const currentFormData = formData[currentStepData.id] || {};
+                                                saveFormData(currentStepData.id, currentFormData);
+                                                return new Promise(resolve => {
+                                                    setTimeout(() => {
+                                                        setCurrentStep(prev => prev + 1);
+                                                        resolve(true);
+                                                    }, 10);
+                                                });
+                                            }
+                                            : goToNextStep}
+                                        // onSubmit={isLastStep ? handleSubmit : goToNextStep}
+                                        totalSteps={assessmentSteps.length}
+                                        areaId={currentStepData.areaId}
+                                    />
+                                </motion.div>
+                            ) : (
+                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                                    <p>No component available for this step.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -118,7 +186,7 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
 }
 
 interface SchoolAssessmentStepsProps {
-    children: React.ReactNode;
+    children?: ReactNode;
 }
 
 export default function SchoolAssessmentSteps({ children }: SchoolAssessmentStepsProps) {

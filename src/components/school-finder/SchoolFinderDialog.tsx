@@ -1,33 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
-import { School } from './types';
+import { closeDialog, resetDialog } from '@/app/slicers/DialogSlice';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose
+  DialogHeader,
+  DialogTitle
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { SchoolSearchStep } from './steps/SchoolSearchStep';
 import { VerifyOtpStep } from './steps/VerifyOtpStep';
-import { useDispatch, useSelector } from 'react-redux';
-import { closeDialog, resetDialog } from '@/app/slicers/DialogSlice';
-import { stat } from 'fs';
-import { useRef } from 'react';
+import { School } from './types';
 
 type Step = 'search' | 'verify';
-
-interface SchoolFinderDialogProps {
-  isOpen: boolean;
-  onOpenChange?: () => void;
-  onSchoolSelect: (school: School) => void;
-  title?: string;
-  description?: string;
-}
 
 export const SchoolFinderDialog = ({
   isOpen,
@@ -39,11 +29,33 @@ export const SchoolFinderDialog = ({
   const [step, setStep] = useState<Step>('search');
   const [verificationEmail, setVerificationEmail] = useState<string>('');
   const [pendingSchool, setPendingSchool] = useState<School | null>(null);
-  const dispatch = useDispatch()
-  const dialog = useSelector((state) => state.dialog.isOpen)
+  const dispatch = useDispatch();
+  const dialog = useSelector((state) => state.dialog.isOpen);
+  const isClosingRef = useRef(false);
+
+  // Check if we already have a selected school in localStorage
+  useEffect(() => {
+    const checkExistingSchool = () => {
+      try {
+        if (typeof window === 'undefined') return;
+        
+        const schoolId = localStorage.getItem('selectedSchoolId');
+        const schoolEmail = localStorage.getItem('selectedSchoolEmail');
+        
+        if (schoolId && schoolEmail && schoolId !== 'undefined' && schoolId !== 'null') {
+          // We have a school already selected, close the dialog
+          dispatch(closeDialog());
+        }
+      } catch (error) {
+        console.error("Error accessing localStorage:", error);
+        // Continue showing the dialog if we can't access localStorage
+      }
+    };
+    
+    checkExistingSchool();
+  }, [dispatch]);
 
   const handleClose = () => {
-    // onOpenChange(dispatch(closeDialog()));
     dispatch(resetDialog());
 
     // Reset state after dialog closes
@@ -67,36 +79,35 @@ export const SchoolFinderDialog = ({
   const handleVerification = (school: School) => {
     // If we're verifying an existing school that was selected
     if (pendingSchool) {
-      onSchoolSelect(pendingSchool);
+      if (onSchoolSelect) {
+        onSchoolSelect(pendingSchool);
+      }
     } else {
       // If we're verifying a newly registered school
-      onSchoolSelect(school);
+      if (onSchoolSelect) {
+        onSchoolSelect(school);
+      }
     }
     handleClose();
   };
-const isClosingRef = useRef(null)
+
   // Prevent closing dialog during verification by clicking outside
   const handleInteractOutside = (e: React.MouseEvent<HTMLDivElement>) => {
-   
-
-     if (isClosingRef.current) return;
+    if (isClosingRef.current) return;
     
-
-     isClosingRef.current = true;
-     
-
-     dispatch(closeDialog());
-     
-
-     setTimeout(() => {
-       isClosingRef.current = false;
-     }, 100);
-
-    e.preventDefault();
+    isClosingRef.current = true;
+    
+    // Allow closing only during search step
     if (step !== 'search') {
+      e.preventDefault();
       return false;
     }
-
+    
+    dispatch(closeDialog());
+    
+    setTimeout(() => {
+      isClosingRef.current = false;
+    }, 100);
   };
 
   return (
@@ -141,6 +152,7 @@ const isClosingRef = useRef(null)
                 variant="outline"
                 size="sm"
                 className="w-full hover:cursor-pointer hover:bg-red-700 sm:w-auto text-xs sm:text-sm"
+                onClick={handleClose}
               >
                 Cancel
               </Button>

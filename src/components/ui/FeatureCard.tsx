@@ -1,11 +1,11 @@
 'use client';
 
-import { ReactNode } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { ReactNode } from 'react';
 import { IconWrapper } from './IconWrapper';
 
 interface FeatureCardProps {
@@ -27,8 +27,9 @@ export const FeatureCard = ({
   onClick,
   href,
   className,
-  index = 0
+  index = 0,
 }: FeatureCardProps) => {
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -51,15 +52,13 @@ export const FeatureCard = ({
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            {/* <div className="bg-white p-3 rounded-full shadow-sm inline-flex mb-2"> */}
-              <IconWrapper>{icon}</IconWrapper>
-            {/* </div> */}
+            <IconWrapper>{icon}</IconWrapper>
           </motion.div>
           <h3 className="text-xl font-semibold mt-3 mb-2">{title}</h3>
         </CardHeader>
         
         <CardContent className="flex-grow py-2 px-5">
-          <p className="text-muted-foreground text-center text-sm">{description}</p>
+          <p className="text-muted-foreground text-center text-sm">{description || `Click here to apply for ${title?.toLocaleLowerCase()} and follow the steps to the end`}</p>
         </CardContent>
         
         {(actionLabel && (onClick || href)) && (
@@ -81,4 +80,4 @@ export const FeatureCard = ({
       </Card>
     </motion.div>
   );
-}; 
+};

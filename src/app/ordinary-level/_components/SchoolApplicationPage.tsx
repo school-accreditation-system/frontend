@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+
 import { Search } from "lucide-react";
 import SuccessModal from "../_components/SuccessModal";
 import { schoolsData } from "@/constants/schoolsData";

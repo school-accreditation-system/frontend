@@ -41,9 +41,9 @@ export const InfrastructureForm = () => {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-xl font-medium mb-6">Infrastructure</h3>
           
-          <div className="space-y-6 max-w-4xl mx-auto">
+          <div className="space-y-6 mx-auto">
             {/* Infrastructure Summary Cards */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6">
+            <div className="bg-gray-50  rounded-lg border border-gray-100 mb-6">
               <InfrastructureSummary
                 numClassrooms={form.watch("numClassrooms")}
                 numLatrines={form.watch("numLatrines")}

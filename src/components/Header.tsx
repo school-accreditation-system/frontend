@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 "use client"
 import { Globe, LogIn, Menu, User, X } from "lucide-react";
 import Image from "next/image";
