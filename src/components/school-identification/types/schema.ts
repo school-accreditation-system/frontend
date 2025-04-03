@@ -11,6 +11,9 @@ export const basicInfoSchema = z.object({
   typeOfSchool: z.enum(["TVET", "General Education"], { 
     required_error: "Type of school is required" 
   }),
+  schoolCurriculum: z.enum(["CBC", "CBD", "Other"], { 
+    required_error: "School curriculum is required" 
+  }),
   schoolOwner: z.string().min(1, { message: "School owner is required" }).max(100, { message: "School owner should be less than 100 characters" }),
   contact: z.string().min(10, { message: "Contact should be at least 10 digits" }).max(10, { message: "Contact should 10 digits" }),
   accommodationStatus: z.enum(["day", "boarding", "mixed"], { 
@@ -26,8 +29,8 @@ export const locationDetailsSchema = z.object({
   sector: z.string().min(1, { message: "Sector is required" }),
   district: z.string().min(1, { message: "District is required" }),
   province: z.string().min(1, { message: "Province is required" }),
-  latitude: z.string().min(1, { message: "Latitude is required" }).max(10, { message: "Latitude should be less than 10 characters" }),
-  longitude: z.string().min(1, { message: "Longitude is required" }).max(10, { message: "Longitude should be less than 10 characters" })
+  latitude: z.string().min(1, { message: "Latitude is required" }).max(50, { message: "Latitude should be less than 50 characters" }),
+  longitude: z.string().min(1, { message: "Longitude is required" }).max(50, { message: "Longitude should be less than 50 characters" })
 });
 
 // Head Teacher Schema
@@ -35,6 +38,43 @@ export const headTeacherSchema = z.object({
   htName: z.string().min(3, { message: "Head teacher name is required" }),
   qualification: z.string().min(2, { message: "Qualification is required" }),
   telephone: z.string().min(10, { message: "Telephone should be at least 10 digits" }).max(10, { message: "Telephone should be 10 digits" })
+});
+
+// Administrative Staff Schema
+export const administrativeStaffSchema = z.object({
+  numberOfSecretary: z.preprocess(
+    (val) => {
+      if (val === "" || val === null || val === undefined) return 0;
+      const parsed = Number(val);
+      return isNaN(parsed) ? 0 : parsed;
+    },
+    z.number().int().min(0, { message: "Value must be a positive number" })
+  ),
+  numberOfLibrarian: z.preprocess(
+    (val) => {
+      if (val === "" || val === null || val === undefined) return 0;
+      const parsed = Number(val);
+      return isNaN(parsed) ? 0 : parsed;
+    },
+    z.number().int().min(0, { message: "Value must be a positive number" })
+  ),
+  numberOfAccountant: z.preprocess(
+    (val) => {
+      if (val === "" || val === null || val === undefined) return 0;
+      const parsed = Number(val);
+      return isNaN(parsed) ? 0 : parsed;
+    },
+    z.number().int().min(0, { message: "Value must be a positive number" })
+  ),
+  numberOfDeputyHeadTeacher: z.preprocess(
+    (val) => {
+      if (val === "" || val === null || val === undefined) return 0;
+      const parsed = Number(val);
+      return isNaN(parsed) ? 0 : parsed;
+    },
+    z.number().int().min(0, { message: "Value must be a positive number" })
+  ),
+  numberOfOtherStaff: z.string().optional()
 });
 
 // Teaching Staff Schema
@@ -168,6 +208,7 @@ export const infrastructureSchema = z.object({
 export const schoolIdentificationSchema = z.object({
   ...basicInfoSchema.shape,
   ...locationDetailsSchema.shape,
+  ...administrativeStaffSchema.shape,
   ...studentInfoSchema.shape,
   ...teachingStaffBaseSchema.shape,
   ...supportingStaffSchema.shape,
@@ -178,6 +219,7 @@ export const schoolIdentificationSchema = z.object({
 export type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;
 export type LocationDetailsFormValues = z.infer<typeof locationDetailsSchema>;
 export type HeadTeacherFormValues = z.infer<typeof headTeacherSchema>;
+export type AdministrativeStaffFormValues = z.infer<typeof administrativeStaffSchema>;
 export type StudentInfoFormValues = z.infer<typeof studentInfoSchema>;
 export type TeachingStaffFormValues = z.infer<typeof teachingStaffSchema>;
 export type SupportingStaffFormValues = z.infer<typeof supportingStaffSchema>;

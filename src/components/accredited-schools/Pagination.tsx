@@ -1,6 +1,11 @@
+'use client';
+
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { useQueryState, parseAsArrayOf, parseAsString } from 'nuqs';
+import { usePathname } from 'next/navigation';
 
 interface PaginationProps {
   currentPage: number;
@@ -13,6 +18,14 @@ export const Pagination = ({
   totalPages,
   onPageChange,
 }: PaginationProps) => {
+  const pathname = usePathname();
+  
+  // Get current query states to preserve them in pagination links
+  const [searchQuery] = useQueryState('q', parseAsString);
+  const [selectedFields] = useQueryState('fields', parseAsArrayOf(parseAsString));
+  const [selectedProvinces] = useQueryState('provinces', parseAsArrayOf(parseAsString));
+  const [selectedDistricts] = useQueryState('districts', parseAsArrayOf(parseAsString));
+
   if (totalPages <= 1) return null;
 
   // Create an array of page numbers to show
@@ -58,6 +71,7 @@ export const Pagination = ({
             ? "border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50"
             : "border-gray-300 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 hover:cursor-pointer"
         )}
+        aria-label="Previous page"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -75,6 +89,8 @@ export const Pagination = ({
                   ? "bg-blue-600 text-white shadow-sm"
                   : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
               )}
+              aria-label={`Page ${page}`}
+              aria-current={currentPage === page ? 'page' : undefined}
             >
               {page}
             </button>
@@ -96,6 +112,7 @@ export const Pagination = ({
             ? "border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50"
             : "border-gray-300 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 hover:cursor-pointer"
         )}
+        aria-label="Next page"
       >
         <ChevronRight className="h-5 w-5" />
       </button>

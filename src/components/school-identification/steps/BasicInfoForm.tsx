@@ -35,6 +35,7 @@ export const BasicInfoForm = () => {
       schoolEmail: formData.schoolEmail || "",
       status: formData.status || undefined,
       typeOfSchool: formData.typeOfSchool || undefined,
+      schoolCurriculum: formData.schoolCurriculum || undefined,
       schoolOwner: formData.schoolOwner || "",
       contact: formData.contact || "",
       accommodationStatus: formData.accommodationStatus || undefined,
@@ -53,6 +54,7 @@ export const BasicInfoForm = () => {
         schoolEmail: formData.schoolEmail || "",
         status: formData.status || undefined,
         typeOfSchool: formData.typeOfSchool || undefined,
+        schoolCurriculum: formData.schoolCurriculum || undefined,
         schoolOwner: formData.schoolOwner || "",
         contact: formData.contact || "",
         accommodationStatus: formData.accommodationStatus || undefined,
@@ -219,6 +221,39 @@ export const BasicInfoForm = () => {
                     <SelectContent>
                       <SelectItem value="TVET">TVET</SelectItem>
                       <SelectItem value="General Education">General Education</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          
+          <div>
+            <FormField
+              control={form.control}
+              name="schoolCurriculum"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>School Curriculum</FormLabel>
+                  <Select 
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      onFieldChange("schoolCurriculum", value as "CBC" | "CBD" | "Other");
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger 
+                        className={hasFieldError("schoolCurriculum") ? "border-red-500 focus-visible:ring-red-500" : ""}
+                      >
+                        <SelectValue defaultValue={field.value} placeholder="Select curriculum" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="CBC">CBC</SelectItem>
+                      <SelectItem value="CBD">CBD</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
