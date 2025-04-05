@@ -12,7 +12,8 @@ export const typeOfRequestSchema = z.object({
     ], {
         required_error: 'Type of request selection is required',
     }),
-    selections: z.array(z.object({
+    category: z.string(),
+    combinations: z.array(z.object({
         id: z.string(),
         label: z.string(),
         category: z.string()
@@ -42,10 +43,10 @@ export const landOwnershipSchema = z.object({
     annualBudgetPlan: z.enum(['no_budget_plan', 'has_budget_plan', 'complete_budget_plan'], {
         required_error: 'Annual budget plan selection is required',
     }),
-    registrationDocuments: z.enum(['no_registration', 'has_registration'], {
+    registrationDocuments: z.enum(['no_register', 'has_register'], {
         required_error: 'Registration documents selection is required',
     }),
-    landOwnership: z.enum(['no_contract', 'rented_facilities', 'rented_clear_terms', 'owned_land'], {
+    landOwnership: z.enum(['owned_land', 'no_land', 'valid_contract_1_year', 'valid_contract_2_3_years', 'valid_contract_5_years'], {
         required_error: 'Land ownership selection is required',
     }),
 });
@@ -72,15 +73,15 @@ export const schoolInfrastructureSchema = z.object({
     computerLabComputers: z.enum(['no_computer_lab', 'few_computers', 'some_computers', 'most_computers', 'all_computers'], {
         required_error: 'Computer lab assessment is required',
     }),
-    computerLabSize: z.enum(['no_lab_size', 'lab_size_one_door', 'lab_size_two_doors', 'lab_size_two_doors_windows'], {
+    computerLabSize: z.enum(['no_lab_size', 'lab_size_one_door', 'lab_size_two_doors', 'lab_size_two_doors_windows', 'lab_size_three_doors_windows'], {
         required_error: 'Computer lab size assessment is required',
     }),
 
     // Workshops Section
-    workshops: z.enum(['no_workshops', 'some_workshops', 'most_workshops', 'all_workshops'], {
+    workshops: z.enum(['no_workshops', 'few_workshops', 'some_workshops', 'most_workshops', 'all_workshops'], {
         required_error: 'Workshops assessment is required',
     }),
-    toolsStore: z.enum(['no_tools_store', 'some_tools_store', 'most_tools_store', 'all_tools_store'], {
+    toolsStore: z.enum(['no_tools_store', 'few_tools_store', 'some_tools_store', 'most_tools_store', 'all_tools_store'], {
         required_error: 'Tools store assessment is required',
     }),
     library: z.enum(['no_library', 'small_library', 'medium_library', 'large_library', 'full_library'], {
@@ -94,7 +95,7 @@ export const schoolInfrastructureSchema = z.object({
     staffToilets: z.enum(['no_staff_toilets', 'shared_staff_toilets', 'sufficient_staff_toilets'], {
         required_error: 'Staff toilets assessment is required',
     }),
-    learnerToilets: z.enum(['no_learner_toilets', 'shared_learner_toilets', 'some_learner_toilets', 'sufficient_learner_toilets'], {
+    learnerToilets: z.enum(['no_learner_toilets', 'shared_learner_toilets', 'some_learner_toilets', 'sufficient_learner_toilets', 'more_sufficient_learner_toilets'], {
         required_error: 'Learner toilets assessment is required',
     }),
 
@@ -113,38 +114,50 @@ export const schoolInfrastructureSchema = z.object({
     }),
 
     // Welfare Facilities Section
-    drinkingWater: z.enum(['no_drinking_water', 'some_drinking_water', 'sufficient_drinking_water'], {
-        required_error: 'Drinking water assessment is required',
+    diningHall: z.enum(['no_dining_hall', 'some_dining_hall', 'sufficient_dining_hall', 'more_sufficient_dining_hall', 'full_sufficient_dining_hall'], {
+        required_error: 'Dining hall assessment is required',
     }),
-    handWashing: z.enum(['no_hand_washing', 'some_hand_washing', 'sufficient_hand_washing'], {
+    handWashing: z.enum(['no_hand_washing', 'some_hand_washing', 'sufficient_hand_washing', 'more_sufficient_hand_washing', 'full_sufficient_hand_washing'], {
         required_error: 'Hand washing facilities assessment is required',
     }),
-    cookingSpace: z.enum(['no_cooking_space', 'some_cooking_space', 'sufficient_cooking_space'], {
+    cookingSpace: z.enum(['no_cooking_space', 'some_cooking_self_adapted', 'sufficient_cooking_space', 'more_sufficient_cooking_space', 'full_sufficient_cooking_space'], {
         required_error: 'Cooking space assessment is required',
     }),
-    playground: z.enum(['no_playground', 'some_playground', 'sufficient_playground'], {
+    playground: z.enum(['no_playground', 'some_playground', 'sufficient_playground', 'more_sufficient_playground', 'full_sufficient_playground'], {
         required_error: 'Playground assessment is required',
     }),
-    sportsFacilities: z.enum(['no_sports_facilities', 'some_sports_facilities', 'sufficient_sports_facilities'], {
-        required_error: 'Sports facilities assessment is required',
+    rainWaterHarvesting: z.enum(['no_rain_water_harvesting', 'some_rain_water_harvesting', 'sufficient_rain_water_harvesting', 'more_sufficient_rain_water_harvesting', 'full_sufficient_rain_water_harvesting'], {
+        required_error: 'Rain water harvesting assessment is required',
+    }),
+    dormitory: z.enum(['some_dormitory', 'sufficient_dormitory', 'full_sufficient_dormitory'], {
+        required_error: 'Dormitory assessment is required',
     }),
     firstAid: z.enum(['no_first_aid', 'some_first_aid', 'sufficient_first_aid'], {
         required_error: 'First aid facilities assessment is required',
     }),
-    ramps: z.enum(['no_ramps', 'some_ramps', 'sufficient_ramps'], {
-        required_error: 'Ramps assessment is required',
+    disabilityAccess: z.enum(['no_disability_access', 'available_disability_access', 'more_disability_access', 'half_disability_access', 'full_disability_access'], {
+        required_error: 'Disability access assessment is required',
     }),
-    fireSafety: z.enum(['no_fire_safety', 'some_fire_safety', 'sufficient_fire_safety'], {
-        required_error: 'Fire safety assessment is required',
+    girlRoom: z.enum(['no_girl_room', 'some_girl_room', 'sufficient_girl_room', 'more_sufficient_girl_room', 'full_sufficient_girl_room'], {
+        required_error: 'Girl room assessment is required',
     }),
-    wasteManagement: z.enum(['no_waste_management', 'some_waste_management', 'sufficient_waste_management'], {
+    drinkingWater: z.enum(['no_drinking_water', 'some_drinking_water', 'sufficient_drinking_water', 'more_sufficient_drinking_water', 'full_sufficient_drinking_water'], {
+        required_error: 'Drinking water assessment is required',
+    }),
+    greening: z.enum(['no_greening', 'some_greening', 'sufficient_greening'], {
+        required_error: 'Greening assessment is required',
+    }),
+    basicCleaness: z.enum(['no_basic_cleaness', 'some_basic_cleaness', 'sufficient_basic_cleaness'], {
+        required_error: 'Basic cleaness assessment is required',
+    }),
+    wasteManagement: z.enum(['no_waste_management', 'some_waste_management', 'sufficient_waste_management', 'more_sufficient_waste_management'], {
         required_error: 'Waste management assessment is required',
+    }),
+    multiPurposeHall: z.enum(['no_hall', 'half_hall', 'most_hall', 'all_hall', 'more_hall'], {
+        required_error: 'Multi-purpose hall assessment is required',
     }),
 
     // Safety and Security Section
-    multiPurposeHall: z.enum(['no_hall', 'half_hall', 'most_hall', 'all_hall'], {
-        required_error: 'Multi-purpose hall assessment is required',
-    }),
     fireExtinguisher: z.enum(['no_extinguisher', 'few_extinguishers', 'some_extinguishers', 'most_extinguishers', 'all_extinguishers'], {
         required_error: 'Fire extinguisher assessment is required',
     }),
@@ -175,7 +188,7 @@ export const teachingResourcesSchema = z.object({
     }),
 
     // Furniture Section
-    desks: z.enum(['no_desks', 'few_desks', 'shared_desks', 'most_desks', 'all_desks'], {
+    desks: z.enum(['no_desks', 'few_desks', 'shared_desks', 'more_desks', 'most_desks', 'all_desks'], {
         required_error: 'Desk assessment is required',
     }),
     teacherChairs: z.enum(['no_teacher_chair', 'few_teacher_chairs', 'partial_teacher_chairs', 'most_teacher_chairs', 'all_teacher_chairs'], {

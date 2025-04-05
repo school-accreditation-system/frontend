@@ -24,20 +24,20 @@ interface TeachingResourcesFormProps {
 }
 
 interface FormData {
-    strategicPlan: string;
-    annualActionPlan: string;
-    annualBudgetPlan: string;
-    registrationDocuments: string;
-    landOwnership: string;
+    // Equipment Tools and Materials
     materialsToolsEquipment: string;
     approvedCurriculum: string;
     readingMaterials: string;
     projectors: string;
+
+    // Furniture
     desks: string;
     teacherChairs: string;
     teacherTables: string;
     shelves: string;
     dustbins: string;
+
+    // Teaching & Administrative Staff
     sufficientTeachers: string;
     qualifiedTeachers: string;
     adminStaffQualification: string;
@@ -61,17 +61,17 @@ export function TeachingResourcesForm({
         mode: 'onChange',
         defaultValues: {
             // Equipment Tools and Materials
-            equipmentAvailability: parentFormData.equipmentAvailability || undefined,
-            toolsCondition: parentFormData.toolsCondition || undefined,
-            materialsStock: parentFormData.materialsStock || undefined,
-            maintenanceSystem: parentFormData.maintenanceSystem || undefined,
+            materialsToolsEquipment: parentFormData.materialsToolsEquipment || undefined,
+            approvedCurriculum: parentFormData.approvedCurriculum || undefined,
+            readingMaterials: parentFormData.readingMaterials || undefined,
+            projectors: parentFormData.projectors || undefined,
 
             // Furniture
-            studentDesks: parentFormData.studentDesks || undefined,
-            teacherFurniture: parentFormData.teacherFurniture || undefined,
-            storageFurniture: parentFormData.storageFurniture || undefined,
-            laboratoryFurniture: parentFormData.laboratoryFurniture || undefined,
-            libraryFurniture: parentFormData.libraryFurniture || undefined,
+            desks: parentFormData.desks || undefined,
+            teacherChairs: parentFormData.teacherChairs || undefined,
+            teacherTables: parentFormData.teacherTables || undefined,
+            shelves: parentFormData.shelves || undefined,
+            dustbins: parentFormData.dustbins || undefined,
 
             // Teaching & Administrative Staff
             sufficientTeachers: parentFormData.sufficientTeachers || undefined,
@@ -87,6 +87,21 @@ export function TeachingResourcesForm({
     // Add states for criteria and indicator navigation
     const [selectedCriteria, setSelectedCriteria] = useState<string>('equipment');
     const [currentIndicator, setCurrentIndicator] = useState<number>(0);
+
+    // Add state to track completed criteria
+    const [completedCriteria, setCompletedCriteria] = useState<{
+        equipment: boolean,
+        furniture: boolean,
+        staff: boolean
+    }>({
+        equipment: !!parentFormData.materialsToolsEquipment && !!parentFormData.approvedCurriculum &&
+            !!parentFormData.readingMaterials && !!parentFormData.projectors,
+        furniture: !!parentFormData.desks && !!parentFormData.teacherChairs &&
+            !!parentFormData.teacherTables && !!parentFormData.shelves && !!parentFormData.dustbins,
+        staff: !!parentFormData.sufficientTeachers && !!parentFormData.qualifiedTeachers &&
+            !!parentFormData.adminStaffQualification && !!parentFormData.adminStaffAvailability &&
+            !!parentFormData.staffFiles
+    });
 
     // Helper function to get the current field name based on criteria and indicator
     const getCurrentFieldName = () => {
@@ -104,8 +119,8 @@ export function TeachingResourcesForm({
                     case 0: return 'desks';
                     case 1: return 'teacherChairs';
                     case 2: return 'teacherTables';
-                    case 3: return 'laboratoryFurniture';
-                    case 4: return 'libraryFurniture';
+                    case 3: return 'shelves';
+                    case 4: return 'dustbins';
                 }
                 break;
             case 'staff':
@@ -128,7 +143,7 @@ export function TeachingResourcesForm({
             case 'equipment':
                 return 4;
             case 'furniture':
-                return 3;
+                return 5;
             case 'staff':
                 return 5;
             default:
@@ -193,23 +208,33 @@ export function TeachingResourcesForm({
         return currentCriteriaIndex > 0;
     };
 
+    // Function to check if a criteria is accessible
+    const isCriteriaAccessible = (criteriaName: string) => {
+        if (criteriaName === 'equipment') return true;
+        if (criteriaName === 'furniture') return completedCriteria.equipment;
+        if (criteriaName === 'staff') return completedCriteria.equipment && completedCriteria.furniture;
+        return false;
+    };
+
     // handleNextButtonClick function
     const handleNextButtonClick = async () => {
-        console.log("handleNextButtonClick");
         const currentFieldName = getCurrentFieldName();
 
         if (!currentFieldName) {
-            console.error('No field name found for current criteria and indicator');
             return;
         }
 
         const isValid = await form.trigger(currentFieldName, { shouldFocus: true });
-        console.log("isValid", isValid);
         if (isValid) {
             if (currentIndicator === getIndicatorCountForCriteria() - 1) {
+                // Mark current criteria as completed
+                setCompletedCriteria(prev => ({
+                    ...prev,
+                    [selectedCriteria]: true
+                }));
+
                 if (isLastCriteriaGroup()) {
                     updateFormData(form.getValues());
-                    console.log("form.getValues()", form.getValues());
                     onNext();
                 } else {
                     setSelectedCriteria(getNextCriteriaGroup());
@@ -218,8 +243,6 @@ export function TeachingResourcesForm({
             } else {
                 setCurrentIndicator(prev => prev + 1);
             }
-        } else {
-            console.log("isValid", isValid);
         }
     }
 
@@ -244,14 +267,14 @@ export function TeachingResourcesForm({
     const isCriteriaCompleted = (criteria: string): boolean => {
         switch (criteria) {
             case 'equipment':
-                return Boolean(formData.equipmentAvailability && formData.toolsCondition &&
-                    formData.materialsStock && formData.maintenanceSystem);
+                return Boolean(formData.materialsToolsEquipment && formData.approvedCurriculum &&
+                    formData.readingMaterials && formData.projectors);
             case 'furniture':
-                return Boolean(formData.studentDesks && formData.teacherFurniture &&
-                    formData.storageFurniture);
+                return Boolean(formData.desks && formData.teacherChairs &&
+                    formData.teacherTables && formData.shelves && formData.dustbins);
             case 'staff':
                 return Boolean(formData.sufficientTeachers && formData.qualifiedTeachers &&
-                    formData.adminStaff && formData.supportStaff);
+                    formData.adminStaffQualification && formData.adminStaffAvailability && formData.staffFiles);
             default:
                 return false;
         }
@@ -268,7 +291,7 @@ export function TeachingResourcesForm({
                     <Card className="p-6">
                         {currentIndicator === 0 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">1. Availability of Materials, Tools and Equipment</h3>
+                                <h3 className="text-lg font-semibold mb-4">1. Availability of materials, Tools and Equipment  (teaching aids,charts, teacher's guides, laboratory materials, TVET tools and equipment for TVET schools,….)</h3>
                                 <FormField
                                     control={form.control}
                                     name="materialsToolsEquipment"
@@ -285,23 +308,23 @@ export function TeachingResourcesForm({
                                                 >
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="no_tools" id="no_tools" />
-                                                        <Label htmlFor="no_tools">No Tools and Equipment, materials are available</Label>
+                                                        <Label htmlFor="no_tools">No Tools and Equipment , materials are available</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="few_tools" id="few_tools" />
-                                                        <Label htmlFor="few_tools">The Available Tools and Equipment or materials correspond to up to 25% of the required</Label>
+                                                        <Label htmlFor="few_tools">The Available Tools and Equipment or maerials correspond to up to 25% of the required.</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="some_tools" id="some_tools" />
-                                                        <Label htmlFor="some_tools">The school has up to 50% of the required Tools and Equipment or materials</Label>
+                                                        <Label htmlFor="some_tools">The school has up to 50% of the required  Tools and Equipment or  materials</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="most_tools" id="most_tools" />
-                                                        <Label htmlFor="most_tools">The school has up to 75% of the required Tools and Equipment or materials</Label>
+                                                        <Label htmlFor="most_tools">The school has up to 75% of the required  Tools and Equipment or  materials</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="all_tools" id="all_tools" />
-                                                        <Label htmlFor="all_tools">The school has up to 76 to 100% of the required Tools and Equipment or materials</Label>
+                                                        <Label htmlFor="all_tools">The school has up to 76 to 100% of the required  Tools and Equipment or y materials  </Label>
                                                     </div>
                                                 </RadioGroup>
                                             </FormControl>
@@ -313,7 +336,7 @@ export function TeachingResourcesForm({
 
                         {currentIndicator === 1 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">2. Availability of Approved Curriculum</h3>
+                                <h3 className="text-lg font-semibold mb-4">2. Availibility of approved curriculum for the implemented  program</h3>
                                 <FormField
                                     control={form.control}
                                     name="approvedCurriculum"
@@ -330,11 +353,11 @@ export function TeachingResourcesForm({
                                                 >
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="no_curriculum" id="no_curriculum" />
-                                                        <Label htmlFor="no_curriculum">The school has no approved national curriculum or has no licence for international curriculum</Label>
+                                                        <Label htmlFor="no_curriculum">The school has no approved  national curriculum or has no licence for international curriculum</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="approved_curriculum" id="approved_curriculum" />
-                                                        <Label htmlFor="approved_curriculum">The school has an approved national curriculum or has licence for international curriculum</Label>
+                                                        <Label htmlFor="approved_curriculum">The school has an approved  national curriculum or has licence for international curriculum</Label>
                                                     </div>
                                                 </RadioGroup>
                                             </FormControl>
@@ -346,7 +369,7 @@ export function TeachingResourcesForm({
 
                         {currentIndicator === 2 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">3. Availability of Students Textbooks and Reading Materials</h3>
+                                <h3 className="text-lg font-semibold mb-4">3. Availability of students Textbooks and other reading materials</h3>
                                 <FormField
                                     control={form.control}
                                     name="readingMaterials"
@@ -391,7 +414,7 @@ export function TeachingResourcesForm({
 
                         {currentIndicator === 3 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">4. Availability Of A Projector In Each Level</h3>
+                                <h3 className="text-lg font-semibold mb-4">4. Availability Of A Projector In Each level</h3>
                                 <FormField
                                     control={form.control}
                                     name="projectors"
@@ -412,15 +435,15 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="few_projectors" id="few_projectors" />
-                                                        <Label htmlFor="few_projectors">Approximately 1-25% of projectors are available in each level</Label>
+                                                        <Label htmlFor="few_projectors">Approximately 1-25% of projectors are available in each level </Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="some_projectors" id="some_projectors" />
-                                                        <Label htmlFor="some_projectors">Approximately 26-50% of projectors are available in each level</Label>
+                                                        <Label htmlFor="some_projectors">Approximately 26-50% of projectors are available in each level </Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="most_projectors" id="most_projectors" />
-                                                        <Label htmlFor="most_projectors">Approximately 51-75% of projectors are available in each level</Label>
+                                                        <Label htmlFor="most_projectors">Approximately 51-75% of projectors are available in each level </Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="all_projectors" id="all_projectors" />
@@ -463,11 +486,15 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="few_desks" id="few_desks" />
-                                                        <Label htmlFor="few_desks">Only up to 25% of desks are occupied by 2 students maximum</Label>
+                                                        <Label htmlFor="few_desks">only up to 25% of desks are occupied by 2 students maximum</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="shared_desks" id="shared_desks" />
                                                         <Label htmlFor="shared_desks">Only 26%-50% of desks are occupied by 2 students maximum</Label>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="more_desks" id="more_desks" />
+                                                        <Label htmlFor="more_desks">Only 51%-75% of desks are occupied by 2 students maximum</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="most_desks" id="most_desks" />
@@ -508,7 +535,7 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="few_teacher_chairs" id="few_teacher_chairs" />
-                                                        <Label htmlFor="few_teacher_chairs">Approximately up to 25% classrooms have teacher's chair</Label>
+                                                        <Label htmlFor="few_teacher_chairs">Approximately up  25% classrooms have teacher's chair</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="partial_teacher_chairs" id="partial_teacher_chairs" />
@@ -516,11 +543,11 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="most_teacher_chairs" id="most_teacher_chairs" />
-                                                        <Label htmlFor="most_teacher_chairs">Approximately to 51%-75% classrooms have teacher's chair</Label>
+                                                        <Label htmlFor="most_teacher_chairs">Approximately51%-75% classrooms have teacher's chair</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="all_teacher_chairs" id="all_teacher_chairs" />
-                                                        <Label htmlFor="all_teacher_chairs">Approximately to 76%-100% classrooms have teacher's chair</Label>
+                                                        <Label htmlFor="all_teacher_chairs">Approximately 76%-100% classrooms have teacher's chair</Label>
                                                     </div>
                                                 </RadioGroup>
                                             </FormControl>
@@ -553,7 +580,7 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="few_teacher_tables" id="few_teacher_tables" />
-                                                        <Label htmlFor="few_teacher_tables">Approximately up to 25% classrooms have teacher's table)</Label>
+                                                        <Label htmlFor="few_teacher_tables">Approximately up to 25% classrooms have teacher's table</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="partial_teacher_tables" id="partial_teacher_tables" />
@@ -672,7 +699,7 @@ export function TeachingResourcesForm({
                     <Card className="p-6">
                         {currentIndicator === 0 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">1. Availability of Sufficient Teachers</h3>
+                                <h3 className="text-lg font-semibold mb-4">1. availability of Sufficient of teachers    (application to an arleady operating school)</h3>
                                 <FormField
                                     control={form.control}
                                     name="sufficientTeachers"
@@ -689,15 +716,15 @@ export function TeachingResourcesForm({
                                                 >
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="insufficient" id="insufficient" />
-                                                        <Label htmlFor="insufficient">The school lacks 50% of the required teachers</Label>
+                                                        <Label htmlFor="insufficient">the school lacks 50% of the required teachers </Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="most_teachers" id="most_teachers" />
-                                                        <Label htmlFor="most_teachers">The school has up to 80% of the required teachers</Label>
+                                                        <Label htmlFor="most_teachers">The school has up 80% of the required teachers </Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="all_teachers" id="all_teachers" />
-                                                        <Label htmlFor="all_teachers">The school has all required teachers</Label>
+                                                        <Label htmlFor="all_teachers">The school has all required teachers </Label>
                                                     </div>
                                                 </RadioGroup>
                                             </FormControl>
@@ -709,7 +736,7 @@ export function TeachingResourcesForm({
 
                         {currentIndicator === 1 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">2. Availability Of Qualified Teachers</h3>
+                                <h3 className="text-lg font-semibold mb-4">2. Availability Of Qualified  teachers  (application to an arleady operating school)</h3>
                                 <FormField
                                     control={form.control}
                                     name="qualifiedTeachers"
@@ -730,19 +757,19 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="few_qualified_teachers" id="few_qualified_teachers" />
-                                                        <Label htmlFor="few_qualified_teachers">Up to 25% of the teachers have teaching qualification or certified training</Label>
+                                                        <Label htmlFor="few_qualified_teachers">Up to 25% of the teachers  have  teaching qualification or certified training</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="some_qualified_teachers" id="some_qualified_teachers" />
-                                                        <Label htmlFor="some_qualified_teachers">Only Up to 50% of the teachers have teaching qualification or certified training</Label>
+                                                        <Label htmlFor="some_qualified_teachers">Only Up to 50% of the teachers  have  teaching qualification or certified training</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="most_qualified_teachers" id="most_qualified_teachers" />
-                                                        <Label htmlFor="most_qualified_teachers">Only Up to 75% of the teachers have teaching qualification or certified training</Label>
+                                                        <Label htmlFor="most_qualified_teachers">Only Up to 75% of the teachers  have  teaching qualification or certified training</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="all_qualified_teachers" id="all_qualified_teachers" />
-                                                        <Label htmlFor="all_qualified_teachers">Approximately 76%-100% of teachers meeting qualifications required by teacher Profile</Label>
+                                                        <Label htmlFor="all_qualified_teachers">Approximately 76%-100% of teachers meeting qualifications required by teacher Profile </Label>
                                                     </div>
                                                 </RadioGroup>
                                             </FormControl>
@@ -754,7 +781,7 @@ export function TeachingResourcesForm({
 
                         {currentIndicator === 2 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">3.Availability Of administrative staff With Relevant Qualification </h3>
+                                <h3 className="text-lg font-semibold mb-4">3. Availability Of administrative staff With Relevant Qualification </h3>
                                 <FormField
                                     control={form.control}
                                     name="adminStaffQualification"
@@ -775,19 +802,19 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="quarter_relevant" id="quarter_relevant" />
-                                                        <Label htmlFor="quarter_relevant">Up to 25% of the administrative staff have relevant qualification</Label>
+                                                        <Label htmlFor="quarter_relevant">Up to 25% of theadministrative staff have relevant qualification</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="half_relevant" id="half_relevant" />
-                                                        <Label htmlFor="half_relevant">Up to 50% of the administrative staff have relevant qualification</Label>
+                                                        <Label htmlFor="half_relevant">Up to 50% of theadministrative staff have relevant qualification</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="three_quarter_relevant" id="three_quarter_relevant" />
-                                                        <Label htmlFor="three_quarter_relevant">Approximately 75% of the administrative staff have relevant qualification</Label>
+                                                        <Label htmlFor="three_quarter_relevant">Up to 75% of theadministrative staff have relevant qualification</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="all_relevant" id="all_relevant" />
-                                                        <Label htmlFor="all_relevant">All the administrative staff have relevant qualification</Label>
+                                                        <Label htmlFor="all_relevant">All the   administrative staff have relevant qualification</Label>
                                                     </div>
                                                 </RadioGroup>
                                             </FormControl>
@@ -816,11 +843,11 @@ export function TeachingResourcesForm({
                                                 >
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="no_admin_staff" id="no_admin_staff" />
-                                                        <Label htmlFor="no_admin">No administrative staff is available</Label>
+                                                        <Label htmlFor="no_admin_staff">No administrative staff is available</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="few_admin_staff" id="quarter_admin" />
-                                                        <Label htmlFor="quarter_admin">Approximately up to 25% of administrative staff are available</Label>
+                                                        <RadioGroupItem value="few_admin_staff" id="few_admin_staff" />
+                                                        <Label htmlFor="few_admin_staff">Approximately up to 25% of administrative staff are available</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="half_admin_staff" id="half_admin_staff" />
@@ -844,7 +871,7 @@ export function TeachingResourcesForm({
 
                         {currentIndicator === 4 && (
                             <>
-                                <h3 className="text-lg font-semibold mb-4">5. Availability of complete staff files at school</h3>
+                                <h3 className="text-lg font-semibold mb-4">5. Availability of coplete staff files at school  (application to an arleady operating school)</h3>
                                 <FormField
                                     control={form.control}
                                     name="staffFiles"
@@ -873,11 +900,11 @@ export function TeachingResourcesForm({
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="most_staff_files" id="most_staff_files" />
-                                                        <Label htmlFor="most_staff_files">Approximately 51 to 75% of staff have a complete file</Label>
+                                                        <Label htmlFor="most_staff_files">Approximately  51 to 75% of staff have a complete file</Label>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem value="all_staff_files" id="all_staff_files" />
-                                                        <Label htmlFor="all_staff_files">Approximately 76-100% of staff have a complete file</Label>
+                                                        <Label htmlFor="all_staff_files">Approximately  76-100% of staff have a complete file</Label>
                                                     </div>
                                                 </RadioGroup>
                                             </FormControl>
@@ -914,8 +941,7 @@ export function TeachingResourcesForm({
                                     }}
                                 >
                                     <div className={`flex items-center justify-center w-8 h-8 rounded-full 
-                                    ${selectedCriteria === 'equipment' ? 'bg-blue-500 text-white' :
-                                            isCriteriaCompleted('equipment') ? 'bg-green-500 text-white' : 'bg-blue-100 text-blue-600'} 
+                                    ${selectedCriteria === 'equipment' ? 'bg-blue-500 text-white' : 'bg-blue-100 text-blue-600'} 
                                     font-semibold`}
                                     >
                                         <PenTool className="h-4 w-4" />
@@ -930,16 +956,18 @@ export function TeachingResourcesForm({
 
                                 {/* Furniture */}
                                 <div
-                                    className={`flex items-center gap-4 p-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50 
+                                    className={`flex items-center gap-4 p-4 bg-white rounded-lg ${isCriteriaAccessible('furniture') ? 'cursor-pointer hover:bg-gray-50' : 'opacity-60 cursor-not-allowed'} 
                                     ${selectedCriteria === 'furniture' ? 'ring-2 ring-blue-500' : ''}`}
                                     onClick={() => {
-                                        setSelectedCriteria('furniture');
-                                        setCurrentIndicator(0);
+                                        if (isCriteriaAccessible('furniture')) {
+                                            setSelectedCriteria('furniture');
+                                            setCurrentIndicator(0);
+                                        }
                                     }}
                                 >
                                     <div className={`flex items-center justify-center w-8 h-8 rounded-full 
                                     ${selectedCriteria === 'furniture' ? 'bg-blue-500 text-white' :
-                                            isCriteriaCompleted('furniture') ? 'bg-green-500 text-white' : 'bg-blue-100 text-blue-600'} 
+                                            'bg-blue-100 text-blue-600'} 
                                     font-semibold`}
                                     >
                                         <ChartBarIcon className="h-4 w-4" />
@@ -954,16 +982,17 @@ export function TeachingResourcesForm({
 
                                 {/* Staff */}
                                 <div
-                                    className={`flex items-center gap-4 p-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50 
+                                    className={`flex items-center gap-4 p-4 bg-white rounded-lg ${isCriteriaAccessible('staff') ? 'cursor-pointer hover:bg-gray-50' : 'opacity-60 cursor-not-allowed'} 
                                     ${selectedCriteria === 'staff' ? 'ring-2 ring-blue-500' : ''}`}
                                     onClick={() => {
-                                        setSelectedCriteria('staff');
-                                        setCurrentIndicator(0);
+                                        if (isCriteriaAccessible('staff')) {
+                                            setSelectedCriteria('staff');
+                                            setCurrentIndicator(0);
+                                        }
                                     }}
                                 >
                                     <div className={`flex items-center justify-center w-8 h-8 rounded-full 
-                                    ${selectedCriteria === 'staff' ? 'bg-blue-500 text-white' :
-                                            isCriteriaCompleted('staff') ? 'bg-green-500 text-white' : 'bg-blue-100 text-blue-600'} 
+                                    ${selectedCriteria === 'staff' ? 'bg-blue-500 text-white' : 'bg-blue-100 text-blue-600'} 
                                     font-semibold`}
                                     >
                                         <Users className="h-4 w-4" />

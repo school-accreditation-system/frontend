@@ -59,7 +59,7 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
         defaultValues: {
             typeOfRequest: undefined,
             category: '',
-            selections: []
+            combinations: []
         },
         mode: "onChange",
         reValidateMode: "onChange"
@@ -72,7 +72,7 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
     const { watch, setValue, formState: { errors: formErrors } } = form;
     const selectedType = watch('typeOfRequest');
     const selectedCategory = watch('category');
-    const selectedCombinations = watch('selections');
+    const selectedCombinations = watch('combinations');
 
 
     // Function to get subcategories based on selected type
@@ -193,21 +193,21 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
         setValue('typeOfRequest', value as z.infer<typeof typeOfRequestSchema>['typeOfRequest']);
         // Get the first category for the selected type
         const firstCategory = combinations[value]?.subcategories ? Object.keys(combinations[value].subcategories)[0] : '';
-        // Set the first category and reset selections
+        // Set the first category and reset combinations
         setValue('category', firstCategory);
-        setValue('selections', []);
+        setValue('combinations', []);
     };
 
     // Update category selection handler
     const handleCategoryChange = (category: string) => {
         setValue('category', category);
-        // Reset selections when category changes
-        setValue('selections', []);
+        // Reset combinations when category changes
+        setValue('combinations', []);
     };
 
-    // Update selections handler
+    // Update combinations handler
     const handleSelectionsChange = (item: { id: string, label: string, category: string }, checked: boolean) => {
-        const currentSelections = form.getValues('selections');
+        const currentSelections = form.getValues('combinations');
 
         // Ensure the item has the category property
         const itemWithCategory = {
@@ -219,7 +219,7 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
             ? [...currentSelections, itemWithCategory]
             : currentSelections.filter(selection => selection.id !== item.id);
 
-        setValue('selections', newSelections);
+        setValue('combinations', newSelections);
         console.log("newSelections with category:", newSelections);
     };
 
@@ -232,11 +232,11 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
             category: selectedCategory
         }));
 
-        setValue('selections', allItemsWithCategory);
+        setValue('combinations', allItemsWithCategory);
     };
 
     const handleClearAll = () => {
-        setValue('selections', []);
+        setValue('combinations', []);
     };
 
     return (
@@ -271,52 +271,55 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <FormMessage />
+                                    <FormMessage className="border border-red-300 mb-2 p-3 rounded-md bg-red-200 flex items-center gap-2 text-red-800" />
                                 </FormItem>
                             )}
                         />
                     </div>
 
                     {selectedType && combinations[selectedType] && (
-                        <div className="space-y-4 border-t pt-4">
-                            <h3 className="text-lg font-semibold">Select {combinations[selectedType].title} Category</h3>
+                        <div className="space-y-4 flex gap-5  border-t pt-4">
+                            <div className='basis-1/3'>
+                                <h3 className="text-lg font-semibold">Select {combinations[selectedType].title} Category</h3>
 
-                            {/* Categories horizontal scrolling */}
-                            <div className="relative">
-                                <div className="overflow-x-auto pb-2">
-                                    <div className="flex gap-2 min-w-max p-1">
-                                        {getSubcategories().map(([key, category]) => (
-                                            <div
-                                                key={key}
-                                                onClick={() => handleCategoryChange(key)}
-                                                className={`p-3 rounded-lg cursor-pointer border transition-all duration-200 
+                                {/* Categories horizontal scrolling */}
+                                <div className="w-full">
+                                    <div className="flex pb-2">
+                                        <div className="flex flex-col min-w-full gap-2 p-1">
+                                            {getSubcategories().map(([key, category]) => (
+                                                <div
+                                                    key={key}
+                                                    onClick={() => handleCategoryChange(key)}
+                                                    className={`p-3 rounded-lg cursor-pointer border transition-all duration-200 
                                             min-w-[150px] group ${getCategoryColor(key)} 
                                             ${selectedCategory === key ? 'ring-2 ring-primary' : ''}`}
-                                            >
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    {getCategoryIcon(key)}
-                                                    <h4 className="font-medium capitalize text-sm">
-                                                        {category.title}
-                                                    </h4>
+                                                >
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        {getCategoryIcon(key)}
+                                                        <h4 className="font-medium capitalize text-sm">
+                                                            {category.title}
+                                                        </h4>
+                                                    </div>
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-xs text-gray-500">
+                                                            {category.items.length} items
+                                                        </p>
+                                                        <span className="text-xs font-medium text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                            View →
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center justify-between">
-                                                    <p className="text-xs text-gray-500">
-                                                        {category.items.length} items
-                                                    </p>
-                                                    <span className="text-xs font-medium text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                        View →
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
 
                             {/* Show items only when a category is selected */}
                             {selectedCategory && (
-                                <div className="space-y-4">
-                                    <div className="relative">
+                                <div className="space-y-4 basis-2/3">
+                                    <div className="relative bg-white">
                                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                         <Input
                                             placeholder="Search items..."
@@ -350,16 +353,18 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
                                     <div className="grid grid-cols-2 gap-4">
                                         <FormField
                                             control={form.control}
-                                            name="selections"
+                                            name="combinations"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormMessage />
+                                                    {form.formState.errors.combinations && (
+                                                        <FormMessage className="border border-red-300 mb-2 p-3 rounded-md bg-red-200 flex items-center gap-2 text-red-800" />
+                                                    )}
                                                     {filteredItems.map((item) => (
                                                         <div key={item.id} className="flex items-center space-x-2">
                                                             <FormField
                                                                 key={item.id}
                                                                 control={form.control}
-                                                                name="selections"
+                                                                name="combinations"
                                                                 render={({ field }) => (
                                                                     <FormItem>
                                                                         <FormControl>
@@ -405,6 +410,7 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
                     {/* Navigation buttons */}
                     <div className="flex justify-between pt-1 border-t">
                         <Button
+                            type="button"
                             variant="outline"
                             onClick={onPrevious}
                             disabled={currentStep === 0}
@@ -412,33 +418,28 @@ export const TypeOfRequestForm: React.FC<TypeOfRequestFormProps> = ({
                         >
                             <ChevronLeft className="h-4 w-4" /> Previous
                         </Button>
+                        <Button
+                            type="button"
+                            onClick={async (e) => {
+                                e.preventDefault();
+                                const result = await form.trigger();
+                                if (result) {
+                                    // Get the complete form values including all selected combinations
+                                    const formValues = form.getValues();
 
-                        {currentStep === totalSteps - 1 ? (
-                            <Button
-                                onClick={onSubmit}
-                                disabled={isSubmitting}
-                                className="flex items-center gap-2 hover:cursor-pointer"
-                            >
-                                {isSubmitting ? 'Submitting...' : 'Submit'} <Save className="h-4 w-4" />
-                            </Button>
-                        ) : (
-                            <Button
-                                type="submit"
-                                onClick={async (e) => {
-                                    e.preventDefault();
-                                    const result = await form.trigger();
-                                    if (result) {
-                                        console.log(selectedCombinations);
-                                        onNext();
-                                    } else {
-                                        console.log(formErrors.selections);
-                                    }
-                                }}
-                                className="flex items-center gap-2 hover:cursor-pointer"
-                            >
-                                Next <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        )}
+                                    // Update the parent form data with ALL selected combinations
+                                    updateFormData({
+                                        typeOfRequest: formValues.typeOfRequest,
+                                        category: formValues.category,
+                                        combinations: formValues.combinations
+                                    });
+                                    onNext();
+                                }
+                            }}
+                            className="flex items-center gap-2 hover:cursor-pointer"
+                        >
+                            Next <ChevronRight className="h-4 w-4" />
+                        </Button>
                     </div>
                 </form>
             </Form>

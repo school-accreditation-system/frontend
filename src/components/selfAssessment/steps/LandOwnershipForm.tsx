@@ -64,6 +64,25 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
     // Add state for current indicator
     const [currentIndicator, setCurrentIndicator] = useState<number>(0);
 
+    // Track criteria completion status
+    const [completedCriteria, setCompletedCriteria] = useState<{
+        planning: boolean,
+        registration: boolean,
+        land: boolean
+    }>({
+        planning: !!parentFormData.strategicPlan && !!parentFormData.annualActionPlan && !!parentFormData.annualBudgetPlan,
+        registration: !!parentFormData.registrationDocuments,
+        land: !!parentFormData.landOwnership
+    });
+
+    // Function to check if a criteria is accessible
+    const isCriteriaAccessible = (criteriaName: string) => {
+        if (criteriaName === 'planning') return true;
+        if (criteriaName === 'registration') return completedCriteria.planning;
+        if (criteriaName === 'land') return completedCriteria.planning && completedCriteria.registration;
+        return false;
+    };
+
     const onSubmitForm = (data: FormData) => {
         onSubmit(data);
     };
@@ -79,7 +98,7 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
             }
         } else if (selectedCriteria === 'registration') {
             return 'registrationDocuments';
-        } else if (selectedCriteria === 'landOwnership') {
+        } else if (selectedCriteria === 'land') {
             return 'landOwnership';
         }
         return '';
@@ -89,19 +108,19 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
     const getIndicatorCountForCriteria = (criteria = selectedCriteria) => {
         if (criteria === 'planning') return 3;
         if (criteria === 'registration') return 1;
-        if (criteria === 'landOwnership') return 1;
+        if (criteria === 'land') return 1;
         return 0;
     };
 
     // Helper to check if we're on the last criteria group
     const isLastCriteriaGroup = () => {
-        const criteriaGroups = ['planning', 'registration', 'landOwnership'];
+        const criteriaGroups = ['planning', 'registration', 'land'];
         return criteriaGroups.indexOf(selectedCriteria) === criteriaGroups.length - 1;
     };
 
     // Helper to get the next criteria group
     const getNextCriteriaGroup = () => {
-        const criteriaGroups = ['planning', 'registration', 'landOwnership'];
+        const criteriaGroups = ['planning', 'registration', 'land'];
         const currentIndex = criteriaGroups.indexOf(selectedCriteria);
         return criteriaGroups[currentIndex + 1] || criteriaGroups[0];
     };
@@ -110,15 +129,15 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
     const getCurrentIndicatorTitle = () => {
         if (selectedCriteria === 'planning') {
             switch (currentIndicator) {
-                case 0: return 'Strategic Plan';
-                case 1: return 'Annual Action Plan';
-                case 2: return 'Annual Budget Plan';
+                case 0: return 'Availability Of Strategic Plan With  Vision, Mission, Organisational Structure and Budget Proposal In Strategic Plan';
+                case 1: return 'Availability of the school\'s  annual action plan';
+                case 2: return 'Availability of  the school Annual budget  Plan   ';
                 default: return '';
             }
         } else if (selectedCriteria === 'registration') {
-            return 'Registration Documents';
-        } else if (selectedCriteria === 'landOwnership') {
-            return 'Land Ownership';
+            return 'Availability Of official registration Documents';
+        } else if (selectedCriteria === 'land') {
+            return 'Availability the school owner\'s land title or rent contract';
         }
         return '';
     };
@@ -151,19 +170,19 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="basic_plan" id="basic_plan" />
-                                                    <Label htmlFor="basic_plan">The Strategic plan is available with no vision and mission</Label>
+                                                    <Label htmlFor="basic_plan">The  Strategic plan is available with no vision and mission</Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="with_vision" id="with_vision" />
-                                                    <Label htmlFor="with_vision">The strategic plan includes clear vision and mission</Label>
+                                                    <Label htmlFor="with_vision"> The strategic plan includes clear vision and mission</Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="with_structure" id="with_structure" />
-                                                    <Label htmlFor="with_structure">The available strategic plan includes clear vision, mission, and organizational structure</Label>
+                                                    <Label htmlFor="with_structure"> The available strategic plan includes clear vision, mission and organizational structure</Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="complete_plan" id="complete_plan" />
-                                                    <Label htmlFor="complete_plan">The school has a strategic plan that includes clear vision, mission, organizational structure, and implementation plan</Label>
+                                                    <Label htmlFor="complete_plan">The school has strategic plan that includes clear vision, mission, organizational structure and budget proposal in strategic plan </Label>
                                                 </div>
                                             </RadioGroup>
                                         </FormControl>
@@ -186,7 +205,7 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                                             >
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="no_action_plan" id="no_action_plan" />
-                                                    <Label htmlFor="no_action_plan">There is no school's annual action plan</Label>
+                                                    <Label htmlFor="no_action_plan">There is no  school's  annual action plan</Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="has_action_plan" id="has_action_plan" />
@@ -194,7 +213,7 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="complete_action_plan" id="complete_action_plan" />
-                                                    <Label htmlFor="complete_action_plan">The school has an annual action plan with reasonable teaching and learning activities</Label>
+                                                    <Label htmlFor="complete_action_plan">The school has an  annual action plan  with resonable teaching and learning activities</Label>
                                                 </div>
                                             </RadioGroup>
                                         </FormControl>
@@ -217,15 +236,15 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                                             >
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="no_budget_plan" id="no_budget_plan" />
-                                                    <Label htmlFor="no_budget_plan">There is no the school Annual budget Plan</Label>
+                                                    <Label htmlFor="no_budget_plan">There is no   the school Annual budget  Plan   </Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="has_budget_plan" id="has_budget_plan" />
-                                                    <Label htmlFor="has_budget_plan">The school has an Annual budget plan</Label>
+                                                    <Label htmlFor="has_budget_plan">The school has anbudget  plan</Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="complete_budget_plan" id="complete_budget_plan" />
-                                                    <Label htmlFor="complete_budget_plan">The school has an Annual budget Plan with focus on teaching and learning</Label>
+                                                    <Label htmlFor="complete_budget_plan">The school has an Annual budget  Plan with focus on teaching and learning </Label>
                                                 </div>
                                             </RadioGroup>
                                         </FormControl>
@@ -253,12 +272,12 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                                             className="space-y-3"
                                         >
                                             <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="no_registration" id="no_registration" />
-                                                <Label htmlFor="no_registration">The school has no registration certificate in RGB or RDB</Label>
+                                                <RadioGroupItem value="no_register" id="no_register" />
+                                                <Label htmlFor="no_register">The school has no registration certificate in RGB or RDB {field.value}</Label>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="has_registration" id="has_registration" />
-                                                <Label htmlFor="has_registration">The school has registration certificate in RGB/ RDB</Label>
+                                                <RadioGroupItem value="has_register" id="has_register" />
+                                                <Label htmlFor="has_register">The school has  registration certificate in RGB/ RDB</Label>
                                             </div>
                                         </RadioGroup>
                                     </FormControl>
@@ -267,42 +286,50 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                         />
                     </Card>
                 );
-            case 'landOwnership':
+            case 'land':
                 return (
                     <Card className={`p-6 ${form.formState.errors.landOwnership ? 'border-red-200' : ''}`}>
                         <h3 className="text-lg font-semibold mb-4">1. Land Ownership</h3>
                         <FormField
                             control={form.control}
                             name="landOwnership"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormMessage className="border border-red-300 mb-2 p-3 rounded-md bg-red-200 flex items-center gap-2 text-red-800" />
-                                    <FormControl>
-                                        <RadioGroup
-                                            value={field.value}
-                                            onValueChange={field.onChange}
-                                            className="space-y-3"
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="no_contract" id="no_contract" />
-                                                <Label htmlFor="no_contract">The school owner has no rent contract or land title</Label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="rented_facilities" id="rented_facilities" />
-                                                <Label htmlFor="rented_facilities">The school is operating in the facilities which are rented and the contract terms are not clear</Label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="rented_clear_terms" id="rented_clear_terms" />
-                                                <Label htmlFor="rented_clear_terms">The school is operating in the facilities which are rented and the contract terms are clear</Label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="owned_land" id="owned_land" />
-                                                <Label htmlFor="owned_land">The school owner has land title</Label>
-                                            </div>
-                                        </RadioGroup>
-                                    </FormControl>
-                                </FormItem>
-                            )}
+                            render={({ field }) => {
+                                return (
+                                    <FormItem>
+                                        <FormMessage className="border border-red-300 mb-2 p-3 rounded-md bg-red-200 flex items-center gap-2 text-red-800" />
+                                        <FormControl>
+                                            <RadioGroup
+                                                value={field.value}
+                                                onValueChange={(value) => {
+                                                    field.onChange(value);
+                                                }}
+                                                className="space-y-3"
+                                            >
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="owned_land" id="owned_land" />
+                                                    <Label htmlFor="owned_land">Availability the school owner's land title or rent contract</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="no_land" id="no_land" />
+                                                    <Label htmlFor="no_land">The school owner has no rent contract or land title </Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="valid_contract_1_year" id="valid_contract_1_year" />
+                                                    <Label htmlFor="valid_contract_1_year">The school is operating in the facililities  which are rented and the contract term is valid for 1 year or has a land title having 25% or less of required area</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="valid_contract_2_3_years" id="valid_contract_2_3_years" />
+                                                    <Label htmlFor="valid_contract_2_3_years">The school is operating in the facililities  which are rented and the contract term is  valid for 2 to 3  years or has a land title having 26 to 50% of required area</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="valid_contract_5_years" id="valid_contract_5_years" />
+                                                    <Label htmlFor="valid_contract_5_years">The school is operating in the facililities  which are rented and the contract term is  valid for 5  years or has a land title having 76 to 100 % of required area</Label>
+                                                </div>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </FormItem>
+                                );
+                            }}
                         />
                     </Card>
                 );
@@ -323,6 +350,13 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
             // Current field is valid, decide where to go next
             if (currentIndicator === getIndicatorCountForCriteria() - 1) {
                 // We've completed all indicators in this criteria
+
+                // Mark current criteria as completed
+                setCompletedCriteria(prev => ({
+                    ...prev,
+                    [selectedCriteria]: true
+                }));
+
                 if (isLastCriteriaGroup()) {
                     // This is the last criteria group, submit the form
                     const allValid = await form.trigger();
@@ -378,8 +412,12 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                             </div>
 
                             <div
-                                className={`flex items-center gap-4 p-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50 ${selectedCriteria === 'registration' ? 'ring-2 ring-primary' : ''} ${form.formState.errors.registrationDocuments ? 'ring-2 ring-red-400' : ''}`}
-                                onClick={() => setSelectedCriteria('registration')}
+                                className={`flex items-center gap-4 p-4 bg-white rounded-lg ${isCriteriaAccessible('registration') ? 'cursor-pointer hover:bg-gray-50' : 'opacity-60 cursor-not-allowed'} ${selectedCriteria === 'registration' ? 'ring-2 ring-primary' : ''} ${form.formState.errors.registrationDocuments ? 'ring-2 ring-red-400' : ''}`}
+                                onClick={() => {
+                                    if (isCriteriaAccessible('registration')) {
+                                        setSelectedCriteria('registration');
+                                    }
+                                }}
                             >
                                 <div className={`flex items-center justify-center w-8 h-8 min-w-[32px] rounded-full bg-blue-100 text-blue-600 font-semibold ${selectedCriteria === 'registration' ? 'bg-primary text-white' : ''} ${form.formState.errors.registrationDocuments ? 'bg-red-400 text-white' : ''}`}>
                                     <FileCheck className="h-4 w-4" />
@@ -391,8 +429,12 @@ export const LandOwnershipForm: React.FC<LandOwnershipFormProps> = ({
                             </div>
 
                             <div
-                                className={`flex items-center gap-4 p-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50 ${selectedCriteria === 'landOwnership' ? 'ring-2 ring-primary' : ''} ${form.formState.errors.landOwnership ? 'ring-2 ring-red-400' : ''}`}
-                                onClick={() => setSelectedCriteria('landOwnership')}
+                                className={`flex items-center gap-4 p-4 bg-white rounded-lg ${isCriteriaAccessible('land') ? 'cursor-pointer hover:bg-gray-50' : 'opacity-60 cursor-not-allowed'} ${selectedCriteria === 'land' ? 'ring-2 ring-primary' : ''} ${form.formState.errors.landOwnership ? 'ring-2 ring-red-400' : ''}`}
+                                onClick={() => {
+                                    if (isCriteriaAccessible('land')) {
+                                        setSelectedCriteria('land');
+                                    }
+                                }}
                             >
                                 <div className={`flex items-center justify-center w-8 h-8 min-w-[32px] rounded-full bg-blue-100 text-blue-600 font-semibold ${selectedCriteria === 'landOwnership' ? 'bg-primary text-white' : ''} ${form.formState.errors.landOwnership ? 'bg-red-400 text-white' : ''}`}>
                                     <Building className="h-4 w-4" />
