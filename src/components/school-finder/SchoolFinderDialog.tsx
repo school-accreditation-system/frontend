@@ -17,6 +17,7 @@ import { VerifyOtpStep } from './steps/VerifyOtpStep';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeDialog, resetDialog } from '@/app/slicers/DialogSlice';
 import { stat } from 'fs';
+import { useRef } from 'react';
 
 type Step = 'search' | 'verify';
 
@@ -73,13 +74,29 @@ export const SchoolFinderDialog = ({
     }
     handleClose();
   };
-
+const isClosingRef = useRef(null)
   // Prevent closing dialog during verification by clicking outside
   const handleInteractOutside = (e: React.MouseEvent<HTMLDivElement>) => {
+   
+
+     if (isClosingRef.current) return;
+    
+
+     isClosingRef.current = true;
+     
+
+     dispatch(closeDialog());
+     
+
+     setTimeout(() => {
+       isClosingRef.current = false;
+     }, 100);
+
     e.preventDefault();
     if (step !== 'search') {
       return false;
     }
+
   };
 
   return (

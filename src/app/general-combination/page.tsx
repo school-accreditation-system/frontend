@@ -42,7 +42,8 @@ const Page = () => {
   const handleConfirmSelection = () => {
     setIsModalOpen(false);
     if (selectedSchool.schoolIdentification && selectedSchool.selfAssessment) {
-      setCurrentStep("combination");
+      // setCurrentStep("combination");
+      router.push("/accreditation-application")
       return;
     }
     if (selectedSchool.schoolIdentification) {
@@ -152,7 +153,7 @@ const Page = () => {
                                 "Jan 15, 2023"}
                             </p>
                           </div>
-                          <div>
+                          {/* <div>
                             <p className="text-amber-700 text-sm font-medium">
                               Expires
                             </p>
@@ -160,7 +161,7 @@ const Page = () => {
                               {school.schoolIdentification.expiryDate ||
                                 "Jan 15, 2026"}
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                         <div className="mt-2 pt-2 border-t border-green-100">
                           <div className="w-full bg-green-100 rounded-full h-2">
@@ -269,14 +270,14 @@ const Page = () => {
                                 "Mar 10, 2023"}
                             </p>
                           </div>
-                          <div>
+                          {/* <div>
                             <p className="text-purple-700 text-sm font-medium">
                               Next Assessment
                             </p>
                             <p className="text-purple-600 font-bold">
                               {school.selfAssessment.nextDate || "Mar 10, 2024"}
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                         <div className="mt-2 pt-2 border-t border-blue-100">
                           <div className="w-full bg-blue-100 rounded-full h-2">
