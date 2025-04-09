@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { CheckCircle, School, Award, HomeIcon, FileText, BookOpen } from "lucide-react";
-import { FeatureCard } from "@/components/ui/FeatureCard";
+import { FeatureCard, } from "@/components/ui/FeatureCard";
+import { FeaturedCardSkeleton } from "@/components/ui/FeaturedCardSkeleton";
 import { useRouter } from "next/navigation";
 import {
   SchoolFinderDialog,
@@ -18,6 +19,7 @@ import {
   selectRequestType,
   setRequestType,
 } from "@/app/slicers/RequestTypeSlice";
+import { useGetCombinations } from "@/hooks/useCombination";
 
 export const RequestTypesSection = () => {
   const router = useRouter();
@@ -25,6 +27,11 @@ export const RequestTypesSection = () => {
   // const [selectedRequestType, setSelectedRequestType] = useState("");
   const dialog = useSelector((state) => state.dialog);
   const selectedRequestType = useSelector(selectRequestType);
+  const { data: combinations, isLoading: isCombinationsLoading,  error: combinationsError } = useGetCombinations();
+  console.log("combinations ==>", combinations);
+  console.log("combinationsError ==>", combinationsError);
+  console.log("isCombinationsLoading ==>", isCombinationsLoading);
+
 
   const dispatch = useDispatch();
 
@@ -94,17 +101,24 @@ export const RequestTypesSection = () => {
           Request Accreditation in the following categories
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 py-10">
-          {ACCREDITATION_APPLICATION_TYPES.map((type, index) => (
-            <FeatureCard
-              key={type.title}
-              title={type.title}
-              description={type.description}
-              icon={type.icon || <CheckCircle className="w-6 h-6" />}
-              actionLabel={`Apply for ${type.title}`}
-              onClick={() => startAccreditationFlow(type.requestType)}
+          {isCombinationsLoading ? (
+            Array.from({ length: 8 }).map((_, index) => (
+              <FeaturedCardSkeleton key={index} />
+            ))
+          ) : (
+            combinations?.map((combination, index) => (
+              <FeatureCard
+                key={combination.id}
+              title={combination.fullName}
+              description={combination.description}
+              icon={<CheckCircle className="w-6 h-6" />}
+              actionLabel={`Apply for ${combination.fullName}`}
+              onClick={() => startAccreditationFlow(combination.fullName)}
+              isLoading={isCombinationsLoading}
               index={index}
             />
-          ))}
+          ))
+          )}
         </div>
       </div>
 

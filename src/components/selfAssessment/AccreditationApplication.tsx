@@ -40,7 +40,7 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
             <div className="bg-white rounded-lg shadow-lg p-6">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-5">
-                    <h1 className="text-xl font-bold">Accreditation Application</h1>
+                    <h1 className="text-xl font-bold">School Self Assessment</h1>
                     <span className="text-sm text-muted-foreground">
                         Step {currentStep + 1} of {ASSESSMENT_STEPS.length}
                     </span>
@@ -121,7 +121,7 @@ interface SchoolAssessmentStepsProps {
     children: React.ReactNode;
 }
 
-export default function dSchoolAssessmentSteps({ children }: SchoolAssessmentStepsProps) {
+export default function SchoolAssessmentSteps({ children }: SchoolAssessmentStepsProps) {
     return (
         <FormProvider>
             <SchoolAssessmentForm>{children}</SchoolAssessmentForm>

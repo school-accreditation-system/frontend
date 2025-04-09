@@ -15,8 +15,7 @@ export const useAddSchool = () => {
           headTeacher: HeadTeacherDTO,
         locationCode: string
       }) => {   
-    
-    console.log("data ==>", data);
+
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school/addschool?locationCode=${data.locationCode}`, {
         school: data.school,
         headTeacher: data.headTeacher,
