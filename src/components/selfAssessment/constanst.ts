@@ -14,6 +14,13 @@ import { Step } from "./types/step";
 
 
 export const ASSESSMENT_STEPS: Step[] = [
+       {
+        id: 0,
+        title: 'Type of Request',
+        description: 'Select the type of request you want to make',
+        component: TypeOfRequestForm,
+        validationSchema: typeOfRequestSchema,
+    },
     {
         id: 0,
         title: 'Type of Request',

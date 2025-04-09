@@ -112,7 +112,7 @@ export const HeroSection = () => {
           <Link href="/" className="flex items-center">
             <div className="relative h-10 w-40 bg-white rounded-sm p-1 overflow-hidden shadow-sm">
               <Image
-                src="/nesa-logo.png"
+                src="/nesalogo-removebg.png"
                 alt="NESA Logo"
                 className="object-contain p-0.5"
                 fill
@@ -189,7 +189,7 @@ export const HeroSection = () => {
       {/* Hero Content */}
       <div className="container mx-auto px-4">
         <div className="relative z-10 text-center max-w-3xl mx-auto mt-16 md:mt-24">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
             School Accreditation Portal
           </h1>
 

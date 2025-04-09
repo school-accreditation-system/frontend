@@ -22,9 +22,9 @@ const mapToBackendFormat = (data: SchoolIdentificationFormValues) => {
     owner: data.schoolOwner,
     school_curriculum: data.schoolCurriculum, 
     establishment_date: data.yearOfEstablishment,
-    school_type: data.typeOfSchool, // Enum in backend
-    boardingType: data.accommodationStatus.toUpperCase(), // Enum in backend
-    schoolSatus: data.status.toUpperCase(), // Enum in backend
+    school_type: data.typeOfSchool, 
+    boardingType: data.accommodationStatus.toUpperCase(), 
+    schoolSatus: data.status.toUpperCase(), 
     
     // Student information
     numberOfBoys: parseInt(data.numBoys),
@@ -78,7 +78,7 @@ const mapToBackendFormat = (data: SchoolIdentificationFormValues) => {
   };
 };
 
-export const useSchoolInformation = () => {
+export const useSaveSchoolIdentification = () => {
   return useMutation<ApiResponse<any>, ErrorResponse, SchoolIdentificationFormValues>({
     mutationFn: async (data: SchoolIdentificationFormValues) => {
       // Transform data to match backend expectations

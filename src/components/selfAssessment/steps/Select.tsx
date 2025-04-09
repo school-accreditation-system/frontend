@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { combinations, requestTypes } from '../constanst';
 import { useFormContext } from '../context/FormContext';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { useParams } from 'next/navigation';
 type RequestType =
     | 'tvet_trades'
     | 'general_combination'
@@ -54,6 +55,8 @@ export const TypeOfRequestForm = ({
     totalSteps
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
+    const { combinationId } = useParams();
+    // TODO: Call the backend to get the combination details
     const form = useForm<z.infer<typeof typeOfRequestSchema>>({
         resolver: zodResolver(typeOfRequestSchema),
         defaultValues: {
@@ -190,6 +193,7 @@ export const TypeOfRequestForm = ({
 
     // Update the type selection handler
     const handleTypeChange = (value: string) => {
+    
         setValue('typeOfRequest', value as z.infer<typeof typeOfRequestSchema>['typeOfRequest']);
         // Get the first category for the selected type
         const firstCategory = combinations[value]?.subcategories ? Object.keys(combinations[value].subcategories)[0] : '';
@@ -209,7 +213,6 @@ export const TypeOfRequestForm = ({
     const handleSelectionsChange = (item: { id: string, label: string, category: string }, checked: boolean) => {
         const currentSelections = form.getValues('selections');
 
-        // Ensure the item has the category property
         const itemWithCategory = {
             ...item,
             category: selectedCategory
@@ -225,7 +228,6 @@ export const TypeOfRequestForm = ({
 
     // Handle "Select All" and "Clear All"
     const handleSelectAll = () => {
-        // Ensure all items include their category
         const allItemsWithCategory = filteredItems.map(item => ({
             id: item.id,
             label: item.label,
@@ -243,7 +245,7 @@ export const TypeOfRequestForm = ({
         <div className='space-y-6'>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mb-2">
-                    <div className="space-y-4">
+                    {/* <div className="space-y-4">
                         <h2 className="text-lg font-semibold">Type of Request</h2>
                         <FormField
                             control={form.control}
@@ -275,9 +277,9 @@ export const TypeOfRequestForm = ({
                                 </FormItem>
                             )}
                         />
-                    </div>
+                    </div> */}
 
-                    {selectedType && combinations[selectedType] && (
+                    {combinations['tvet_trades'] && (
                         <div className="space-y-4 border-t pt-4">
                             <h3 className="text-lg font-semibold">Select {combinations[selectedType].title} Category</h3>
 
