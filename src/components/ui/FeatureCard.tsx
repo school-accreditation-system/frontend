@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { IconWrapper } from './IconWrapper';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CheckCircle } from 'lucide-react';
 
 interface FeatureCardProps {
   title: string;
@@ -27,8 +29,9 @@ export const FeatureCard = ({
   onClick,
   href,
   className,
-  index = 0
+  index = 0,
 }: FeatureCardProps) => {
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -51,9 +54,7 @@ export const FeatureCard = ({
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            {/* <div className="bg-white p-3 rounded-full shadow-sm inline-flex mb-2"> */}
-              <IconWrapper>{icon}</IconWrapper>
-            {/* </div> */}
+            <IconWrapper>{icon}</IconWrapper>
           </motion.div>
           <h3 className="text-xl font-semibold mt-3 mb-2">{title}</h3>
         </CardHeader>
@@ -81,4 +82,4 @@ export const FeatureCard = ({
       </Card>
     </motion.div>
   );
-}; 
+};

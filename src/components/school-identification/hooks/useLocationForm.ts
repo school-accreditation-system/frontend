@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LocationDetailsFormValues, locationDetailsSchema } from "../types/schema";
-import { Provinces, Districts, Sectors, Cells, Villages } from "rwanda";
+import { useGetProvinces, useGetLocationsByParentCode } from '@/hooks/useLocation';
 
 export interface UseLocationFormProps {
   formData: any;
@@ -15,11 +15,18 @@ export const useLocationForm = ({ formData, updateFormData, formErrors }: UseLoc
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   
-  // State to store available options for each level
-  const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
-  const [availableSectors, setAvailableSectors] = useState<string[]>([]);
-  const [availableCells, setAvailableCells] = useState<string[]>([]);
-  const [availableVillages, setAvailableVillages] = useState<string[]>([]);
+  // Location codes state for API calls
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState<string | undefined>();
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState<string | undefined>();
+  const [selectedSectorCode, setSelectedSectorCode] = useState<string | undefined>();
+  const [selectedCellCode, setSelectedCellCode] = useState<string | undefined>();
+  
+  // Fetch data from the backend using React Query
+  const { data: provinces, isLoading: isProvincesLoading } = useGetProvinces();
+  const { data: districts, isLoading: isDistrictsLoading } = useGetLocationsByParentCode(selectedProvinceCode);
+  const { data: sectors, isLoading: isSectorsLoading } = useGetLocationsByParentCode(selectedDistrictCode);
+  const { data: cells, isLoading: isCellsLoading } = useGetLocationsByParentCode(selectedSectorCode);
+  const { data: villages, isLoading: isVillagesLoading } = useGetLocationsByParentCode(selectedCellCode);
   
   const stepErrors = formErrors['location-details'] || [];
   
@@ -37,6 +44,22 @@ export const useLocationForm = ({ formData, updateFormData, formErrors }: UseLoc
     mode: "onChange"
   });
 
+  // Initialize location codes from formData if available
+  useEffect(() => {
+    if (formData.provinceCode) {
+      setSelectedProvinceCode(formData.provinceCode);
+    }
+    if (formData.districtCode) {
+      setSelectedDistrictCode(formData.districtCode);
+    }
+    if (formData.sectorCode) {
+      setSelectedSectorCode(formData.sectorCode);
+    }
+    if (formData.cellCode) {
+      setSelectedCellCode(formData.cellCode);
+    }
+  }, []);
+
   // Sync form data on component mount and when formData changes
   useEffect(() => {
     // Only reset the form if there's actual data
@@ -53,111 +76,6 @@ export const useLocationForm = ({ formData, updateFormData, formErrors }: UseLoc
     }
   }, [formData, form]);
 
-  // Effect to update available districts when province changes
-  useEffect(() => {
-    const province = form.watch("province");
-    if (province) {
-      try {
-        const districts = Districts(province) || [];
-        setAvailableDistricts(districts);
-        
-        // Clear lower-level selections when province changes
-        if (!formData.district || !districts.includes(formData.district)) {
-          form.setValue("district", "");
-          form.setValue("sector", "");
-          form.setValue("cell", "");
-          form.setValue("village", "");
-          setAvailableSectors([]);
-          setAvailableCells([]);
-          setAvailableVillages([]);
-        }
-      } catch (error) {
-        console.error("Error fetching districts:", error);
-        setAvailableDistricts([]);
-      }
-    } else {
-      setAvailableDistricts([]);
-    }
-  }, [form.watch("province"), formData, form]);
-
-  // Effect to update available sectors when district changes
-  useEffect(() => {
-    const province = form.watch("province");
-    const district = form.watch("district");
-    
-    if (province && district) {
-      try {
-        const sectors = Sectors(province, district) || [];
-        setAvailableSectors(sectors);
-        
-        // Clear lower-level selections when district changes
-        if (!formData.sector || !sectors.includes(formData.sector)) {
-          form.setValue("sector", "");
-          form.setValue("cell", "");
-          form.setValue("village", "");
-          setAvailableCells([]);
-          setAvailableVillages([]);
-        }
-      } catch (error) {
-        console.error("Error fetching sectors:", error);
-        setAvailableSectors([]);
-      }
-    } else {
-      setAvailableSectors([]);
-    }
-  }, [form.watch("province"), form.watch("district"), formData, form]);
-
-  // Effect to update available cells when sector changes
-  useEffect(() => {
-    const province = form.watch("province");
-    const district = form.watch("district");
-    const sector = form.watch("sector");
-    
-    if (province && district && sector) {
-      try {
-        const cells = Cells(province, district, sector) || [];
-        setAvailableCells(cells);
-        
-        // Clear village selection when sector changes
-        if (!formData.cell || !cells.includes(formData.cell)) {
-          form.setValue("cell", "");
-          form.setValue("village", "");
-          setAvailableVillages([]);
-        }
-      } catch (error) {
-        console.error("Error fetching cells:", error);
-        setAvailableCells([]);
-      }
-    } else {
-      setAvailableCells([]);
-    }
-  }, [form.watch("province"), form.watch("district"), form.watch("sector"), formData, form]);
-
-  // Effect to update available villages when cell changes
-  useEffect(() => {
-    const province = form.watch("province");
-    const district = form.watch("district");
-    const sector = form.watch("sector");
-    const cell = form.watch("cell");
-    
-    if (province && district && sector && cell) {
-      try {
-        const villages = Villages(province, district, sector, cell) || [];
-        setAvailableVillages(villages);
-        
-        // Clear village selection if current selection is not valid
-        if (form.getValues("village") && !villages.includes(form.getValues("village"))) {
-          form.setValue("village", "");
-        }
-      } catch (error) {
-        console.error("Error fetching villages:", error);
-        setAvailableVillages([]);
-      }
-    } else {
-      setAvailableVillages([]);
-    }
-  }, [form.watch("province"), form.watch("district"), form.watch("sector"), form.watch("cell"), form]);
-
   // Separate effect for validation to avoid loops
   useEffect(() => {
     // Only trigger validation if there are actual errors
@@ -169,13 +87,110 @@ export const useLocationForm = ({ formData, updateFormData, formErrors }: UseLoc
     }
   }, [stepErrors, form]);
 
-  const onFieldChange = useCallback((name: keyof LocationDetailsFormValues, value: any) => {
-    // Create data update
-    const updatedData = { [name]: value } as Partial<LocationDetailsFormValues>;
-    form.setValue(name, value, { shouldValidate: true });
-
+  const handleProvinceChange = (value: string, locationCode: string) => {
+    form.setValue('province', value, { shouldValidate: true });
+    setSelectedProvinceCode(locationCode);
+    
+    // Reset downstream values
+    form.setValue('district', '', { shouldValidate: true });
+    form.setValue('sector', '', { shouldValidate: true });
+    form.setValue('cell', '', { shouldValidate: true });
+    form.setValue('village', '', { shouldValidate: true });
+    
+    // Reset downstream selected codes
+    setSelectedDistrictCode(undefined);
+    setSelectedSectorCode(undefined);
+    setSelectedCellCode(undefined);
+    
     // Update data in context
-    updateFormData('location-details', updatedData);
+    updateFormData('location-details', { 
+      province: value,
+      provinceCode: locationCode,
+      district: '',
+      districtCode: '',
+      sector: '',
+      sectorCode: '',
+      cell: '',
+      cellCode: '',
+      village: '' 
+    });
+  };
+
+  const handleDistrictChange = (value: string, locationCode: string) => {
+    form.setValue('district', value, { shouldValidate: true });
+    setSelectedDistrictCode(locationCode);
+    
+    // Reset downstream values
+    form.setValue('sector', '', { shouldValidate: true });
+    form.setValue('cell', '', { shouldValidate: true });
+    form.setValue('village', '', { shouldValidate: true });
+    
+    // Reset downstream selected codes
+    setSelectedSectorCode(undefined);
+    setSelectedCellCode(undefined);
+    
+    // Update data in context
+    updateFormData('location-details', { 
+      district: value,
+      districtCode: locationCode,
+      sector: '',
+      sectorCode: '',
+      cell: '',
+      cellCode: '',
+      village: '' 
+    });
+  };
+
+  const handleSectorChange = (value: string, locationCode: string) => {
+    form.setValue('sector', value, { shouldValidate: true });
+    setSelectedSectorCode(locationCode);
+    
+    // Reset downstream values
+    form.setValue('cell', '', { shouldValidate: true });
+    form.setValue('village', '', { shouldValidate: true });
+    
+    // Reset downstream selected codes
+    setSelectedCellCode(undefined);
+    
+    // Update data in context
+    updateFormData('location-details', { 
+      sector: value,
+      sectorCode: locationCode,
+      cell: '',
+      cellCode: '',
+      village: '' 
+    });
+  };
+
+  const handleCellChange = (value: string, locationCode: string) => {
+    form.setValue('cell', value, { shouldValidate: true });
+    setSelectedCellCode(locationCode);
+    
+    // Reset village selection when cell changes
+    form.setValue('village', '', { shouldValidate: true });
+    
+    // Update data in context
+    updateFormData('location-details', { 
+      cell: value,
+      cellCode: locationCode,
+      village: '' 
+    });
+  };
+
+  const handleVillageChange = (value: string) => {
+    form.setValue('village', value, { shouldValidate: true });
+    
+    // Update data in context
+    updateFormData('location-details', { village: value });
+  };
+
+  const onFieldChange = useCallback((name: keyof LocationDetailsFormValues, value: any) => {
+    // For non-location dropdown fields (like latitude/longitude)
+    if (name !== 'province' && name !== 'district' && name !== 'sector' && name !== 'cell' && name !== 'village') {
+      const updatedData = { [name]: value } as Partial<LocationDetailsFormValues>;
+      form.setValue(name, value, { shouldValidate: true });
+      updateFormData('location-details', updatedData);
+    }
   }, [form, updateFormData]);
 
   // Handle checkbox change for geolocation
@@ -250,14 +265,28 @@ export const useLocationForm = ({ formData, updateFormData, formErrors }: UseLoc
     isAtSchool,
     isGettingLocation,
     locationError,
-    availableDistricts,
-    availableSectors,
-    availableCells,
-    availableVillages,
+    provinces,
+    districts,
+    sectors,
+    cells,
+    villages,
+    isProvincesLoading,
+    isDistrictsLoading,
+    isSectorsLoading,
+    isCellsLoading,
+    isVillagesLoading,
+    selectedProvinceCode,
+    selectedDistrictCode,
+    selectedSectorCode,
+    selectedCellCode,
+    handleProvinceChange,
+    handleDistrictChange,
+    handleSectorChange,
+    handleCellChange,
+    handleVillageChange,
     onFieldChange,
     handleIsAtSchoolChange,
     hasFieldError,
-    stepErrors,
-    getAllProvinces: Provinces,
+    stepErrors
   };
 }; 

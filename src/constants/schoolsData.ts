@@ -10,7 +10,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Gasabo"
   },
   {
     id: 2,
@@ -23,7 +25,9 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Nyarugenge"
   },
   {
     id: 3,
@@ -36,7 +40,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Kicukiro"
   },
   {
     id: 4,
@@ -49,7 +55,9 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Gasabo"
   },
   {
     id: 5,
@@ -62,7 +70,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Southern Province",
+    district: "Huye"
   },
   {
     id: 6,
@@ -75,7 +85,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Gasabo"
   },
   {
     id: 7,
@@ -88,7 +100,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Gasabo"
   },
   {
     id: 8,
@@ -101,7 +115,9 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Southern Province",
+    district: "Nyanza"
   },
   {
     id: 9,
@@ -114,7 +130,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Kicukiro"
   },
   {
     id: 10,
@@ -127,7 +145,9 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Gasabo"
   },
   {
     id: 11,
@@ -140,7 +160,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Eastern Province",
+    district: "Bugesera"
   },
   {
     id: 12,
@@ -153,7 +175,9 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Kigali",
+    district: "Gasabo"
   },
   {
     id: 13,
@@ -166,7 +190,9 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Northern Province",
+    district: "Musanze"
   },
   {
     id: 14,
@@ -179,7 +205,9 @@ export const schoolsData = [
     selfAssessment: true,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Eastern Province",
+    district: "Bugesera"
   },
   {
     id: 15,
@@ -192,6 +220,8 @@ export const schoolsData = [
     selfAssessment: false,
     hasOrdinaryLevel:true,
     hasAdvancedLevel:true,
-    hasBoardingStatus: true
+    hasBoardingStatus: true,
+    province: "Southern Province",
+    district: "Kamonyi"
   },
 ];

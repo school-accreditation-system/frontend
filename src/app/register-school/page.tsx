@@ -1,4 +1,3 @@
-import React from 'react';
 import { SchoolRegistrationForm } from '@/components/school-registration/SchoolRegistrationForm';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Building } from 'lucide-react';

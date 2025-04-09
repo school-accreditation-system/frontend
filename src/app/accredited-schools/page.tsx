@@ -1,12 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { SearchIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { schoolsData } from '@/constants/schoolsData';
 import { AccreditationField, AccreditedSchool } from '@/types/accredited-schools';
 import { SchoolCard, SearchFilters, Pagination } from '@/components/accredited-schools';
 import { motion } from 'framer-motion';
+import { useQueryState, parseAsString } from 'nuqs';
+import { z } from 'zod';
+
+// Zod schema for validating search parameters
+const SearchParamsSchema = z.object({
+  query: z.string().optional(),
+});
 
 // Accreditation fields data
 const accreditationFields: AccreditationField[] = [
@@ -17,6 +24,10 @@ const accreditationFields: AccreditationField[] = [
   { id: 'bam', name: 'BAM (Business, Accounting, Mathematics)', color: 'bg-pink-100 text-pink-700 border-pink-200' },
   { id: 'general', name: 'General Accreditation', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
 ];
+
+// Extract unique provinces and districts from the school data
+const provinces = Array.from(new Set(schoolsData.map(school => school.province))).sort();
+const allDistricts = Array.from(new Set(schoolsData.map(school => school.district))).sort();
 
 // Add accreditation fields to the mock data for demonstration
 const schoolsWithAccreditation: AccreditedSchool[] = schoolsData.map(school => {
@@ -41,60 +52,58 @@ const schoolsWithAccreditation: AccreditedSchool[] = schoolsData.map(school => {
 });
 
 export default function AccreditedSchoolsPage() {
-  const [filteredSchools, setFilteredSchools] = useState<AccreditedSchool[]>(schoolsWithAccreditation);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedField, setSelectedField] = useState<string>('');
-  const [currentPage, setCurrentPage] = useState(1);
+  // Define query states using nuqs
+  const [searchQuery, setSearchQuery] = useQueryState('q', parseAsString);
+  const [currentPage, setCurrentPage] = useQueryState('page', {
+    parse: (value) => {
+      const parsed = parseInt(value || '1', 10);
+      return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+    },
+    serialize: (value) => String(value)
+  });
+
+  // State for filtered schools
+  const [filteredSchools, setFilteredSchools] = React.useState<AccreditedSchool[]>(schoolsWithAccreditation);
   
-  // Pagination settings
-  const itemsPerPage = 6;
-  const totalPages = Math.ceil(filteredSchools.length / itemsPerPage);
-  const displayedSchools = filteredSchools.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  
-  // Search handler
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    applyFilters(query, selectedField);
-  };
-  
-  // Field filter handler
-  const handleFieldFilter = (fieldId: string) => {
-    setSelectedField(fieldId);
-    applyFilters(searchQuery, fieldId);
-  };
-  
-  // Combined filter logic to avoid duplication
-  const applyFilters = (query: string, fieldId: string) => {
-    if (query.trim() === '' && fieldId === '') {
-      setFilteredSchools(schoolsWithAccreditation);
-      setCurrentPage(1);
+  // Apply filters when search parameters change
+  useEffect(() => {
+    // Validate and sanitize search parameters
+    const validatedParams = SearchParamsSchema.safeParse({
+      query: searchQuery,
+    });
+
+    if (!validatedParams.success) {
+      console.error('Invalid search parameters:', validatedParams.error);
       return;
     }
-    
-    const filtered = schoolsWithAccreditation.filter(school => {
-      const matchesQuery = query.trim() === '' || 
-        school.name.toLowerCase().includes(query.toLowerCase()) ||
-        school.address.toLowerCase().includes(query.toLowerCase());
-        
-      const matchesField = fieldId === '' || 
-        school.accreditationFields.some(field => field.id === fieldId);
-        
-      return matchesQuery && matchesField;
-    });
-    
+
+    // Apply filters
+    let filtered = schoolsWithAccreditation;
+
+    // Filter by search query
+    if (searchQuery?.trim()) {
+      filtered = filtered.filter(school => 
+        school.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        school.address.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
     setFilteredSchools(filtered);
-    setCurrentPage(1);
+    
+    // Reset page to 1 if filters change and we're not on page 1
+    if (currentPage && currentPage > 1 && filtered.length <= 6) {
+      setCurrentPage(1);
+    }
+  }, [searchQuery, currentPage]);
+  
+  // Handle search input change
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
   };
   
   // Clear all filters
   const clearFilters = () => {
     setSearchQuery('');
-    setSelectedField('');
-    setFilteredSchools(schoolsWithAccreditation);
     setCurrentPage(1);
   };
   
@@ -103,6 +112,14 @@ export default function AccreditedSchoolsPage() {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Pagination settings
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(filteredSchools.length / itemsPerPage);
+  const displayedSchools = filteredSchools.slice(
+    ((currentPage || 1) - 1) * itemsPerPage,
+    (currentPage || 1) * itemsPerPage
+  );
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -123,20 +140,28 @@ export default function AccreditedSchoolsPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Browse our comprehensive list of accredited educational institutions. Filter by subject combinations and find the perfect school for your child.
+            Browse our comprehensive list of accredited educational institutions. Filter by subject combinations, location, and find the perfect school for your child.
           </motion.p>
         </div>
         
         {/* Search Filters */}
-        <SearchFilters 
+        <SearchFilters
           searchQuery={searchQuery}
-          selectedField={selectedField}
+          selectedField={''} // No field selection since we're removing filters
           accreditationFields={accreditationFields}
-          onSearchChange={handleSearch}
-          onFieldChange={handleFieldFilter}
+          onSearchChange={handleSearchChange}
+          onFieldChange={() => {}} // No field change handling
           totalSchools={filteredSchools.length}
           clearFilters={clearFilters}
         />
+        
+        {/* Results Count */}
+        <div className="mb-6">
+          <p className="text-sm text-gray-600">
+            Found <span className="font-medium text-gray-900">{filteredSchools.length}</span> schools
+            {searchQuery ? ` matching "${searchQuery}"` : ''}
+          </p>
+        </div>
         
         {/* Main content area */}
         <div>
@@ -166,20 +191,6 @@ export default function AccreditedSchoolsPage() {
             </motion.div>
           ) : (
             <>
-              {/* Top Pagination */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="text-sm text-gray-500">
-                  Showing <span className="font-medium text-gray-800">{(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filteredSchools.length)}</span> of <span className="font-medium text-gray-800">{filteredSchools.length}</span> schools
-                </div>
-                <div className="hidden sm:block">
-                  <Pagination 
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                </div>
-              </div>
-              
               {/* Schools Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {displayedSchools.map((school, index) => (
@@ -197,7 +208,7 @@ export default function AccreditedSchoolsPage() {
               {/* Bottom Pagination */}
               <div className="mt-8 mb-12 flex justify-center">
                 <Pagination 
-                  currentPage={currentPage}
+                  currentPage={currentPage || 1}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
                 />
