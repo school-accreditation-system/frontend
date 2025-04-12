@@ -1,12 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { ZodError, ZodObject, ZodSchema } from "zod";
-import { toast } from "@/components/ui/use-toast";
-import { SchoolIdentificationFormValues } from "../types/schema";
+import { useToast } from "@/components/ui/use-toast";
+import { createContext, ReactNode, useContext, useState, useEffect } from "react";
+import { ZodError, ZodSchema } from "zod";
 import { IDENTIFICATION_STEPS } from "../constants";
-import { useSearchParams, useRouter } from "next/navigation";
-
+import { SchoolIdentificationFormValues } from "../types/schema";
+import { useSaveSchoolIdentification, useUpdateSchoolIdentification, useGetSchoolIdentification } from "@/hooks/useSchoolIdentification";
+import { useParams } from "next/navigation";
 type FormContextType = {
   currentStep: number;
   setCurrentStep: (step: number) => void;
@@ -28,19 +28,29 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const schoolId = localStorage.getItem("schoolId");
   const [formData, setFormData] = useState<
     Partial<SchoolIdentificationFormValues>
   >({});
+  const { toast } = useToast();
+  const [isEditing, setIsEditing] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [stepsWithErrors, setStepsWithErrors] = useState<string[]>([]);
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { mutate: saveSchoolIdentification, isPending: isSaving } =
+    useSaveSchoolIdentification(schoolId as string);
+  const { mutate: updateSchoolIdentification, isPending: isUpdating } =
+    useUpdateSchoolIdentification(schoolId as string);
+  const { data: schoolIdentification, isLoading } = useGetSchoolIdentification(
+    schoolId as string
+  );
 
-  const schoolId = searchParams.get("schoolId");
-  const returnTo = searchParams.get("returnTo") || "/";
+  useEffect(() => {
+    if (!isLoading && schoolIdentification) {
+      setIsEditing(true);
+      setFormData(schoolIdentification);
+    }
+  }, [isLoading, schoolIdentification]);
 
-  // a function that updates the form data
   const updateFormData = (
     stepId: string,
     data: Partial<SchoolIdentificationFormValues>
@@ -57,28 +67,22 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // a function that validates the step data against the schema
   const validateStep = async (
     stepId: string,
     schema?: any
   ): Promise<boolean> => {
     if (!schema) return true;
     try {
-      // Create a data object with current form values for validation
       const stepData: Record<string, unknown> = {};
 
-      // Get all fields from the schema (using type assertion to access Zod internals)
       const schemaFields = Object.keys(schema.shape || {});
 
-      // Copy values from formData to validation object
       schemaFields.forEach((field) => {
         stepData[field] = formData[field as keyof typeof formData];
       });
 
-      // Validate data against schema
       await schema.parseAsync(stepData);
 
-      // If validation passes, clear any errors for this step
       if (formErrors[stepId]) {
         const newErrors = { ...formErrors };
         delete newErrors[stepId];
@@ -89,12 +93,10 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
       return true;
     } catch (error) {
       if (error instanceof ZodError) {
-        // Store error messages for this step
         const newErrors = { ...formErrors };
         newErrors[stepId] = error.errors.map((err) => err.message);
         setFormErrors(newErrors);
 
-        // Add this step to the list of steps with errors
         if (!stepsWithErrors.includes(stepId)) {
           setStepsWithErrors((prev) => [...prev, stepId]);
         }
@@ -128,15 +130,12 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
       toast({
         title: "Cannot Submit Form",
         description: "Please fill all required fields before submitting.",
-        variant: "destructive",
+        status: "error",
       });
       return;
     }
-
-    // checking if all steps are valid before submitting
     let allValid = true;
     for (const step of IDENTIFICATION_STEPS.slice(0, -1)) {
-      // Check if step has validationSchema property
       const validationSchema =
         "validationSchema" in step ? step.validationSchema : undefined;
       if (!(await validateStep(step.id, validationSchema))) {
@@ -148,37 +147,53 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
       toast({
         title: "Cannot Submit Form",
         description: "Please fill all required fields before submitting.",
-        variant: "destructive",
+        status: "error",
       });
       return;
     }
 
     try {
-      setIsSubmitting(true);
-      // TODO: Replace with actual API call using tanstack query
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Form submitted with data:", formData);
-
-      toast({
-        title: "Success",
-        description: "School information submitted successfully!",
-        variant: "default",
-      });
-
-      localStorage.setItem("schoolIdentification", JSON.stringify(formData));
-
-      router.push(`${returnTo}?schoolId=${schoolId}&formCompleted=true`);
+      if (isEditing) {
+        updateSchoolIdentification(formData, {
+          onSuccess: (data) => {
+            toast({
+              title: "Success", 
+              description: data.message,
+              status: "success",
+            });
+          },
+          onError: (error) => {
+            toast({
+              title: "Error",
+              description: `${error.response.data.message} Try again`,
+              status: "error",
+            });
+          },
+        });
+      } else {
+        saveSchoolIdentification(formData, {
+          onSuccess: (data) => {
+            toast({
+              title: "Success",
+              description: data.message,
+              status: "success",
+            });
+          },
+          onError: (error) => {
+            toast({
+              title: "Error",
+              description: `${error.response.data.message} Try again`,
+              status: "error",
+            });
+          },
+        });
+      }
     } catch (error) {
-      console.error("Error submitting form:", error);
       toast({
         title: "Error",
-        description:
-          "There was an error submitting your information. Please try again.",
-        variant: "destructive",
+        description: error.response.data.message,
+        status: "error",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -187,7 +202,7 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
     setCurrentStep,
     formData,
     formErrors,
-    isSubmitting,
+    isSubmitting: isSaving || isUpdating,
     stepsWithErrors,
     updateFormData,
     validateStep,

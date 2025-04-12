@@ -60,7 +60,7 @@ export const FeatureCard = ({
         </CardHeader>
         
         <CardContent className="flex-grow py-2 px-5">
-          <p className="text-muted-foreground text-center text-sm">{description}</p>
+          <p className="text-muted-foreground text-center text-sm">{description || `Click here to apply for ${title?.toLocaleLowerCase()} and follow the steps to the end`}</p>
         </CardContent>
         
         {(actionLabel && (onClick || href)) && (

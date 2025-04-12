@@ -3,7 +3,6 @@ import { ProcessStepsSection } from '@/components/accreditation/ProcessStepsSect
 import { RequestTypesSection } from '@/components/accreditation/RequestTypesSection';
 import { ServicesSection } from '@/components/accreditation/ServicesSection';
 import { AboutSection } from '@/components/accreditation/AboutSection';
-import Header from '@/components/Header';
 
 export default function HomePage() {
   return (

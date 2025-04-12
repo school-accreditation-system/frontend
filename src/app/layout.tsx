@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "@/components/ui/toaster";
 import { StoreProvider } from "./store";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -39,8 +39,8 @@ export default function RootLayout({
             </main>
           </ReactQueryProvider>
         </NuqsAdapter>
-        <Footer />
-        <Toaster/>
+        {/* <Footer /> */}
+        <Toaster />
       </body>
     </html>
   );

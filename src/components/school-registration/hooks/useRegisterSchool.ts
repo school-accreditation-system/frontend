@@ -1,23 +1,18 @@
 "use client"
 
-import { UseFormReturn } from 'react-hook-form';
-import { useGetProvinces, useGetLocationsByParentCode } from '@/hooks/useLocation';
-import { Location } from '@/types/Location';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { schoolRegistrationSchema } from '../types/schema';
+import { useToast } from '@/components/ui/use-toast';
+import { useGetLocationsByParentCode, useGetProvinces } from '@/hooks/useLocation';
 import { useAddSchool } from '@/hooks/useSchool';
-import { useAddHeadTeacher } from '@/hooks/useHeadTeacher';
-import { SchoolRegistrationFormData } from '../types/schema';
-import { toast } from 'react-hot-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { SchoolRegistrationFormData, schoolRegistrationSchema } from '../types/schema';
 export function useRegisterSchool() {
-const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<string | undefined>();
   const [selectedDistrictCode, setSelectedDistrictCode] = useState<string | undefined>();
   const [selectedSectorCode, setSelectedSectorCode] = useState<string | undefined>();
   const [selectedCellCode, setSelectedCellCode] = useState<string | undefined>();
+  const { toast } = useToast();
 
   // Fetch data from the backend using React Query
   const { data: provinces, isLoading: isProvincesLoading } = useGetProvinces();
@@ -25,7 +20,6 @@ const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: sectors, isLoading: isSectorsLoading } = useGetLocationsByParentCode(selectedDistrictCode);
   const { data: cells, isLoading: isCellsLoading } = useGetLocationsByParentCode(selectedSectorCode);
   const { data: villages, isLoading: isVillagesLoading } = useGetLocationsByParentCode(selectedCellCode);
-  const router = useRouter();
   const [error, setError] = useState<string>('');
   const { mutate: addSchool, isPending: isAddingSchool } = useAddSchool();
 
@@ -119,7 +113,6 @@ const [isSubmitting, setIsSubmitting] = useState(false);
      ];
     
   const onSubmit = async (data: SchoolRegistrationFormData) => {
-    console.log("data village ==>", data.village);
     addSchool({
       school: {
         shortName: data.schoolShortName?.toUpperCase(),
@@ -138,27 +131,28 @@ const [isSubmitting, setIsSubmitting] = useState(false);
       },
       locationCode: data.village,
     }, {
-      onSuccess: (data) => {
-        toast.success(data.message, {
-          duration: 5000,
-          position: 'top-center',
-          icon: '👏',
+      onSuccess: () => {
+        toast({
+          title: "Success",
+          description: "School registered successfully!",
+          status: "info",
         });
+        router.push('/school-identification?from=school-registration');
       },
       onError: (error) => {
         if(error.response.data.message){
           setError(error.response.data.message);
-          toast.error(error.response.data.message, {
-            duration: 5000,
-            position: 'top-center',
-            icon: '👎',
+          toast({
+            title: "Error",
+            description: error.response.data.message,
+            status: "error",
           });
         }else{
           setError(error.message);
-          toast.error(error.message, {
-            duration: 5000,
-            position: 'top-center',
-            icon: '👎',
+          toast({
+            title: "Error",
+            description: "An error occurred while registering the school. Please try again.",
+            status: "error",
           });
         }
       }
@@ -191,6 +185,6 @@ const [isSubmitting, setIsSubmitting] = useState(false);
       form,
       onSubmit,
       error,
-      isSubmitting
+      isSubmitting: isAddingSchool
   };
 }

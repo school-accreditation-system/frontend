@@ -1,22 +1,26 @@
 'use client';
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, ChevronLeft, ChevronRight, Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { FormProvider, useFormContext } from './context/index'
-import { TypeOfRequestForm } from '@/components/selfAssessment/steps/TypeofRequestForm';
-import { LandOwnershipForm } from '@/components/selfAssessment/steps/LandOwnershipForm';
-import { SchoolInfrastructureForm } from '@/components/selfAssessment/steps/SchoolInfrastructureForm';
-import { TeachingResourcesForm } from '@/components/selfAssessment/steps/TeachingResourcesForm';
-import { ProvisionalResults } from '@/components/selfAssessment/steps/ProvisionalResults';
-import { ASSESSMENT_STEPS } from './constanst';
+import { Check, AlertCircle, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+// import { ASSESSMENT_STEPS } from './constanst';
+import { FormProvider, useFormContext } from './context/index';
+import { useGetAreas } from '@/hooks/useStandard';
+import { TypeOfRequestForm } from './steps/TypeofRequestForm';
+import { LandOwnershipForm } from './steps/LandOwnershipForm';
+import { ProvisionalResults } from './steps/ProvisionalResults';
+import { Standard } from '@/types/Standard';
+import { Button } from '../ui/button';
 
-
-interface SchoolAssessmentFormProps {
-    children: React.ReactNode;
+// Define a type for Step
+interface Step {
+  id: number;
+  title: string;
+  description: string;
+  component?: React.ComponentType<any>;
+  areaId?: string;
 }
 
-const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
+const SchoolAssessmentForm = () => {
     const {
         currentStep,
         setCurrentStep,
@@ -25,24 +29,120 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
         isSubmitting,
         stepsWithErrors,
         updateFormData,
-        validateStep,
         goToNextStep,
         goToPreviousStep,
         handleSubmit
     } = useFormContext();
+    
+    // For tracking validation errors in view
+    const [incompleteFieldsVisible, setIncompleteFieldsVisible] = useState<boolean>(true);
+    
+    // Fetch areas from the backend
+    const { data: areas, isLoading: areasLoading } = useGetAreas();
+    
+    // State to hold the dynamically generated steps
+    const [assessmentSteps, setAssessmentSteps] = useState<Step[]>([
+        {
+            id: 0,
+            title: "Type of Request",
+            description: "Select the type of request you want to make",
+            component: TypeOfRequestForm
+        },
+        {
+            id: 1,
+            title: "Provisional results",
+            description: "Review provisional results",
+            component: ProvisionalResults
+        }
+    ]);
+    
+    useEffect(() => {
+        if (areas && areas.length > 0) {
+            const newSteps: Step[] = [
+                {
+                    id: 0,
+                    title: "Type of Request",
+                    description: "Select the type of request you want to make",
+                    component: TypeOfRequestForm
+                },
+                // Dynamically add steps for each area
+                ...areas.map((area: Standard, index: number) => ({
+                    id: index + 1,
+                    title: area.name,
+                    description: `Complete assessment for ${area.name}`,
+                    component: LandOwnershipForm,
+                    areaId: area.id
+                })),
+                {
+                    id: areas.length + 1,
+                    title: "Provisional results",
+                    description: "Review provisional results",
+                    component: ProvisionalResults
+                }
+            ];
+            
+            setAssessmentSteps(newSteps);
+        }
+    }, [areas]);
+    
+    // Check if there are validation errors in the current view
+    useEffect(() => {
+        const checkIfErrorsAreVisible = () => {
+            // Get all error message elements
+            const errorElements = document.querySelectorAll('[role="alert"]');
+            if (errorElements.length === 0) {
+                setIncompleteFieldsVisible(true);
+                return;
+            }
 
-    const currentStepData = ASSESSMENT_STEPS[currentStep];
+            // Check if any error is hidden behind the sticky navigation bar
+            let allErrorsVisible = true;
+            errorElements.forEach(element => {
+                const rect = element.getBoundingClientRect();
+                const isVisible = (
+                    rect.top >= 0 &&
+                    rect.bottom <= window.innerHeight - 70 // 70px is approx height of sticky bar
+                );
+                if (!isVisible) {
+                    allErrorsVisible = false;
+                }
+            });
+            
+            setIncompleteFieldsVisible(allErrorsVisible);
+        };
+
+        // Add scroll event listener to check error visibility
+        window.addEventListener('scroll', checkIfErrorsAreVisible);
+        
+        // Also check on initial render and when form errors change
+        checkIfErrorsAreVisible();
+        
+        return () => {
+            window.removeEventListener('scroll', checkIfErrorsAreVisible);
+        };
+    }, [formErrors]);
+    
+    const currentStepData = assessmentSteps[currentStep] || assessmentSteps[0];
     const CurrentStepComponent = currentStepData.component;
-
+    
+    // Determine button labels based on current step
+    const isPreviousDisabled = currentStep === 0;
+    const isLastStep = currentStep === assessmentSteps.length - 1;
+    const nextButtonText = isLastStep ? 'Submit' : 'Next';
+    const nextButtonIcon = isLastStep ? <ArrowRight className="ml-1 h-4 w-4" /> : <ChevronRight className="ml-1 h-4 w-4" />;
+    
+    if (areasLoading) {
+        return <div className="flex justify-center items-center min-h-[400px]">Loading assessment steps...</div>;
+    }
 
     return (
-        <div className="container mx-auto px-4 max-w-6xl">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="container mx-auto px-4 max-w-8xl pb-20"> {/* Added bottom padding for sticky nav */}
+            <div className="bg-white/50 rounded-xs p-6">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-5">
                     <h1 className="text-xl font-bold">Accreditation Application</h1>
                     <span className="text-sm text-muted-foreground">
-                        Step {currentStep + 1} of {ASSESSMENT_STEPS.length}
+                        Step {currentStep + 1} of {assessmentSteps.length}
                     </span>
                 </div>
                 <div className="space-y-6">
@@ -51,11 +151,11 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
                         <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-primary transition-all duration-300 ease-in-out"
-                                style={{ width: `${((currentStep + 1) / ASSESSMENT_STEPS.length) * 100}%` }}
+                                style={{ width: `${((currentStep + 1) / assessmentSteps.length) * 100}%` }}
                             />
                         </div>
                         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                            {ASSESSMENT_STEPS.map((step, index) => {
+                            {assessmentSteps.map((step, index) => {
                                 const hasError = stepsWithErrors.includes(step.id);
 
                                 return (
@@ -90,38 +190,86 @@ const SchoolAssessmentForm = ({ children }: SchoolAssessmentFormProps) => {
 
                         {/* Right side content area */}
                         <div className="w-full bg-gray-50 rounded-lg p-6">
-                            <motion.div
-                                key={currentStepData.id}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <CurrentStepComponent
-                                    formData={formData}
-                                    updateFormData={(data) => updateFormData(currentStepData.id, data)}
-                                    errors={formErrors[currentStepData.id] || []}
-                                    currentStep={currentStep}
-                                    isSubmitting={isSubmitting}
-                                    onPrevious={goToPreviousStep}
-                                    onNext={goToNextStep}
-                                    onSubmit={handleSubmit}
-                                    totalSteps={ASSESSMENT_STEPS.length}
-                                />
-                            </motion.div>
+                            {CurrentStepComponent ? (
+                                <motion.div
+                                    key={currentStepData.id}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <CurrentStepComponent
+                                        formData={formData}
+                                        updateFormData={(data) => updateFormData(currentStepData.id, data)}
+                                        errors={formErrors[currentStepData.id] || []}
+                                        currentStep={currentStep}
+                                        isSubmitting={isSubmitting}
+                                        onPrevious={goToPreviousStep}
+                                        onNext={goToNextStep}
+                                        onSubmit={handleSubmit}
+                                        totalSteps={assessmentSteps.length}
+                                        areaId={currentStepData.areaId}
+                                    />
+                                </motion.div>
+                            ) : (
+                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                                    <p>No component available for this step.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            {/* Error notification that appears when incomplete fields are not visible */}
+            {!incompleteFieldsVisible && Object.keys(formErrors).length > 0 && (
+                <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2 z-30 animate-bounce">
+                    <div className="bg-red-50 text-red-800 px-4 py-2 rounded-full shadow-lg border border-red-200 flex items-center">
+                        <AlertCircle className="h-4 w-4 mr-2" />
+                        <span className="text-sm font-medium">Scroll up to see incomplete fields</span>
+                    </div>
+                </div>
+            )}
+            
+            {/* Shared sticky navigation buttons */}
+            <div className="fixed bottom-0 left-0 right-0 z-20 px-30 bg-white border-t border-gray-200 p-4 flex justify-between items-center shadow-lg">
+                <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isPreviousDisabled}
+                    onClick={goToPreviousStep}
+                    className="flex items-center gap-1.5 text-sm py-2 px-3 md:px-4"
+                >
+                    <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    Previous
+                </Button>
+
+                <div className="flex items-center">
+                    {/* Show indicator of current step */}
+                    <span className="text-sm text-gray-500 mr-3">
+                        {currentStepData.title} - {currentStep + 1}/{assessmentSteps.length}
+                    </span>
+                </div>
+
+                <Button
+                    type="button"
+                    onClick={isLastStep ? handleSubmit : goToNextStep}
+                    disabled={isSubmitting}
+                    className="flex items-center gap-1.5 text-sm py-2 px-3 md:px-4"
+                >
+                    {isSubmitting ? 'Processing...' : nextButtonText}
+                    {!isSubmitting && nextButtonIcon}
+                </Button>
             </div>
         </div>
     );
 }
 
 interface SchoolAssessmentStepsProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
-export default function dSchoolAssessmentSteps({ children }: SchoolAssessmentStepsProps) {
+export default function SchoolAssessmentSteps({ children }: SchoolAssessmentStepsProps) {
     return (
         <FormProvider>
             <SchoolAssessmentForm>{children}</SchoolAssessmentForm>

@@ -4,9 +4,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, ArrowRight } from 'lucide-react';
-import { SchoolRegistrationFormData } from '@/components/school-finder/types';
 import {
   Select,
   SelectContent,
@@ -14,8 +11,8 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { ArrowRight } from 'lucide-react';
 import { useRegisterSchool } from './hooks/useRegisterSchool';
-import { schoolRegistrationSchema } from "./types/schema";
 
 export const SchoolRegistrationForm = () => {
     const {  provinces,
@@ -268,6 +265,7 @@ export const SchoolRegistrationForm = () => {
                 >
                   <SelectTrigger 
                     id="cell"
+                    // eslint-disable-next-line max-lines
                     className={`w-full ${form.formState.errors.cell ? 'border-red-500' : ''}`}
                   >
                     {isCellsLoading ? (

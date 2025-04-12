@@ -21,6 +21,7 @@ export const SummaryForm = ({ formData, errors = [] }: SummaryFormProps) => {
     (formData.storekeeper || 0) + 
     (formData.drivers || 0);
   
+  
   // Calculate student totals
   const numBoys = parseInt(formData.numBoys as string || "0", 10) || 0;
   const numGirls = parseInt(formData.numGirls as string || "0", 10) || 0;
@@ -52,7 +53,7 @@ export const SummaryForm = ({ formData, errors = [] }: SummaryFormProps) => {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="max-w-6xl mx-auto"
+      className="mx-auto"
     >
       <h2 className="text-xl font-semibold mb-6 text-gray-800 flex items-center gap-2">
         <Check className="text-green-500" size={20} />
@@ -117,22 +118,32 @@ export const SummaryForm = ({ formData, errors = [] }: SummaryFormProps) => {
             <div className="p-2 bg-purple-100 rounded-full">
               <User className="text-purple-600" size={18} />
             </div>
-            <h3 className="font-medium text-gray-800">Head Teacher Information</h3>
+            <h3 className="font-medium text-gray-800">Administrative Staff</h3>
           </div>
           
           <div className="grid grid-cols-1 gap-y-2 text-sm">
             <div className="flex justify-between border-b pb-1">
-              <p className="text-gray-500">Name:</p>
-              <p className="font-medium text-right">{formData.htName || '—'}</p>
+              <p className="text-gray-500">Deputy Head Teachers:</p>
+              <p className="font-medium text-right">{formData.numberOfDeputyHeadTeacher || '0'}</p>
             </div>
             <div className="flex justify-between border-b pb-1">
-              <p className="text-gray-500">Qualification:</p>
-              <p className="font-medium text-right">{formData.qualification || '—'}</p>
+              <p className="text-gray-500">Secretaries:</p>
+              <p className="font-medium text-right">{formData.numberOfSecretary || '0'}</p>
             </div>
             <div className="flex justify-between border-b pb-1">
-              <p className="text-gray-500">Telephone:</p>
-              <p className="font-medium text-right">{formData.telephone || '—'}</p>
+              <p className="text-gray-500">Librarians:</p>
+              <p className="font-medium text-right">{formData.numberOfLibrarian || '0'}</p>
             </div>
+            <div className="flex justify-between border-b pb-1">
+              <p className="text-gray-500">Accountants:</p>
+              <p className="font-medium text-right">{formData.numberOfAccountant || '0'}</p>
+            </div>
+            {formData.numberOfOtherStaff && (
+              <div className="flex justify-between border-b pb-1">
+                <p className="text-gray-500">Other Staff:</p>
+                <p className="font-medium text-right">{formData.numberOfOtherStaff}</p>
+              </div>
+            )}
           </div>
         </motion.div>
 
@@ -349,4 +360,4 @@ export const SummaryForm = ({ formData, errors = [] }: SummaryFormProps) => {
       </motion.div>
     </motion.div>
   );
-}; 
+};

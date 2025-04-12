@@ -1,0 +1,49 @@
+# Ignore artifacts:
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+/.nyc_output/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+/.github/
+.gitignore
+.eslintignore
+.prettierignore
+graphql.schema.json
+graphql.ts
+
+/node_modules
+/src/assets/
+/src/database/
+/public/robots.txt
+/.husky/
+/.next/
+/out/
+
+*.xlsx
+*.lock
+*.json
+*.css
+*.mdx
+*.graphql
+*.yml
+*.ico
+*.md
+.env

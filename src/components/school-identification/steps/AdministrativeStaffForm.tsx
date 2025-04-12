@@ -15,13 +15,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { AdministrativeStaffFormValues, administrativeStaffSchema } from "../types/schema";
 import { useFormContext } from "../context/FormContext";
-import { useGetHeadTeacherBySchoolId } from "@/hooks/useHeadTeacher";
-
 export const AdministrativeStaffForm = () => {
     const { formData, updateFormData, formErrors } = useFormContext();
-    // TODO: Get school id from local storage when authentication is implemented
-    const { data: headTeacher, isLoading: isHeadTeacherLoading } = useGetHeadTeacherBySchoolId("ee926ffd-3698-41b3-8b1b-0f96e88a7394");
-  
   const stepErrors = formErrors['administrative-staff'] || [];
   
   const form = useForm<AdministrativeStaffFormValues>({
@@ -71,35 +66,12 @@ export const AdministrativeStaffForm = () => {
   return (
     <Form {...form}>
       <div className="space-y-6">
-        <div className="p-4 bg-blue-50 border border-blue-100 rounded-md text-sm text-blue-700 mb-6">
+        <div className="p-4 bg-primary/5 border border-primary rounded-md text-sm text-primary mb-6">
           <p>
             Please enter information about additional administrative staff. This information is important 
             for understanding the overall staffing structure of the school.
           </p>
-        </div>
-
-        {/* Head Teacher Info (Read-only) */}
-        <div className="p-4 bg-gray-50 border border-gray-100 rounded-md mb-6">
-          <h3 className="font-medium text-gray-900 mb-2">Head Teacher Information</h3>
-          <p className="text-sm text-gray-500 mb-4">
-            The head teacher information was entered in a previous step and cannot be modified here.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Name</p>
-              <p className="font-medium">{ isHeadTeacherLoading ? "Loading..." : headTeacher?.data.name || "Not provided"}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Qualification</p>
-              <p className="font-medium">{ isHeadTeacherLoading ? "Loading..." : headTeacher?.data.qualification || "Not provided"}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Telephone</p>
-              <p className="font-medium">{ isHeadTeacherLoading ? "Loading..." : headTeacher?.data.telephone || "Not provided"}</p>
-            </div>
-          </div>
-        </div>
-      
+        </div>      
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <FormField
