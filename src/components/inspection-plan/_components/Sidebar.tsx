@@ -8,6 +8,7 @@ import { MdDashboard, MdOutlineSettings } from "react-icons/md";
 import { FaClipboardList, FaUsers } from "react-icons/fa";
 import { BsPeopleFill } from "react-icons/bs";
 import { FcInspection } from "react-icons/fc";
+import { AiOutlineLogout } from "react-icons/ai";
 
 const MENU_ITEMS = [
   { 
@@ -46,6 +47,12 @@ const MENU_ITEMS = [
     link: "/inspection-plan/settings",
     icon: <MdOutlineSettings className="h-5 w-5" />
   },
+  { 
+      id: 7, 
+      name: "Logout", 
+      link: "/",
+      icon: <AiOutlineLogout  className="h-5 w-5" />
+    },
 ];
 
 const Sidebar = () => {

@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { MdDashboard, MdOutlineSettings } from "react-icons/md";
 import { FaClipboardList, FaUsers } from "react-icons/fa";
 import { BsPeopleFill } from "react-icons/bs";
-
+import { AiOutlineLogout } from "react-icons/ai";
 
 const MENU_ITEMS = [
   { 
@@ -40,6 +40,12 @@ const MENU_ITEMS = [
     name: "Settings", 
     link: "/inspector-dashboard/settings",
     icon: <MdOutlineSettings className="h-5 w-5" />
+  },
+  { 
+    id: 6, 
+    name: "Logout", 
+    link: "/",
+    icon: <AiOutlineLogout  className="h-5 w-5" />
   },
 ];
 
