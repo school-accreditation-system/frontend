@@ -7,52 +7,46 @@ import { usePathname } from "next/navigation";
 import { MdDashboard, MdOutlineSettings } from "react-icons/md";
 import { FaClipboardList, FaUsers } from "react-icons/fa";
 import { BsPeopleFill } from "react-icons/bs";
-import { FcInspection } from "react-icons/fc";
 import { AiOutlineLogout } from "react-icons/ai";
 
 const MENU_ITEMS = [
   { 
     id: 1, 
     name: "Dashboard", 
-    link: "/inspection-plan",
+    link: "/inspector-dashboard",
     icon: <MdDashboard className="h-5 w-5" />
   },
   { 
     id: 2, 
-    name: "Applications", 
-    link: "/inspection-plan/applications",
+    name: "Assigned Schools", 
+    link: "/inspector-dashboard/applications",
     icon: <FaClipboardList className="h-5 w-5" />
   },
-  { 
-    id: 3, 
-    name: "Team-planning", 
-    link: "/inspection-plan/team-planning",
-    icon: <BsPeopleFill className="h-5 w-5" />
-  },
-  { 
-    id: 4, 
-    name: "Teams", 
-    link: "/inspection-plan/teams",
-    icon: <FaUsers className="h-5 w-5" />
-  },
+ 
+  // { 
+  //   id: 3, 
+  //   name: "Team-planning", 
+  //   link: "/inspection-plan/team-planning",
+  //   icon: <BsPeopleFill className="h-5 w-5" />
+  // },
+  // { 
+  //   id: 4, 
+  //   name: "Teams", 
+  //   link: "/inspector-dashboard/team",
+  //   icon: <FaUsers className="h-5 w-5" />
+  // },
   { 
     id: 5, 
-    name: "Inspections", 
-    link: "/inspection-plan/inspections",
-    icon: <FcInspection className="h-5 w-5" />
-  },
-  { 
-    id: 6, 
     name: "Settings", 
-    link: "/inspection-plan/settings",
+    link: "/inspector-dashboard/settings",
     icon: <MdOutlineSettings className="h-5 w-5" />
   },
   { 
-      id: 7, 
-      name: "Logout", 
-      link: "/",
-      icon: <AiOutlineLogout  className="h-5 w-5" />
-    },
+    id: 6, 
+    name: "Logout", 
+    link: "/",
+    icon: <AiOutlineLogout  className="h-5 w-5" />
+  },
 ];
 
 const Sidebar = () => {

@@ -42,9 +42,13 @@ export const StaffLoginForm = () => {
       
       // TODO: Replace with actual API call to authenticate staff
       console.log('Login data:', data);
-      
-      // FIXME: Redirect to staff dashboard on successful login
-      router.push('/dashboard');
+       if(data.email == "john@gmail.com" && data.password == "Password123"){
+
+         // FIXME: Redirect to staff dashboard on successful login
+         router.push('/inspector-dashboard');
+        }else{
+          router.push("/inspection-plan")
+        }
     } catch (error) {
       console.error('Login error:', error);
       // FIXME: Handle login error here
