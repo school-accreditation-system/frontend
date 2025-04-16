@@ -55,8 +55,8 @@ export default function AccreditedSchoolsPage() {
   );
   
   // Search handler
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
+  const handleSearch = (query) => {
+    // const query = e.target.value;
     setSearchQuery(query);
     applyFilters(query, selectedField);
   };
@@ -83,10 +83,17 @@ export default function AccreditedSchoolsPage() {
       const matchesField = fieldId === '' || 
         school.accreditationFields.some(field => field.id === fieldId);
         
-      return matchesQuery && matchesField;
+      return matchesQuery || matchesField;
     });
+
+    const filteredSchool = schoolsWithAccreditation.filter(school => (
+      school.name.toLowerCase().includes(query.toLowerCase()) ||
+      school.address.toLowerCase().includes(query.toLowerCase())
+    ))
+
+
     
-    setFilteredSchools(filtered);
+    setFilteredSchools(filteredSchool);
     setCurrentPage(1);
   };
   

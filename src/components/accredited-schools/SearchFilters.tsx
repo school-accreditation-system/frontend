@@ -34,6 +34,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
+    console.log("query",query)
     setSearchParam(query);
     onSearchChange(query);
   };
