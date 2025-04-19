@@ -5,6 +5,7 @@ import logo from "../../../public/nesa-logo.png";
 import waterMark from "../../../public/nesa-logo.png";
 import accreditated_logo from "../../../public/accredited-logo.jpg";
 import { handlePrintCertificate } from "../verify-certificate/_components/printCertificate";
+import { generateQrCode } from "./QrCode";
 
 const AccreditationStatusPage = () => {
   // State for the application ID input
@@ -107,7 +108,7 @@ const AccreditationStatusPage = () => {
     );
   };
 
-
+// if(isLoading) return <h1>{generateQrCode()}</h1>
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">

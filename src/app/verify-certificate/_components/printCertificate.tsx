@@ -1,4 +1,7 @@
-export const handlePrintCertificate = ({
+// Import the QR code library
+import QRCode from 'qrcode';
+
+export const handlePrintCertificate = async ({
     logo,
     waterMark,
     sealImage,
@@ -10,9 +13,6 @@ export const handlePrintCertificate = ({
     validToDate,
     certificateNumber,
   }) => {
-    // Create a new window for printing
-    const printWindow = window.open("", "_blank");
-
     // Function to get correct Next.js image paths
     const getNextImagePath = (imagePath) => {
       if (!imagePath) return "";
@@ -29,7 +29,30 @@ export const handlePrintCertificate = ({
       return imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
     };
 
-    // Generate the certificate HTML content
+    // Generate QR code for the certificate verification
+    const certificateVerificationUrl = `https://your-domain.com/verify/${certificateNumber}`;
+    
+    // Generate QR code first, before opening the print window
+    let qrCodeDataUrl = '';
+    try {
+      qrCodeDataUrl = await QRCode.toDataURL(certificateVerificationUrl, {
+        width: 100,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      });
+    } catch (error) {
+      console.error("Error generating QR code:", error);
+      // Set a fallback in case of error - either empty or a placeholder
+      qrCodeDataUrl = '';
+    }
+    
+    // Now create a new window for printing, after the QR code is generated
+    const printWindow = window.open("", "_blank");
+    
+    // Generate the certificate HTML content with the QR code data URL
     const certificateHTML = `
       <html>
         <head>
@@ -202,13 +225,20 @@ export const handlePrintCertificate = ({
               margin-bottom: 10px;
             }
             
+            .qr-code {
+              width: 100px;
+              height: 100px;
+              margin-bottom: 10px;
+            }
+            
             .certificate-id {
               font-size: 16px;
               margin-top: 5px;
             }
-              .year: {
-              font-size: 1.4rem
-              }
+            
+            .year {
+              font-size: 1.4rem;
+            }
           </style>
         </head>
         <body>
@@ -252,10 +282,10 @@ export const handlePrintCertificate = ({
                 </div>
                 
                 <div class="seal-section">
-                  <img src="${getNextImagePath(
-                    sealImage
-                  )}" class="seal-image" alt="Official Seal" 
-                       onerror="this.onerror=null; this.style.display='none';" />
+                  ${qrCodeDataUrl ? 
+                    `<img class="qr-code" src="${qrCodeDataUrl}" alt="Certificate QR Code" />` : 
+                    `<div id="qrCodePlaceholder" class="qr-code"></div>`
+                  }
                   <div class="certificate-id">
                     Certificate Number:<br>
                     ${certificateNumber}
@@ -266,6 +296,39 @@ export const handlePrintCertificate = ({
           </div>
           
           <script>
+            // Function to create a fallback QR code if needed
+            function createFallbackQRCode() {
+              // Only create fallback if the QR code data URL wasn't provided
+              if (!document.querySelector('.qr-code[src]')) {
+                const placeholder = document.getElementById('qrCodePlaceholder');
+                if (placeholder) {
+                  const qrCanvas = document.createElement('canvas');
+                  qrCanvas.width = 100;
+                  qrCanvas.height = 100;
+                  const qrContext = qrCanvas.getContext('2d');
+                  
+                  // Create a simple placeholder pattern
+                  qrContext.fillStyle = '#ffffff';
+                  qrContext.fillRect(0, 0, 100, 100);
+                  qrContext.fillStyle = '#000000';
+                  qrContext.fillRect(10, 10, 80, 80);
+                  qrContext.fillStyle = '#ffffff';
+                  qrContext.fillRect(20, 20, 60, 60);
+                  qrContext.fillStyle = '#000000';
+                  qrContext.fillRect(30, 30, 40, 40);
+                  
+                  // Create an image element
+                  const img = document.createElement('img');
+                  img.src = qrCanvas.toDataURL();
+                  img.className = 'qr-code';
+                  img.alt = 'Certificate QR Code (Placeholder)';
+                  
+                  // Replace the placeholder with the generated image
+                  placeholder.parentNode.replaceChild(img, placeholder);
+                }
+              }
+            }
+            
             // Function to create multiple watermarks
             function createWatermarks() {
               const container = document.getElementById('watermarksContainer');
@@ -300,6 +363,7 @@ export const handlePrintCertificate = ({
             // Run once the document is loaded
             window.onload = function() {
               createWatermarks();
+              createFallbackQRCode();
               
               // Add a delay to ensure images are loaded before printing
               setTimeout(() => {
@@ -319,17 +383,17 @@ export const handlePrintCertificate = ({
   };
 
 
-  // Helper functions
-  const formatDate = (date) => {
-    return date.toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
+// Helper functions
+const formatDate = (date) => {
+  return date.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
 
-  const getTwoYearsFromNow = () => {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() + 2);
-    return date;
-  };
+const getTwoYearsFromNow = () => {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + 2);
+  return date;
+};
