@@ -41,7 +41,7 @@ const AccreditationStatusPage = () => {
     },
     TVT101: {
       type: "tvet",
-      status: "Under Review",
+      status: "Under Review By Head of department",
       date: "2025-03-25",
       comments: "Staff credentials being verified",
     },

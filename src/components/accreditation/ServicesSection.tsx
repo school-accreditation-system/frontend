@@ -10,18 +10,18 @@ import {
 } from 'lucide-react';
 
 const SERVICES = [
-  {
-    title: 'Accredited Schools',
-    description: 'View your school\'s past assessments and accreditation requests. Track your progress over time and learn from successful accreditation examples.',
-    icon: <ListChecks className="w-8 h-8 text-primary" />,
-    href: '/accredited-schools',
-    actionLabel: 'View accredited schools',
-    bgColor: 'bg-blue-100',
-    iconColor: 'text-primary',
-    topColor: 'bg-primary',
-    hoverColor: 'hover:text-primary',
-    linkColor: 'text-primary',
-  },
+  // {
+  //   title: 'Accredited Schools',
+  //   description: 'View your school\'s past assessments and accreditation requests. Track your progress over time and learn from successful accreditation examples.',
+  //   icon: <ListChecks className="w-8 h-8 text-primary" />,
+  //   href: '/accredited-schools',
+  //   actionLabel: 'View accredited schools',
+  //   bgColor: 'bg-blue-100',
+  //   iconColor: 'text-primary',
+  //   topColor: 'bg-primary',
+  //   hoverColor: 'hover:text-primary',
+  //   linkColor: 'text-primary',
+  // },
   {
     title: 'Application Status',
     description: 'Stay informed about your accreditation progress. Track your application status in real-time and receive timely updates on each step of the process.',
@@ -53,14 +53,14 @@ export const ServicesSection = () => {
     <section className="py-20 bg-white" id="services">
       <div className="container mx-auto px-4">
         <div className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">Verify school's accreditation</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">Track your application status</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Access these tools to help manage your school's accreditation journey
           </p>
         </div>
         
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {SERVICES.map((service, index) => (
               <div 
                 key={service.title} 

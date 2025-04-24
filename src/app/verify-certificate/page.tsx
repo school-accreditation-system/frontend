@@ -152,7 +152,7 @@ const CertificateVerificationPage = () => {
               >
                 Certificate ID
               </button>
-              <button
+              {/* <button
                 className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   verificationMethod === 'qr'
                     ? 'bg-primary text-white'
@@ -161,7 +161,7 @@ const CertificateVerificationPage = () => {
                 onClick={() => setVerificationMethod('qr')}
               >
                 QR Code Scan
-              </button>
+              </button> */}
             </div>
           </div>
           
