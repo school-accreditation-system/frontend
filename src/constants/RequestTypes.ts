@@ -13,14 +13,14 @@ const REQUEST_TYPES = [
     actionLabel: "Fill School Information",
     requestType: "school-identification",
   },
-  {
-    title: "Self-Assessment",
-    description:
-      "Empower your institution's growth! Our comprehensive self-assessment is your first step towards excellence. Discover your strengths, uncover opportunities, and pave the way for successful accreditation.",
-    href: "/self-assessment",
-    actionLabel: "Start Self-Assessment",
-    requestType: "self-assessment",
-  }
+  // {
+  //   title: "Self-Assessment",
+  //   description:
+  //     "Empower your institution's growth! Our comprehensive self-assessment is your first step towards excellence. Discover your strengths, uncover opportunities, and pave the way for successful accreditation.",
+  //   href: "/self-assessment",
+  //   actionLabel: "Start Self-Assessment",
+  //   requestType: "self-assessment",
+  // }
 ];
 
 export const ACCREDITATION_APPLICATION_TYPES = [

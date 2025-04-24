@@ -1,19 +1,35 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Loader2, Eye, EyeOff, Home, Lock, Mail } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { staffLoginSchema, StaffLoginValues } from './types/schema';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Loader2,
+  Eye,
+  EyeOff,
+  Home,
+  Lock,
+  Mail,
+  Terminal,
+} from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { staffLoginSchema, StaffLoginValues } from "./types/schema";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const StaffLoginForm = () => {
   const router = useRouter();
@@ -24,35 +40,68 @@ export const StaffLoginForm = () => {
   // Staff login form
   const form = useForm<StaffLoginValues>({
     resolver: zodResolver(staffLoginSchema),
-    defaultValues: { 
-      email: '',
-      password: ''
+    defaultValues: {
+      email: "",
+      password: "",
     },
-    mode: 'onChange'
+    mode: "onChange",
   });
 
   // Handle staff login submission
   const handleLoginSubmit = async (data: StaffLoginValues) => {
     setIsLoading(true);
     setFormError(null);
-    
+
     try {
       // FIXME: Remove this delay when API is implemented
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // TODO: Replace with actual API call to authenticate staff
-      console.log('Login data:', data);
-       if(data.email == "john@gmail.com" && data.password == "Password123"){
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-         // FIXME: Redirect to staff dashboard on successful login
-         router.push('/inspector-dashboard');
-        }else{
-          router.push("/inspection-plan")
-        }
+      const EMPLOYEE_DATA = [
+        { id: 1, email: "analyst@gmail.com", password: "Password123",role: "analyst" },
+        { id: 2, email: "inspector@gmail.com", password: "Password123" ,role: "inspector" },
+        { id: 3, email: "division@gmail.com", password: "Password123",role: "division"  },
+        { id: 4, email: "hod@gmail.com", password: "Password123",role: "hod"  },
+        { id: 5, email: "director@gmail.com", password: "Password123",role: "director"  },
+      ];
+      let loggedInUser = null;
+
+      // TODO: Replace with actual API call to authenticate staff
+      console.log("Login data:", data);
+      loggedInUser = EMPLOYEE_DATA.find(
+        (user) => user.email === data.email && user.password === data.password
+      );
+      if (!loggedInUser) {
+        <Alert>
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Heads up!</AlertTitle>
+          <AlertDescription>
+            You can add components and dependencies to your app using the cli.
+          </AlertDescription>
+        </Alert>;
+      }
+      localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+      if (loggedInUser.email == "analyst@gmail.com") {
+        router.push("/inspection-plan");
+      } else if (loggedInUser.email == "inspector@gmail.com") {
+        router.push("/inspector-dashboard");
+      } else if (
+        loggedInUser.email == "division@gmail.com" ||
+        "hod@gmail.com" ||
+        "director@gmail.com"
+      ) {
+        router.push("/management-dashboard");
+      }
+      //  if(data.email == "john@gmail.com" && data.password == "Password123"){
+
+      //    // FIXME: Redirect to staff dashboard on successful login
+      //    router.push('/inspector-dashboard');
+      //   }else{
+      //     router.push("/inspection-plan")
+      //   }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       // FIXME: Handle login error here
-      setFormError('Invalid email or password. Please try again.');
+      setFormError("Invalid email or password. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -64,16 +113,12 @@ export const StaffLoginForm = () => {
 
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
   return (
     <Card className="w-full">
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={formVariants}
-      >
+      <motion.div initial="hidden" animate="visible" variants={formVariants}>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-xl sm:text-2xl font-bold">
             NESA Staff Login
@@ -82,7 +127,10 @@ export const StaffLoginForm = () => {
 
         <CardContent className="pt-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleLoginSubmit)} className="space-y-5">
+            <form
+              onSubmit={form.handleSubmit(handleLoginSubmit)}
+              className="space-y-5"
+            >
               {/* Email Field */}
               <FormField
                 control={form.control}
@@ -133,8 +181,8 @@ export const StaffLoginForm = () => {
                           {...field}
                         />
                       </FormControl>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         onClick={togglePasswordVisibility}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       >
@@ -159,8 +207,8 @@ export const StaffLoginForm = () => {
 
               {/* Forgot Password Link */}
               <div className="flex justify-end">
-                <Link 
-                  href="/forgot-password" 
+                <Link
+                  href="/forgot-password"
                   className="text-sm text-primary hover:text-primary/80 transition-colors"
                 >
                   Forgot password?
@@ -170,30 +218,30 @@ export const StaffLoginForm = () => {
               {/* Submit Button */}
               <div className="flex justify-center gap-4">
                 <Button
-                type="submit"
+                  type="submit"
                   className="w-1/2 h-12 bg-gray-100 hover:cursor-pointer text-gray-600 p-4 rounded-lg"
-                  onClick={() => router.push('/')}
+                  onClick={() => router.push("/")}
                   variant="outline"
                 >
                   <Home className="h-5 w-5 ml-2" />
                   <span>Home</span>
                 </Button>
-              <Button
-                type="submit"
-                className="w-1/2 h-12 hover:cursor-pointer"
-                disabled={isLoading || !form.formState.isValid}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    <span>Logging in...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Login</span>
-                    <ArrowRight className="h-5 w-5 ml-2" />
-                  </>
-                )}
+                <Button
+                  type="submit"
+                  className="w-1/2 h-12 hover:cursor-pointer"
+                  disabled={isLoading || !form.formState.isValid}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      <span>Logging in...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Login</span>
+                      <ArrowRight className="h-5 w-5 ml-2" />
+                    </>
+                  )}
                 </Button>
               </div>
             </form>
@@ -202,4 +250,4 @@ export const StaffLoginForm = () => {
       </motion.div>
     </Card>
   );
-}; 
+};
