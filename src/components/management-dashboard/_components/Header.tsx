@@ -3,12 +3,16 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { FaBell, FaSearch, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const Header = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const router = useRouter()
+  const [userName,setUserName]= useState("")
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("loggedInUser"));
+    setUserName(data.name)
+  },[])
   
   const toggleUserMenu = () => {
     setShowUserMenu(!showUserMenu);
@@ -21,12 +25,9 @@ const Header = () => {
   };
   
   const handleLogout = () => {
-    router.push("/")
+    // Implement logout logic here
+    console.log("Logging out...");
   };
-
-  const handleProfile = () => {
-    router.push("/management-dashboard/settings")
-  }
   
   return (
     <div className="w-full h-16 bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
@@ -36,7 +37,7 @@ const Header = () => {
           
           <div className="flex gap-2 items-center">
             <h4 className="text-gray-600">Welcome,</h4>
-            <p className="font-bold text-primary">Jonathan</p>
+            <p className="font-bold text-primary">{userName}</p>
           </div>
         </div>
         
@@ -97,7 +98,7 @@ const Header = () => {
               <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center text-white">
                 <FaUserCircle className="h-7 w-7" />
               </div>
-              <span className="font-medium hidden md:block">Jonathan</span>
+              <span className="font-medium hidden md:block">{userName}</span>
               <IoIosArrowDown className={`transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
             </button>
             
@@ -105,17 +106,17 @@ const Header = () => {
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
                 <div className="p-3 border-b border-gray-200">
-                  <p className="font-semibold">Jonathan Doe</p>
-                  <p className="text-sm text-gray-500">jonathan.doe@example.com</p>
+                  <p className="font-semibold">{userName}</p>
+                  <p className="text-sm text-gray-500">{userName}@gmail.com</p>
                 </div>
                 <div className="p-2">
-                  <button className="w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm flex items-center gap-2" onClick={handleProfile}>
+                  {/* <button className="w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm flex items-center gap-2">
                     <FaUserCircle className="text-gray-500" />
                     <span>My Profile</span>
-                  </button>
+                  </button> */}
                   <button 
                     onClick={handleLogout}
-                    className="w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm flex items-center gap-2 text-red-500"
+                    className="w-full text-left p-2 rounded-md hover:bg-red-500 text-sm flex items-center gap-2 text-red-500 hover:text-white hover:cursor-pointer"
                   >
                     <FaSignOutAlt />
                     <span>Logout</span>

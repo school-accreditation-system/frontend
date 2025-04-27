@@ -41,12 +41,12 @@ const MENU_ITEMS = [
     link: "/inspection-plan/inspections",
     icon: <FcInspection className="h-5 w-5" />
   },
-  { 
-    id: 6, 
-    name: "Settings", 
-    link: "/inspection-plan/settings",
-    icon: <MdOutlineSettings className="h-5 w-5" />
-  },
+  // { 
+  //   id: 6, 
+  //   name: "Settings", 
+  //   link: "/inspection-plan/settings",
+  //   icon: <MdOutlineSettings className="h-5 w-5" />
+  // },
   { 
       id: 7, 
       name: "Logout", 
@@ -59,7 +59,7 @@ const Sidebar = () => {
   const pathname = usePathname();
   
   return (
-    <div className="w-80 h-screen flex items-center  flex-col space-y-16 p-2 bg-gray-100 border-r border-gray-200">
+    <div className="w-80 max-h-full flex items-center  flex-col space-y-16 p-2 bg-gray-100 border-r border-gray-200">
       <div className="p-2">
         <Image src={logo} className="w-24 h-14" alt="logo" />
       </div>

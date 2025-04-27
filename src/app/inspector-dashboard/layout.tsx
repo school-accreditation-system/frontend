@@ -1,4 +1,4 @@
-import Header from "@/components/inspector-dashboard/_components/Header";
+import Header from "@/components/inspection-plan/_components/Header";
 import Sidebar from "@/components/inspector-dashboard/_components/Sidebar";
 import React from "react";
 

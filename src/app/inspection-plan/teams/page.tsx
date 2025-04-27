@@ -1,5 +1,22 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import {
+  MantineReactTable,
+  useMantineReactTable,
+  type MRT_ColumnDef,
+} from 'mantine-react-table';
+
+// Import the shadcn/ui components
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils"; // Make sure you have this utility
 
 // Sample school data
 const schoolsData = [
@@ -15,13 +32,69 @@ const schoolsData = [
   { id: 10, name: "Kigali International Community School", district: "Kigali", type: "International" },
 ];
 
-const page = () => {
-  const [teams, setTeams] = useState([]);
+// Define the type for team and assignment data
+type TeamMember = {
+  id: number;
+  name: string;
+};
+
+type Team = {
+  id: number;
+  name: string;
+  members: TeamMember[];
+  createdAt: string;
+};
+
+type TeamAssignment = {
+  schoolIds: number[];
+  startDate: string;
+  endDate: string;
+};
+
+type AssignedSchools = {
+  [teamId: number]: TeamAssignment;
+};
+
+// DatePicker component based on shadcn/ui
+const DatePicker = ({ date, setDate, label }) => {
+  return (
+    <div className="flex flex-col space-y-1">
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !date && "text-gray-400"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date ? format(date, "PPP") : "Select date"}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            initialFocus
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
+const TeamAssignmentPage = () => {
+  const [teams, setTeams] = useState<Team[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [currentTeam, setCurrentTeam] = useState(null);
+  const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [assignedSchools, setAssignedSchools] = useState({});
-  const [selectedSchools, setSelectedSchools] = useState([]);
+  const [assignedSchools, setAssignedSchools] = useState<AssignedSchools>({});
+  const [selectedSchools, setSelectedSchools] = useState<number[]>([]);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   // Load teams from localStorage
   useEffect(() => {
@@ -64,15 +137,22 @@ const page = () => {
   );
 
   // Open modal for school assignment
-  const handleAssignSchools = (team) => {
+  const handleAssignSchools = (team: Team) => {
     setCurrentTeam(team);
+    
     // Initialize selected schools with any already assigned to this team
-    setSelectedSchools(assignedSchools[team.id] || []);
+    const teamAssignments = assignedSchools[team.id] || {};
+    setSelectedSchools(teamAssignments.schoolIds || []);
+    
+    // Set dates if they exist
+    setStartDate(teamAssignments.startDate ? new Date(teamAssignments.startDate) : new Date());
+    setEndDate(teamAssignments.endDate ? new Date(teamAssignments.endDate) : null);
+    
     setShowModal(true);
   };
 
   // Toggle school selection
-  const toggleSchoolSelection = (schoolId) => {
+  const toggleSchoolSelection = (schoolId: number) => {
     setSelectedSchools(prev => {
       if (prev.includes(schoolId)) {
         return prev.filter(id => id !== schoolId);
@@ -82,12 +162,37 @@ const page = () => {
     });
   };
 
-  // Save school assignments
+  // Save school assignments with date range
   const handleSaveAssignments = () => {
-    // Update assigned schools
+    // Validate dates
+    if (!startDate) {
+      alert("Please select a start date");
+      return;
+    }
+    
+    if (!endDate) {
+      alert("Please select an end date");
+      return;
+    }
+    
+    if (startDate > endDate) {
+      alert("End date must be after start date");
+      return;
+    }
+
+    if (!currentTeam) {
+      alert("No team selected");
+      return;
+    }
+    
+    // Update assigned schools with dates
     const updatedAssignments = {
       ...assignedSchools,
-      [currentTeam.id]: selectedSchools
+      [currentTeam.id]: {
+        schoolIds: selectedSchools,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      }
     };
     
     // Save to localStorage
@@ -99,8 +204,12 @@ const page = () => {
     setCurrentTeam(null);
   };
 
-  // Get school names for display
-  const getSchoolNamesByIds = (schoolIds) => {
+  // Get school names for display (used in tooltip or expanded view)
+  const getSchoolNamesByIds = (schoolIds: number[]) => {
+    if (!schoolIds || schoolIds.length === 0) {
+      return '';
+    }
+    
     return schoolIds
       .map(id => schoolsData.find(school => school.id === id)?.name)
       .filter(Boolean)
@@ -108,7 +217,8 @@ const page = () => {
   };
 
   // Format date for display
-  const formatDate = (dateString) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Not set';
     try {
       return new Date(dateString).toLocaleDateString();
     } catch (e) {
@@ -116,69 +226,152 @@ const page = () => {
     }
   };
 
+  // Transform teams data for MantineReactTable
+  const tableData = useMemo(() => {
+    return teams.map(team => {
+      const teamAssignment = assignedSchools[team.id] || {};
+      return {
+        id: team.id,
+        name: team.name,
+        members: team.members,
+        startDate: teamAssignment.startDate || '',
+        endDate: teamAssignment.endDate || '',
+        schoolIds: teamAssignment.schoolIds || [],
+        schoolsCount: teamAssignment.schoolIds?.length || 0,
+        schools: getSchoolNamesByIds(teamAssignment.schoolIds || []),
+      };
+    });
+  }, [teams, assignedSchools]);
+
+  // Define the columns for MantineReactTable
+  const columns = useMemo<MRT_ColumnDef<any>[]>(
+    () => [
+      // {
+      //   accessorKey: 'id',
+      //   header: 'Team ID',
+      //   size: 80,
+      // },
+      {
+        accessorKey: 'name',
+        header: 'Team Name',
+        size: 180,
+      },
+      {
+        accessorKey: 'members',
+        header: 'Team Members',
+        size: 200,
+        Cell: ({ cell }) => {
+          const members = cell.getValue<TeamMember[]>();
+          return (
+            <ul className="list-disc list-inside text-sm">
+              {members.map(member => (
+                <li key={member.id}>{member.name}</li>
+              ))}
+            </ul>
+          );
+        },
+      },
+      {
+        accessorKey: 'startDate',
+        header: 'Start Date',
+        size: 130,
+        Cell: ({ cell }) => formatDate(cell.getValue<string>()),
+      },
+      {
+        accessorKey: 'endDate',
+        header: 'End Date',
+        size: 130,
+        Cell: ({ cell }) => formatDate(cell.getValue<string>()),
+      },
+      {
+        accessorKey: 'schoolsCount',
+        header: 'Schools Count',
+        size: 120,
+      },
+      {
+        accessorKey: 'schools',
+        header: 'Assigned Schools',
+        size: 80,
+        Cell: ({ cell, row }) => {
+          const schools = cell.getValue<string>();
+          const count = row.original.schoolsCount;
+          
+          if (count === 0) {
+            return <span className="text-gray-400 text-sm">No schools assigned</span>;
+          }
+          
+          // Show first school and +X more if many schools
+          const schoolsList = schools.split(', ');
+          const firstSchool = schoolsList[0];
+          
+          if (schoolsList.length > 1) {
+            return (
+              <div className="text-sm">
+                <span>{firstSchool}</span>
+                <span className="ml-1 text-blue-500">
+                  +{schoolsList.length - 1} more
+                </span>
+              </div>
+            );
+          }
+          
+          return <span className="text-sm">{schools}</span>;
+        },
+      },
+      {
+
+        header: 'Actions',
+        size: 80,
+        enableSorting: false,
+        enableColumnFilter: false,
+        Cell: ({ row }) => (
+          <Button
+            onClick={() => handleAssignSchools(teams.find(t => t.id === row.original.id) as Team)}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+          >
+            Assign Schools
+          </Button>
+        ),
+      },
+    ],
+    [teams]
+  );
+
+  // Configure the Mantine React Table
+  const table = useMantineReactTable({
+    columns,
+    data: tableData,
+    enableColumnFilters: true,
+    enableSorting: true,
+    enablePagination: true,
+    initialState: {
+      pagination: { pageSize: 10, pageIndex: 0 },
+      sorting: [{ id: 'id', desc: false }],
+    },
+    mantineTableProps: {
+      striped: true,
+      highlightOnHover: true,
+    },
+   
+  });
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center text-blue-500">Team Inspection Assignment</h1>
-      
+
+      <h1 className="text-xl font-bold text-blue-500 py-6">Team Inspection Assignment</h1>
+
+
       {teams.length === 0 ? (
         <div className="text-center py-10 bg-white rounded-lg shadow-md">
           <p className="text-gray-500">No teams found. Please create teams first.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
-            <thead className="bg-blue-500 text-white">
-              <tr>
-                <th className="py-3 px-4 text-left">Team ID</th>
-                <th className="py-3 px-4 text-left">Team Name</th>
-                <th className="py-3 px-4 text-left">Members</th>
-                <th className="py-3 px-4 text-left">StartDate</th>
-                <th className="py-3 px-4 text-left">EndDate</th>
-                <th className="py-3 px-4 text-left">Assigned Schools</th>
-                <th className="py-3 px-4 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {teams.map((team) => (
-                <tr key={team.id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">{team.id}</td>
-                  <td className="py-3 px-4 font-medium">{team.name}</td>
-                  <td className="py-3 px-4">
-                    <ul className="list-disc list-inside text-sm">
-                      {team.members.map(member => (
-                        <li key={member.id}>{member.name}</li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td className="py-3 px-4 text-sm">{formatDate(team.createdAt)}</td>
-                  <td className="py-3 px-4 text-sm">20/09/2025</td>
-                  <td className="py-3 px-4">
-                    {assignedSchools[team.id]?.length > 0 ? (
-                      <span className="text-sm">
-                        {getSchoolNamesByIds(assignedSchools[team.id])}
-                      </span>
-                    ) : (
-                      <span className="text-gray-400 text-sm">No schools assigned</span>
-                    )}
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <button
-                      onClick={() => handleAssignSchools(team)}
-                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-                    >
-                      Assign Schools
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <MantineReactTable table={table} />
       )}
 
-      {/* School Assignment Modal */}
+      {/* School Assignment Modal with Date Pickers */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-blue-500">
@@ -190,6 +383,20 @@ const page = () => {
               >
                 ✕
               </button>
+            </div>
+
+            {/* Date Range Selector */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <DatePicker 
+                date={startDate} 
+                setDate={setStartDate} 
+                label="Inspection Start Date" 
+              />
+              <DatePicker 
+                date={endDate} 
+                setDate={setEndDate} 
+                label="Inspection End Date" 
+              />
             </div>
 
             <div className="mb-4">
@@ -260,6 +467,7 @@ const page = () => {
                 <button
                   onClick={handleSaveAssignments}
                   className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  disabled={!startDate || !endDate || selectedSchools.length === 0}
                 >
                   Save Assignments
                 </button>
@@ -272,4 +480,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default TeamAssignmentPage;
