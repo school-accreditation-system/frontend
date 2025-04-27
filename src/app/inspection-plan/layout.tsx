@@ -6,11 +6,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <main className="flex ">
+    <main className="flex overflow-hidden h-screen">
         <Sidebar />
-      <div className="w-full">
+      <div className="w-full overflow-y-scroll">
         <Header />
+        <div className="overflow-y-scroll">
+
         {children}
+        </div>
         </div>
     </main>
   );

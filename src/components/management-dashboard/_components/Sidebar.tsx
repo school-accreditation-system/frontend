@@ -35,12 +35,12 @@ const MENU_ITEMS = [
   //   link: "/management-dashboard/team",
   //   icon: <FaUsers className="h-5 w-5" />
   // },
-  { 
-    id: 5, 
-    name: "Settings", 
-    link: "/management-dashboard/settings",
-    icon: <MdOutlineSettings className="h-5 w-5" />
-  },
+  // { 
+  //   id: 5, 
+  //   name: "Settings", 
+  //   link: "/management-dashboard/settings",
+  //   icon: <MdOutlineSettings className="h-5 w-5" />
+  // },
   { 
     id: 6, 
     name: "Logout", 

@@ -123,7 +123,7 @@ const Table = ({ data = [] }: TableProps) => {
                 onClick={() => handleViewDetails(inspection.id)}
                 className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
               >
-                View
+                View more
               </button>
               
               {/* {inspection.inspectionStatus !== 'Completed' && (

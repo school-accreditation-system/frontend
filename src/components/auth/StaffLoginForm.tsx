@@ -54,22 +54,24 @@ export const StaffLoginForm = () => {
 
     try {
       // FIXME: Remove this delay when API is implemented
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+      
       const EMPLOYEE_DATA = [
-        { id: 1, email: "analyst@gmail.com", password: "Password123",role: "analyst" },
-        { id: 2, email: "inspector@gmail.com", password: "Password123" ,role: "inspector" },
-        { id: 3, email: "division@gmail.com", password: "Password123",role: "division"  },
-        { id: 4, email: "hod@gmail.com", password: "Password123",role: "hod"  },
-        { id: 5, email: "director@gmail.com", password: "Password123",role: "director"  },
+        { id: 1, email: "analyst@gmail.com", password: "Password123",role: "analyst",name:"Rugwiza" },
+        { id: 2, email: "inspector@gmail.com", password: "Password123" ,role: "inspector",name:"Ngabo" },
+        { id: 3, email: "division@gmail.com", password: "Password123",role: "division",name:"Rukundo"  },
+        { id: 4, email: "hod@gmail.com", password: "Password123",role: "hod",name:"Mugisha"  },
+        { id: 5, email: "director@gmail.com", password: "Password123",role: "director",name:"Uwase"  },
       ];
       let loggedInUser = null;
-
+      
       // TODO: Replace with actual API call to authenticate staff
       console.log("Login data:", data);
       loggedInUser = EMPLOYEE_DATA.find(
         (user) => user.email === data.email && user.password === data.password
       );
+      console.log("Logged in user:", loggedInUser);
+      localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       if (!loggedInUser) {
         <Alert>
           <Terminal className="h-4 w-4" />
@@ -79,7 +81,6 @@ export const StaffLoginForm = () => {
           </AlertDescription>
         </Alert>;
       }
-      localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
       if (loggedInUser.email == "analyst@gmail.com") {
         router.push("/inspection-plan");
       } else if (loggedInUser.email == "inspector@gmail.com") {

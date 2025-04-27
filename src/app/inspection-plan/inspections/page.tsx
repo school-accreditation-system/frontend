@@ -6,35 +6,35 @@ import React, { useState, useEffect } from "react";
 const INSPECTIONS_DATA = [
   {
     id: 1,
-    teamName: "Team Alpha",
+    teamName: "Kayonza",
     inspectionDate: "2023-10-01",
     inspectionType: "Annual",
     inspectionStatus: "Completed",
   },
   {
     id: 2,
-    teamName: "Team Beta",
+    teamName: "Rubavi",
     inspectionDate: "2023-10-15",
     inspectionType: "Follow-up",
     inspectionStatus: "Pending",
   },
   {
     id: 3,
-    teamName: "Team Gamma",
+    teamName: "Gasabo",
     inspectionDate: "2023-11-05",
     inspectionType: "Special",
     inspectionStatus: "In Progress",
   },
   {
     id: 4,
-    teamName: "Team Alpha",
+    teamName: "Nyarugenge",
     inspectionDate: "2023-11-20",
     inspectionType: "Annual",
     inspectionStatus: "Scheduled",
   },
   {
     id: 5,
-    teamName: "Team Delta",
+    teamName: "Nyaruguru",
     inspectionDate: "2023-12-03",
     inspectionType: "Follow-up",
     inspectionStatus: "Completed",
@@ -52,7 +52,7 @@ const page = () => {
 
   return (
     <div className="p-10">
-      <h1 className="text-2xl font-bold mb-6 text-blue-600">Inspection Plan</h1>
+      <h1 className="text-2xl font-bold mb-6 text-blue-600">Inspections</h1>
       {data ? <Table data={data} /> : <p>Loading inspection data...</p>}
     </div>
   );
