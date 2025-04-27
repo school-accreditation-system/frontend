@@ -109,21 +109,54 @@ const TeamAssignmentPage = () => {
     school.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Open modal for school assignment
   const handleAssignSchools = (team: Team) => {
+    if (!team || typeof team.id !== 'number') {
+      console.error('Invalid team provided to handleAssignSchools');
+      return;
+    }
+  
     setCurrentTeam(team);
     
-    // Initialize selected schools with any already assigned to this team
-    const teamAssignments = assignedSchools[team.id] || {};
-    setSelectedSchools(teamAssignments.schoolIds || []);
-    
-    // Set dates if they exist
-    setStartDate(teamAssignments.startDate ? new Date(teamAssignments.startDate) : new Date());
-    setEndDate(teamAssignments.endDate ? new Date(teamAssignments.endDate) : null);
+    try {
+      // Get existing assignments with proper type checking
+      const teamAssignment = assignedSchools[team.id] || {};
+      
+      // Safely extract school IDs with proper array check
+      let schoolIds: number[] = [];
+      if (teamAssignment.schoolIds && Array.isArray(teamAssignment.schoolIds)) {
+        schoolIds = teamAssignment.schoolIds;
+      }
+      setSelectedSchools(schoolIds);
+      
+      // Set both dates consistently with sensible defaults
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      // Properly parse dates with error handling
+      try {
+        setStartDate(teamAssignment.startDate ? new Date(teamAssignment.startDate) : today);
+      } catch (e) {
+        console.error('Error parsing start date, using default', e);
+        setStartDate(today);
+      }
+      
+      try {
+        setEndDate(teamAssignment.endDate ? new Date(teamAssignment.endDate) : tomorrow);
+      } catch (e) {
+        console.error('Error parsing end date, using default', e);
+        setEndDate(tomorrow);
+      }
+    } catch (error) {
+      console.error('Error preparing school assignments form:', error);
+      // Set safe defaults
+      setSelectedSchools([]);
+      setStartDate(new Date());
+      setEndDate(new Date(new Date().setDate(new Date().getDate() + 1)));
+    }
     
     setShowModal(true);
-  };
-
+  }
   // Toggle school selection
   const toggleSchoolSelection = (schoolId: number) => {
     setSelectedSchools(prev => {
@@ -135,47 +168,67 @@ const TeamAssignmentPage = () => {
     });
   };
 
-  // Save school assignments with date range
   const handleSaveAssignments = () => {
-    // Validate dates
-    if (!startDate) {
-      alert("Please select a start date");
-      return;
-    }
-    
-    if (!endDate) {
-      alert("Please select an end date");
-      return;
-    }
-    
-    if (startDate > endDate) {
-      alert("End date must be after start date");
-      return;
-    }
-
-    if (!currentTeam) {
-      alert("No team selected");
-      return;
-    }
-    
-    // Update assigned schools with dates
-    const updatedAssignments = {
-      ...assignedSchools,
-      [currentTeam.id]: {
-        schoolIds: selectedSchools,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString()
+    try {
+      // Validate current team
+      if (!currentTeam || typeof currentTeam.id !== 'number') {
+        alert("Invalid team selection");
+        return;
       }
-    };
-    
-    // Save to localStorage
-    localStorage.setItem('assignedSchools', JSON.stringify(updatedAssignments));
-    setAssignedSchools(updatedAssignments);
-    
-    // Close modal
-    setShowModal(false);
-    setCurrentTeam(null);
-  };
+      
+      // Validate dates exist and are valid Date objects
+      if (!startDate || !(startDate instanceof Date) || isNaN(startDate.getTime())) {
+        alert("Please select a valid start date");
+        return;
+      }
+      
+      if (!endDate || !(endDate instanceof Date) || isNaN(endDate.getTime())) {
+        alert("Please select a valid end date");
+        return;
+      }
+      
+      // Validate date range
+      if (startDate >= endDate) {
+        alert("End date must be after start date");
+        return;
+      }
+      
+      // Validate schools selection
+      if (!Array.isArray(selectedSchools) || selectedSchools.length === 0) {
+        alert("Please select at least one school");
+        return;
+      }
+      
+      // Update assigned schools with dates
+      const updatedAssignments = {
+        ...assignedSchools,
+        [currentTeam.id]: {
+          schoolIds: selectedSchools,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString()
+        }
+      };
+      
+      // Save to localStorage with error handling
+      try {
+        localStorage.setItem('assignedSchools', JSON.stringify(updatedAssignments));
+        setAssignedSchools(updatedAssignments);
+        
+        // Close modal and reset form state
+        setShowModal(false);
+        setCurrentTeam(null);
+        setSelectedSchools([]);
+        setStartDate(null);
+        setEndDate(null);
+      } catch (e) {
+        console.error('Error saving to localStorage:', e);
+        alert("Failed to save assignments. Please try again.");
+      }
+    } catch (error) {
+      console.error('Error in handleSaveAssignments:', error);
+      alert("An unexpected error occurred. Please try again.");
+    }
+  }
 
   // Get school names for display (used in tooltip or expanded view)
   const getSchoolNamesByIds = (schoolIds: number[]) => {
@@ -360,17 +413,40 @@ const TeamAssignmentPage = () => {
 
             {/* Date Range Selector */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <DatePicker 
-                date={startDate} 
-                setDate={setStartDate} 
-                label="Inspection Start Date" 
-              />
-              <DatePicker 
-                date={endDate} 
-                setDate={setEndDate} 
-                label="Inspection End Date" 
-              />
-            </div>
+  <DatePicker 
+    date={startDate} 
+    setDate={(date) => {
+      if (date) {
+        setStartDate(date);
+        // If end date is null or before start date, set it to day after start date
+        if (!endDate || date >= endDate) {
+          const newEndDate = new Date(date);
+          newEndDate.setDate(newEndDate.getDate() + 1);
+          setEndDate(newEndDate);
+        }
+      } else {
+        setStartDate(null);
+      }
+    }} 
+    label="Inspection Start Date" 
+  />
+  <DatePicker 
+    date={endDate} 
+    setDate={(date) => {
+      if (date) {
+        // Only allow end dates after start date
+        if (startDate && date <= startDate) {
+          alert("End date must be after start date");
+          return;
+        }
+        setEndDate(date);
+      } else {
+        setEndDate(null);
+      }
+    }} 
+    label="Inspection End Date" 
+  />
+</div>
 
             <div className="mb-4">
               <input
