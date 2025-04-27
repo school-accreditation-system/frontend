@@ -80,33 +80,7 @@ const DashboardPage = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-blue-500 text-center">Inspector Dashboard</h1>
-      
-      {/* Team Information */}
-      {currentTeam && (
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-lg font-semibold text-blue-600 mb-2">Team Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Team Name:</p>
-              <p className="font-medium">{currentTeam.name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Members:</p>
-              <ul className="list-disc list-inside">
-                {currentTeam.members.map(member => (
-                  <li key={member.id} className="text-sm">{member.name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Active Since:</p>
-              <p className="text-sm">
-                {new Date(currentTeam.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+   
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

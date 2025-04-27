@@ -10,7 +10,8 @@ import {
 export type InspectionItem = {
   id: number;
   teamName: string;
-  inspectionDate: string;
+  status:string;
+  createdAt: string;
   inspectionType: string;
   inspectionStatus: string;
 };
@@ -52,12 +53,12 @@ const Table = ({ data = [] }: TableProps) => {
         size: 60,
       },
       {
-        accessorKey: 'teamName',
+        accessorKey: 'name',
         header: 'Team Name',
         size: 150,
       },
       {
-        accessorKey: 'inspectionDate',
+        accessorKey: 'createdAt',
         header: 'Date',
         size: 120,
         // Add date formatting if needed
@@ -66,13 +67,13 @@ const Table = ({ data = [] }: TableProps) => {
           return date.toLocaleDateString();
         },
       },
+      // {
+      //   accessorKey: 'status',
+      //   header: 'Type',
+      //   size: 120,
+      // },
       {
-        accessorKey: 'inspectionType',
-        header: 'Type',
-        size: 120,
-      },
-      {
-        accessorKey: 'inspectionStatus',
+        accessorKey: 'status',
         header: 'Status',
         size: 120,
         // Add custom cell rendering for status
@@ -81,7 +82,7 @@ const Table = ({ data = [] }: TableProps) => {
           let bgColor = 'bg-gray-100';
           let textColor = 'text-gray-800';
           
-          switch (status) {
+          switch (status?.toLowerCase()) {
             case 'Completed':
               bgColor = 'bg-green-100';
               textColor = 'text-green-800';
@@ -160,7 +161,7 @@ const Table = ({ data = [] }: TableProps) => {
     enablePagination: true,
     initialState: {
       pagination: { pageSize: 10, pageIndex: 0 },
-      sorting: [{ id: 'inspectionDate', desc: true }],
+      // sorting: [{ id: 'inspectionDate', desc: true }],
     },
     mantineTableProps: {
       striped: true,

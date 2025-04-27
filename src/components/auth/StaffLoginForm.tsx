@@ -64,23 +64,21 @@ export const StaffLoginForm = () => {
       ];
       let loggedInUser = null;
       
-      // TODO: Replace with actual API call to authenticate staff
-      console.log("Login data:", data);
       loggedInUser = EMPLOYEE_DATA.find(
         (user) => user.email === data.email && user.password === data.password
       );
-      console.log("Logged in user:", loggedInUser);
+
       localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      if (!loggedInUser) {
-        <Alert>
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>Heads up!</AlertTitle>
-          <AlertDescription>
-            You can add components and dependencies to your app using the cli.
-          </AlertDescription>
-        </Alert>;
-      }
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      // if (!loggedInUser) {
+      //   <Alert>
+      //     <Terminal className="h-4 w-4" />
+      //     <AlertTitle>Heads up!</AlertTitle>
+      //     <AlertDescription>
+      //       You can add components and dependencies to your app using the cli.
+      //     </AlertDescription>
+      //   </Alert>;
+      // }
       if (loggedInUser.email == "analyst@gmail.com") {
         router.push("/inspection-plan");
       } else if (loggedInUser.email == "inspector@gmail.com") {
@@ -92,16 +90,8 @@ export const StaffLoginForm = () => {
       ) {
         router.push("/management-dashboard");
       }
-      //  if(data.email == "john@gmail.com" && data.password == "Password123"){
-
-      //    // FIXME: Redirect to staff dashboard on successful login
-      //    router.push('/inspector-dashboard');
-      //   }else{
-      //     router.push("/inspection-plan")
-      //   }
+     
     } catch (error) {
-      console.error("Login error:", error);
-      // FIXME: Handle login error here
       setFormError("Invalid email or password. Please try again.");
     } finally {
       setIsLoading(false);
