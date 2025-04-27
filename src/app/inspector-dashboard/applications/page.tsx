@@ -84,7 +84,7 @@ const initialInspections = schoolsData.map(school => ({
 // Hardcoded team for testing
 const hardcodedTeam = {
   id: 4,
-  name: "Team 4",
+  name: "Team Nyanza",
   members: [
     { id: 1, name: "Tuyishime Aline" },
     { id: 2, name: "Uwase Marie" },

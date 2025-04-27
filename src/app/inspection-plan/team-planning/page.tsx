@@ -313,6 +313,7 @@ const TeamManagement = () => {
         id: newId,
         name: teamName || `Team ${newId}`,
         createdAt: new Date().toISOString(),
+        status: "pending",
         members: selectedEmployees
       };
       

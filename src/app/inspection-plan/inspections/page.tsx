@@ -46,8 +46,9 @@ const page = () => {
   const [data, setData] = useState(INSPECTIONS_DATA);
   
   useEffect(() => {
-
-    setData(INSPECTIONS_DATA);
+    const teams = JSON.parse(localStorage.getItem("teams") || "[]");
+    setData(teams)
+    // setData(INSPECTIONS_DATA);
   }, []);
 
   return (

@@ -37,11 +37,11 @@ const DashboardPage = () => {
         // Mock data for demonstration
         const team = {
           id: 1,
-          name: "Inspection Team Alpha",
+          name: "Team Nyanza",
           members: [
-            { id: 1, name: "John Doe" },
-            { id: 2, name: "Jane Smith" },
-            { id: 3, name: "Robert Johnson" }
+            { id: 1, name: "Tuyishime Aline" },
+            { id: 2, name: "Uwase Marie" },
+            { id: 3, name: "Mukashyaka Diane" },
           ],
           createdAt: "2023-01-15"
         };
