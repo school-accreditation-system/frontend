@@ -1,5 +1,25 @@
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+
 // DatePicker component based on shadcn/ui
 const DatePicker = ({ date, setDate, label }) => {
+  // Format date for display
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Not set";
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch (e) {
+      return "Invalid date";
+    }
+  };
   return (
     <div className="flex flex-col space-y-1">
       <label className="text-sm font-medium text-gray-700">{label}</label>
