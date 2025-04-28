@@ -1,12 +1,14 @@
+import { AuthProvider } from "@/components/auth/AuthContext.tsx";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
-import { Footer } from "@/components/layout/Footer";
-import { Toaster } from "@/components/ui/toaster";
 import { StoreProvider } from "./store";
 
-import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { SchoolProvider } from "@/components/auth/SchoolContext.tsx";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import GlobalSchoolDialog from "@/components/school-finder/GlobalSchoolDialog.tsx";
 
 const ibmPlexSans = IBM_Plex_Sans({
   weight: ['300', '400', '500', '600', '700'],
@@ -25,19 +27,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  return ( 
+  return (
     <html lang="en">
       <body
         className={`${ibmPlexSans.variable} antialiased min-h-screen flex flex-col`}
       >
         <NuqsAdapter>
-          <ReactQueryProvider>
-            <main className="flex-1">
-              <StoreProvider>
-                {children}
-              </StoreProvider>
-            </main>
-          </ReactQueryProvider>
+          <AuthProvider>
+            <SchoolProvider>
+              <ReactQueryProvider>
+                <main className="flex-1">
+                  <StoreProvider>
+                    {children}
+                  </StoreProvider>
+                  {/* <GlobalSchoolDialog /> */}
+                </main>
+              </ReactQueryProvider>
+            </SchoolProvider>
+          </AuthProvider>
         </NuqsAdapter>
         {/* <Footer /> */}
         <Toaster />

@@ -31,7 +31,7 @@ const SchoolAssessmentForm = () => {
         goToNextStep,
         goToPreviousStep,
         handleSubmit,
-        setAssessmentSteps
+        setAssessmentStepsArray
     } = useFormContext();
     const { data: areas, isLoading: areasLoading } = useGetAreas();
     const [assessmentSteps, setStepsArray] = useState<Step[]>([
@@ -74,9 +74,9 @@ const SchoolAssessmentForm = () => {
             ];
 
             setStepsArray(newSteps);
-            setAssessmentSteps(areas.length + 1);
+            setAssessmentStepsArray(newSteps);
         }
-    }, [areas, setAssessmentSteps]);
+    }, [areas, setAssessmentStepsArray]);
 
     const currentStepData = assessmentSteps[currentStep] || assessmentSteps[0];
     const CurrentStepComponent = currentStepData.component;
@@ -167,7 +167,6 @@ const SchoolAssessmentForm = () => {
                                                 });
                                             }
                                             : goToNextStep}
-                                        // onSubmit={isLastStep ? handleSubmit : goToNextStep}
                                         totalSteps={assessmentSteps.length}
                                         areaId={currentStepData.areaId}
                                     />

@@ -1,15 +1,16 @@
+/* eslint-disable max-nested-callbacks */
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Mail, CheckCircle, RefreshCw, Timer, AlertTriangle, LockKeyhole } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { School, VerifyOtpStepProps } from '../types';
+import { Card, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { schoolsData } from '@/constants/schoolsData';
+import { AlertTriangle, ArrowLeft, CheckCircle, LockKeyhole, Mail, RefreshCw, Timer } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { School, VerifyOtpStepProps } from '../types';
 
-export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({ 
+export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
   email,
   onVerify,
   onBack
@@ -27,11 +28,11 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
       setCanResend(true);
       return;
     }
-    
+
     const timer = setTimeout(() => {
       setTimeLeft(timeLeft - 1);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, [timeLeft]);
 
@@ -47,22 +48,22 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
       setError('Please enter the complete 6-digit verification code');
       return;
     }
-    
+
     setIsVerifying(true);
     setError('');
-    
+
     // TODO: Implement the API call to verify the OTP (call backend here)
     setTimeout(() => {
       // FIXME: Remove this once the API call is implemented
       if (otpCode === '123456') {
         setIsSuccess(true);
-          
-          // FIXME: Remove this once the API call is implemented
-          // Wait a moment to show success state before proceeding
+
+        // FIXME: Remove this once the API call is implemented
+        // Wait a moment to show success state before proceeding
         setTimeout(() => {
           // FIXME: Remove this once the API call is implemented
           const existingSchool = schoolsData.find(s => s.email === email);
-          
+
           const verifiedSchool: School = existingSchool || {
             id: Date.now(), // In a real app, this would come from the backend
             name: "Newly Registered School",
@@ -72,7 +73,7 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
             schoolIdentification: false,
             selfAssessment: false,
           };
-          
+
           onVerify(verifiedSchool);
         }, 1000);
       } else {
@@ -87,7 +88,7 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
     setTimeLeft(120);
     setCanResend(false);
     setError('');
-    
+
     // Simulate API call
     setTimeout(() => {
       console.log("OTP resent to", email);
@@ -106,7 +107,7 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
               <div className="flex-1">
                 <h4 className="font-medium text-sm text-blue-800 mb-1">Verification Code Sent</h4>
                 <p className="text-sm text-blue-700">
-                  We've sent a 6-digit verification code to <span className="font-medium block mt-1">{email}</span>
+                  We&apos;ve sent a 6-digit verification code to <span className="font-medium block mt-1">{email}</span>
                 </p>
               </div>
             </div>
@@ -121,13 +122,13 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
                 </p>
               </div>
             </div>
-            
+
             <Card className="border-0 shadow-sm">
               <CardContent className="p-4 sm:p-5 flex flex-col items-center">
                 <div className="bg-primary/10 p-2.5 sm:p-3 rounded-full mb-3">
                   <LockKeyhole className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
-                
+
                 <Input
                   value={otpCode}
                   onChange={(e) => {
@@ -139,16 +140,16 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
                   className="text-center text-lg sm:text-xl tracking-wider py-4 sm:py-6 font-mono max-w-[180px] sm:max-w-[200px]"
                   autoFocus
                 />
-                
+
                 <CardDescription className="mt-2 text-center text-xs sm:text-sm">
                   Enter the 6-digit verification code
                 </CardDescription>
               </CardContent>
-              
+
               <CardFooter className="flex justify-center pb-4 sm:pb-5 pt-0">
                 {canResend ? (
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     onClick={handleResendCode}
                     className="text-xs gap-1 hover:cursor-pointer hover:bg-primary/80"
                     size="sm"
@@ -158,19 +159,19 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
                   </Button>
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    Didn't receive the code? You can resend in {formatTime(timeLeft)}
+                    Didn&apos;t receive the code? You can resend in {formatTime(timeLeft)}
                   </p>
                 )}
               </CardFooter>
             </Card>
-            
+
             {error && (
               <Alert variant="destructive" className="bg-red-50 border-red-200">
                 <AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-600" />
                 <AlertDescription className="text-xs sm:text-sm text-red-700">{error}</AlertDescription>
               </Alert>
             )}
-            
+
             {/* FIXME: Remove this once the API call is implemented */}
             <Card className="border-0 bg-muted/50">
               <CardContent className="p-2.5 sm:p-3 text-xs text-muted-foreground">
@@ -178,11 +179,11 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
                 <p>Use code <span className="font-mono font-bold">123456</span> to simulate a successful verification.</p>
               </CardContent>
             </Card>
-            
+
             <div className="flex justify-between items-center pt-4 border-t">
-              <Button 
+              <Button
                 type="button"
-                variant="ghost" 
+                variant="ghost"
                 onClick={onBack}
                 className=" hover:cursor-pointer hover:bg-gray-600 gap-1 text-xs sm:text-sm"
                 size="sm"
@@ -191,7 +192,7 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
                 <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Back
               </Button>
-              <Button 
+              <Button
                 onClick={handleVerify}
                 disabled={isVerifying || otpCode.length < 6}
                 className="gap-1 text-xs sm:text-sm hover:cursor-pointer hover:bg-primary/80"
@@ -210,7 +211,7 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
           </div>
           <h3 className="text-lg sm:text-xl font-semibold text-green-800">Verification Successful</h3>
           <p className="text-sm sm:text-base text-muted-foreground">
-            Your school has been verified successfully. 
+            Your school has been verified successfully.
             You will now be redirected to continue with your request.
           </p>
         </div>
