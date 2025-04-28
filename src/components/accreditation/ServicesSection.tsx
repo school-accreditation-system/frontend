@@ -60,7 +60,7 @@ export const ServicesSection = () => {
 
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {SERVICES.map((service, index) => (
+            {SERVICES.map((service) => (
               <div
                 key={service.title}
                 className="flex flex-col h-full rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg relative"

@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
+import { useSchool } from "@/components/auth/SchoolContext";
 
 
 export const SchoolSearchStep = ({
@@ -37,6 +38,7 @@ export const SchoolSearchStep = ({
     isLoading,
     error: schoolsError,
   } = useGetSchools(debouncedSearchQuery);
+  const { setSchool } = useSchool();
 
   const handleSchoolSelect = (school: SchoolDTO) => {
     setSelectedSchool(school);
@@ -46,12 +48,9 @@ export const SchoolSearchStep = ({
   const handleContinue = () => {
     if (!selectedSchool) return;
     setIsVerifying(true);
-    localStorage.setItem("schoolId", selectedSchool.id);
-    // TODO: Change this when email verification is implemented from the backend
+    setSchool(selectedSchool);
     setTimeout(() => {
-      // Simulate API call to send verification code
       try {
-        // Check if the school has an email
         if (!selectedSchool.email) {
           setVerificationError(
             "This school doesn&apos;t have a registered email address. Please contact support."
@@ -59,8 +58,6 @@ export const SchoolSearchStep = ({
           setIsVerifying(false);
           return;
         }
-
-        // Move to the OTP verification step
         onStartVerification(selectedSchool.email, selectedSchool);
         setIsVerifying(false);
       } catch (error) {
@@ -116,26 +113,26 @@ export const SchoolSearchStep = ({
           <Card className="border-0 shadow-none bg-blue-50/50 p-4 sm:p-6">
             <CardContent className="p-0 flex flex-col items-center">
               <div className="flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 bg-blue-100 rounded-full mb-3 sm:mb-4">
-          <SchoolIcon className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                <SchoolIcon className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
               </div>
               <p className="text-center text-sm sm:text-base text-muted-foreground">
-          Search for your school by name or school email to begin
+                Search for your school by name or school email to begin
               </p>
               <div className="flex items-center text-xs sm:text-sm text-primary/80 mt-3 sm:mt-4 gap-1.5 sm:gap-2 flex-wrap justify-center">
-          <span className="flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-primary text-white font-medium">
-            1
-          </span>
-          <span>Search School</span>
-          <span className="text-gray-300 mx-1 sm:mx-2">•</span>
-          <span className="flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-gray-200 text-gray-500 font-medium">
-            2
-          </span>
-          <span className="text-gray-400">Verify Email</span>
-          <span className="text-gray-300 mx-1 sm:mx-2">•</span>
-          <span className="flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-gray-200 text-gray-500 font-medium">
-            3
-          </span>
-          <span className="text-gray-400">Enter Code</span>
+                <span className="flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-primary text-white font-medium">
+                  1
+                </span>
+                <span>Search School</span>
+                <span className="text-gray-300 mx-1 sm:mx-2">•</span>
+                <span className="flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-gray-200 text-gray-500 font-medium">
+                  2
+                </span>
+                <span className="text-gray-400">Verify Email</span>
+                <span className="text-gray-300 mx-1 sm:mx-2">•</span>
+                <span className="flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-gray-200 text-gray-500 font-medium">
+                  3
+                </span>
+                <span className="text-gray-400">Enter Code</span>
               </div>
             </CardContent>
           </Card>

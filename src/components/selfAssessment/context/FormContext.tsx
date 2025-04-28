@@ -1,50 +1,65 @@
+/* eslint-disable max-nested-callbacks */
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { createContext, ReactNode, useContext, useState } from 'react';
-import type { FormContextType } from '../types/schema';
-import { saveFormData, getFormData, clearFormData } from '@/utils/storage';
 import { useToast } from '@/components/ui/use-toast';
+import { clearFormData, saveFormData } from '@/utils/storage';
+import { useRouter } from 'next/navigation';
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import type { FormContextType } from '../types/schema';
+import { useSchool } from '@/components/auth/SchoolContext.tsx';
+import { useSubmitAccreditation } from '@/hooks/useSelfAssessment';
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
+
+interface Step {
+    id: number;
+    title: string;
+    description: string;
+    component?: React.ComponentType<any>;
+    areaId?: string;
+}
 
 export function FormProvider({ children }: { children: ReactNode }) {
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [formErrors, setFormErrors] = useState<Record<string, any>>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [stepsWithErrors, setStepsWithErrors] = useState<number[]>([]);
+    const [steps, setSteps] = useState<Step[]>([]);
     const [assessmentSteps, setAssessmentSteps] = useState<number>(0);
+    const { mutate, isPending } = useSubmitAccreditation()
     const { toast } = useToast();
     const router = useRouter();
-    const searchParams = useSearchParams();
 
-    const schoolId = searchParams.get('schoolId');
-    const returnTo = searchParams.get('returnTo') || '/';
+    const setAssessmentStepsArray = useCallback((newSteps: Step[]) => {
+        setSteps(newSteps);
+        setAssessmentSteps(newSteps.length > 0 ? newSteps.length - 1 : 0);
+    }, []);
+    const { school } = useSchool();
 
-    const updateFormData = (step: number, data: any) => {
+    const updateFormData = useCallback((step: number, data: any) => {
         saveFormData(step, data);
         setFormData(prev => ({ ...prev, [step]: data }));
 
         if (stepsWithErrors.includes(step)) {
             setStepsWithErrors(prev => prev.filter(s => s !== step));
         }
-    };
+    }, [stepsWithErrors]);
 
-    const validateStep = async (step: number): Promise<boolean> => {
-        // Check if formData exists for this step
+    const validateStep = useCallback(async (step: number): Promise<boolean> => {
         if (!formData[step]) {
-            // Add to stepsWithErrors if not already there
             if (!stepsWithErrors.includes(step)) {
                 setStepsWithErrors(prev => [...prev, step]);
             }
             return false;
         }
 
+        if (stepsWithErrors.includes(step)) {
+            setStepsWithErrors(prev => prev.filter(s => s !== step));
+        }
         return true;
-    };
+    }, [formData, stepsWithErrors]);
 
-    const goToNextStep = async () => {
+    const goToNextStep = useCallback(async () => {
         const isValid = await validateStep(currentStep);
 
         if (isValid && currentStep < assessmentSteps) {
@@ -53,58 +68,73 @@ export function FormProvider({ children }: { children: ReactNode }) {
         }
 
         return false;
-    };
+    }, [currentStep, assessmentSteps, validateStep]);
 
-    const goToPreviousStep = () => {
+    const goToPreviousStep = useCallback(() => {
         setCurrentStep(prev => Math.max(prev - 1, 0));
-    };
+    }, []);
 
-    const handleSubmit = async () => {
-        setIsSubmitting(true);
-
-        try {
-            // Validate all steps
-            const stepsToValidate = Array.from({ length: assessmentSteps + 1 }, (_, i) => i);
-            const validationResults = await Promise.all(
-                stepsToValidate.map(step => validateStep(step))
-            );
-
-            const isValid = validationResults.every(Boolean);
-
-            if (!isValid) {
-                throw new Error('Please complete all required fields');
+    const getDynamicOptionIds = useCallback(() => {
+        const dynamicOptionIds: string[] = [];
+        steps.forEach(step => {
+            if (step.areaId) {
+                const stepData = formData[step.id];
+                if (stepData && typeof stepData === 'object') {
+                    Object.entries(stepData).forEach(([key, value]) => {
+                        if (!key.endsWith('_document') && value) {
+                            dynamicOptionIds.push(value as string);
+                        }
+                    });
+                }
             }
+        });
+        return dynamicOptionIds;
+    }, [steps, formData]);
 
-            // Get merged data instead of combining
-            const finalData = getFormData().merged || {};
+    const handleSubmit = useCallback(async (applicantData: any) => {
+        try {
+            const dynamicOptions = getDynamicOptionIds();
+            const typeOfRequestData = formData[0] || {};
 
-            console.log("Form data", finalData);
+            const dataToSubmit = {
+                applicant: applicantData,
+                options: dynamicOptions,
+                selectedCombination: typeOfRequestData.selectedCombination,
+                schoolId: school?.id,
+            };
 
-            // Here you would submit the data to your API
-            // const response = await fetch('/api/submit-assessment', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(finalData)
-            // });
+            console.log("Data to submit:", dataToSubmit);
 
-            // if (!response.ok) {
-            //     throw new Error('Failed to submit assessment');
-            // }
-            toast({
-                title: "Assessment submitted successfully",
-                description: "Thank you for submitting your assessment",
-                status: "success"
+            // Call the mutate function
+            await mutate(dataToSubmit, {
+                onSuccess: (data) => {
+                    toast({
+                        title: "Assessment submitted successfully",
+                        description: "Thank you for submitting your assessment. The inspection team will review your application and get back to you.",
+                        status: "success"
+                    });
+
+                    clearFormData();
+                    router.push(`/?success=true`);
+                },
+                onError: (error) => {
+                    console.error("Error during submission:", error);
+                    toast({
+                        title: "Submission Failed",
+                        description: error.response.data.message || "Could not submit the assessment. Please try again.",
+                        status: "error"
+                    });
+                }
             });
-
-            clearFormData();
-            router.push(`${returnTo}?schoolId=${schoolId}&formCompleted=true`);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error submitting form:", error);
-            // Handle error - could set an error state here
-        } finally {
-            setIsSubmitting(false);
+            toast({
+                title: "Submission Failed",
+                description: error.message || "Could not submit the assessment. Please try again.",
+                status: "error"
+            });
         }
-    };
+    }, [steps, formData, toast, router, getDynamicOptionIds, mutate]); // Ensure mutate is included in dependencies
 
     return (
         <FormContext.Provider value={{
@@ -112,7 +142,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
             setCurrentStep,
             formData,
             formErrors,
-            isSubmitting,
+            isSubmitting: isPending,
             stepsWithErrors,
             updateFormData,
             validateStep,
@@ -120,7 +150,9 @@ export function FormProvider({ children }: { children: ReactNode }) {
             goToPreviousStep,
             handleSubmit,
             assessmentSteps,
-            setAssessmentSteps
+            setAssessmentSteps,
+            steps,
+            setAssessmentStepsArray
         }}>
             {children}
         </FormContext.Provider>

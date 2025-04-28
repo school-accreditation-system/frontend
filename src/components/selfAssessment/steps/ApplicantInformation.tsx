@@ -10,7 +10,7 @@ import { User } from 'lucide-react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useRouter } from 'next/navigation';
+import { useFormContext } from '../context/FormContext';
 
 const applicantSchema = z.object({
     nationalId: z.string().trim().min(16, { message: "National ID is required" }).max(16, { message: "National ID must be 16 characters" }),
@@ -20,71 +20,53 @@ const applicantSchema = z.object({
     telephone: z.string().trim().min(1, { message: "Telephone number is required" })
 });
 
-interface ApplicantInformationProps {
-    formData: any;
-    updateFormData: (data: any) => void;
-    onPrevious: () => void;
-    onNext: () => Promise<boolean>;
-    currentStep: number;
-    totalSteps: number;
-    isSubmitting: boolean;
-    handleSubmit: (data: any) => void;
-}
-
-export function ApplicantInformation({
-    formData,
-    updateFormData,
-    onPrevious,
-    onNext,
-    isSubmitting
-}: ApplicantInformationProps) {
+export function ApplicantInformation() {
     const { toast } = useToast();
-    const router = useRouter();
+    const {
+        currentStep,
+        formData: allFormData,
+        updateFormData: contextUpdateFormData,
+        goToPreviousStep,
+        handleSubmit: contextHandleSubmit,
+        isSubmitting,
+        steps
+    } = useFormContext();
+
+    const stepId = steps.length > 0 ? steps[currentStep]?.id : currentStep;
+    const currentStepFormData = allFormData[stepId] || {};
+
     const {
         register,
         handleSubmit,
         setValue,
         control,
-        formState: { errors, isValid }
+        formState: { errors }
     } = useForm({
         resolver: zodResolver(applicantSchema),
-        defaultValues: formData || {
-            nationalId: "",
-            applicantName: "",
-            role: "Owner",
-            email: "",
-            telephone: ""
-        },
+        defaultValues: currentStepFormData,
         mode: "onChange"
     });
 
-    // Load existing data into form
     useEffect(() => {
-        if (formData && Object.keys(formData).length > 0) {
-            Object.entries(formData).forEach(([key, value]) => {
+        if (currentStepFormData && Object.keys(currentStepFormData).length > 0) {
+            Object.entries(currentStepFormData).forEach(([key, value]) => {
                 setValue(key as any, value || "");
             });
         }
-    }, [formData, setValue]);
+    }, [currentStepFormData, setValue]);
 
+    const onSubmit = async (data: any) => {
+        try {
+            contextUpdateFormData(stepId, data);
+            await contextHandleSubmit(data);
 
-    // Handle form submission
-    const onSubmit = (data: any) => {
-        updateFormData(data);
-        handleSubmit(formData);
-        toast({
-            title: "Success",
-            description: "Your application has been submitted successfully /n Please wait for the inspection team to review your application",
-            status: "success"
-        });
-        router.push(`/?message=success`);
-        onNext();
-    };
-
-    // Auto-save form data on change
-    const handleFormChange = () => {
-        const currentFormData = control._formValues;
-        updateFormData(currentFormData);
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to process applicant information before submitting.",
+                variant: "destructive",
+            });
+        }
     };
 
     return (
@@ -107,7 +89,7 @@ export function ApplicantInformation({
                 </CardHeader>
 
                 <CardContent className="p-6">
-                    <form onChange={handleFormChange} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         {/* National ID field */}
                         <div className="grid gap-2">
                             <Label htmlFor="nationalId" className="font-medium text-gray-700">National ID Number</Label>
@@ -211,7 +193,7 @@ export function ApplicantInformation({
                         <div className="flex justify-between pt-4 border-t mt-6">
                             <button
                                 type="button"
-                                onClick={onPrevious}
+                                onClick={goToPreviousStep}
                                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 flex items-center"
                             >
                                 Previous
@@ -222,7 +204,7 @@ export function ApplicantInformation({
                                 disabled={isSubmitting}
                                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-50 flex items-center"
                             >
-                                {isSubmitting ? 'Saving...' : 'Continue to Preview'}
+                                {isSubmitting ? 'Submitting...' : 'Submit Application'}
                             </button>
                         </div>
                     </form>
