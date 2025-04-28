@@ -4,20 +4,20 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const Page = ({ 
-  onSubmit, 
-  initialData = {}, 
+const Page = ({
+  onSubmit,
+  initialData = {},
   isEditing = false,
-  allowStatusEdit = false 
+  allowStatusEdit = false
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [attachments, setAttachments] = useState([]);
-  
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors }, 
-    reset 
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
   } = useForm({
     defaultValues: initialData
   });
@@ -51,24 +51,24 @@ const Page = ({
 
   const handleFormSubmit = async (data) => {
     setIsSubmitting(true);
-    
+
     try {
       // Create form data to handle file uploads
       const formData = new FormData();
-      
+
       // Add all form fields to formData
       Object.keys(data).forEach(key => {
         formData.append(key, data[key]);
       });
-      
+
       // Add attachments
       attachments.forEach(file => {
         formData.append("attachments", file);
       });
-      
+
       // Call the onSubmit function passed as prop
       await onSubmit(formData);
-      
+
       if (!isEditing) {
         // Reset form after successful submission
         reset();
@@ -107,7 +107,7 @@ const Page = ({
               <p className="mt-1 text-sm text-red-600">{errors.school_code.message}</p>
             )}
           </div>
-          
+
           <div>
             <label htmlFor="school_name" className="block text-sm font-medium text-gray-700 mb-1">
               School Name
@@ -276,6 +276,7 @@ const Page = ({
                 <path
                   d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
                   strokeWidth={2}
+                  // eslint-disable-next-line max-lines
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -356,7 +357,7 @@ const Page = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          className="px-6 py-2 bg-primary text-white font-medium hover:cursor-pointer rounded-md hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
         >
           {isSubmitting ? "Submitting..." : isEditing ? "Update Claim" : "Submit Claim"}
         </button>

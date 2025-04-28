@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { StoreProvider } from "./store";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import ReactQueryProvider from "@/providers/reactQueryProvider";
 
 const ibmPlexSans = IBM_Plex_Sans({
   weight: ['300', '400', '500', '600', '700'],
@@ -23,19 +24,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+
+  return ( 
     <html lang="en">
       <body
         className={`${ibmPlexSans.variable} antialiased min-h-screen flex flex-col`}
       >
         <NuqsAdapter>
-          <main className="flex-1">
-          <StoreProvider>
-            {children}
-          </StoreProvider>
-          </main>
+          <ReactQueryProvider>
+            <main className="flex-1">
+              <StoreProvider>
+                {children}
+              </StoreProvider>
+            </main>
+          </ReactQueryProvider>
         </NuqsAdapter>
-        <Footer />
+        {/* <Footer /> */}
         <Toaster />
       </body>
     </html>

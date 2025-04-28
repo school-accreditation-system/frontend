@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client';
 
 import {
@@ -76,6 +77,54 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
             <p className="text-sm text-gray-500">Total: {totalSupportingStaff}</p>
           </div>
         </div>
+
+                <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="p-4 bg-primary/5 border border-primary rounded-md mt-6"
+        >
+          <p className="text-sm text-primary">
+            <strong>Note:</strong> All supporting staff information will be used for accreditation and reporting purposes.
+            Please ensure accurate numbers are provided.
+          </p>
+        </motion.div>
+        
+        {/* Display summary of provided data */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+        >
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Supporting Staff Summary</h4>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+            <div className="text-center p-2 bg-white rounded shadow-sm">
+              <p className="text-xs text-gray-500">Total</p>
+              <p className="text-lg font-bold text-gray-800">{totalSupportingStaff}</p>
+            </div>
+            <div className="text-center p-2 bg-white rounded shadow-sm">
+              <p className="text-xs text-gray-500">Cleaners</p>
+              <p className="text-lg font-semibold text-gray-700">{cleaners}</p>
+            </div>
+            <div className="text-center p-2 bg-white rounded shadow-sm">
+              <p className="text-xs text-gray-500">Watchmen</p>
+              <p className="text-lg font-semibold text-gray-700">{watchmen}</p>
+            </div>
+            <div className="text-center p-2 bg-white rounded shadow-sm">
+              <p className="text-xs text-gray-500">Cooks</p>
+              <p className="text-lg font-semibold text-gray-700">{schoolCooks}</p>
+            </div>
+            <div className="text-center p-2 bg-white rounded shadow-sm">
+              <p className="text-xs text-gray-500">Storekeeper</p>
+              <p className="text-lg font-semibold text-gray-700">{storekeeper}</p>
+            </div>
+            <div className="text-center p-2 bg-white rounded shadow-sm">
+              <p className="text-xs text-gray-500">Drivers</p>
+              <p className="text-lg font-semibold text-gray-700">{drivers}</p>
+            </div>
+          </div>
+        </motion.div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <motion.div
@@ -162,7 +211,7 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
                         field.onChange(isNaN(value) ? 0 : value);
                         onFieldChange("schoolCooks", isNaN(value) ? 0 : value);
                       }} 
-                      className={errors.some(e => e.includes("cooks")) ? "border-red-500 focus-visible:ring-red-500" : ""}
+                      className={errors.some(e => e.toLowerCase().includes("cooks") && !e.toLowerCase().includes("valid")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -263,55 +312,7 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
             )}
           />
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="p-4 bg-blue-50 border border-blue-100 rounded-md mt-6"
-        >
-          <p className="text-sm text-blue-700">
-            <strong>Note:</strong> All supporting staff information will be used for accreditation and reporting purposes.
-            Please ensure accurate numbers are provided.
-          </p>
-        </motion.div>
-        
-        {/* Display summary of provided data */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="bg-gray-50 p-4 rounded-lg border border-gray-200"
-        >
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Supporting Staff Summary</h4>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-            <div className="text-center p-2 bg-white rounded shadow-sm">
-              <p className="text-xs text-gray-500">Total</p>
-              <p className="text-lg font-bold text-gray-800">{totalSupportingStaff}</p>
-            </div>
-            <div className="text-center p-2 bg-white rounded shadow-sm">
-              <p className="text-xs text-gray-500">Cleaners</p>
-              <p className="text-lg font-semibold text-gray-700">{cleaners}</p>
-            </div>
-            <div className="text-center p-2 bg-white rounded shadow-sm">
-              <p className="text-xs text-gray-500">Watchmen</p>
-              <p className="text-lg font-semibold text-gray-700">{watchmen}</p>
-            </div>
-            <div className="text-center p-2 bg-white rounded shadow-sm">
-              <p className="text-xs text-gray-500">Cooks</p>
-              <p className="text-lg font-semibold text-gray-700">{schoolCooks}</p>
-            </div>
-            <div className="text-center p-2 bg-white rounded shadow-sm">
-              <p className="text-xs text-gray-500">Storekeeper</p>
-              <p className="text-lg font-semibold text-gray-700">{storekeeper}</p>
-            </div>
-            <div className="text-center p-2 bg-white rounded shadow-sm">
-              <p className="text-xs text-gray-500">Drivers</p>
-              <p className="text-lg font-semibold text-gray-700">{drivers}</p>
-            </div>
-          </div>
-        </motion.div>
       </motion.div>
     </Form>
   );
-}; 
+};

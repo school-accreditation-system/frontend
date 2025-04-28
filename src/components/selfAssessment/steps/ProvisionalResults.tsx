@@ -17,7 +17,7 @@ interface ProvisionalResultsProps {
 }
 
 export function ProvisionalResults({
-    overallScore = 45,
+    overallScore ,
     ranking,
     decision,
     accreditationYears,

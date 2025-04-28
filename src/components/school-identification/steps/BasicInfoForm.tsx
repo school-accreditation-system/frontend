@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client';
 
 import {
@@ -30,36 +31,41 @@ export const BasicInfoForm = () => {
   const form = useForm<BasicInfoFormValues>({
     resolver: zodResolver(basicInfoSchema),
     defaultValues: {
-      schoolName: formData.schoolName || "",
-      schoolCode: formData.schoolCode || "",
-      schoolEmail: formData.schoolEmail || "",
-      status: formData.status || undefined,
-      typeOfSchool: formData.typeOfSchool || undefined,
-      schoolOwner: formData.schoolOwner || "",
-      contact: formData.contact || "",
-      accommodationStatus: formData.accommodationStatus || undefined,
-      yearOfEstablishment: formData.yearOfEstablishment || ""
+      schoolEmail: "",
+      status: undefined,
+      typeOfSchool: undefined,
+      schoolCurriculum: undefined,
+      schoolOwner: "",
+      contact: "",
+      accommodationStatus: undefined,
+      yearOfEstablishment: ""
     },
     mode: "onChange"
   });
 
   // Sync form data on component mount and when formData changes
   useEffect(() => {
-    // Only reset the form if there's actual data and we're not in the middle of validation
     if (Object.keys(formData).length > 0) {
+      
+      // First reset with basic values
       form.reset({
-        schoolName: formData.schoolName || "",
-        schoolCode: formData.schoolCode || "",
         schoolEmail: formData.schoolEmail || "",
         status: formData.status || undefined,
         typeOfSchool: formData.typeOfSchool || undefined,
+        schoolCurriculum: formData.schoolCurriculum || undefined,
         schoolOwner: formData.schoolOwner || "",
         contact: formData.contact || "",
         accommodationStatus: formData.accommodationStatus || undefined,
         yearOfEstablishment: formData.yearOfEstablishment || ""
-      }, { keepValues: true });
+      });
+      
+      // Then ensure select fields get their values set properly
+      if (formData.status) form.setValue("status", formData.status);
+      if (formData.typeOfSchool) form.setValue("typeOfSchool", formData.typeOfSchool);
+      if (formData.schoolCurriculum) form.setValue("schoolCurriculum", formData.schoolCurriculum);
+      if (formData.accommodationStatus) form.setValue("accommodationStatus", formData.accommodationStatus);
     }
-  }, [formData]); 
+  }, [formData, form]);
 
   useEffect(() => {
     if (stepErrors.length > 0) {
@@ -88,251 +94,220 @@ export const BasicInfoForm = () => {
   return (
     <Form {...form}>
       <div className="space-y-6">        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <FormField
-              control={form.control}
-              name="schoolName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Name</FormLabel>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">                    
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Status</FormLabel>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    onFieldChange("status", value as "PUBLIC" | "PRIVATE" | "GOVERNMENT_AIDED");
+                  }}
+                  value={field.value}
+                >
                   <FormControl>
-                    <Input 
-                      placeholder="Enter school name" 
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        onFieldChange("schoolName", e.target.value);
-                      }} 
-                      className={hasFieldError("schoolName") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                    />
+                    <SelectTrigger 
+                      className={`w-full ${hasFieldError("status") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                    >
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                  <SelectContent>
+                    <SelectItem value="PUBLIC">Public</SelectItem>
+                    <SelectItem value="PRIVATE">Private</SelectItem>
+                    <SelectItem value="GOVERNMENT_AIDED">Government Aided</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           
-          <div>
-            <FormField
-              control={form.control}
-              name="schoolCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Code</FormLabel>
+          <FormField
+            control={form.control}
+            name="typeOfSchool"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Type of School</FormLabel>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    onFieldChange("typeOfSchool", value as "MIXED" | "FEMALE" | "MALE");
+                  }}
+                  value={field.value}
+                >
                   <FormControl>
-                    <Input 
-                      placeholder="Enter school code" 
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        onFieldChange("schoolCode", e.target.value);
-                      }} 
-                      className={hasFieldError("schoolCode") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                    />
+                    <SelectTrigger 
+                      className={`w-full ${hasFieldError("typeOfSchool") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                    >
+                      <SelectValue defaultValue={field.value} placeholder="Select type" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                  <SelectContent>
+                    <SelectItem value="MIXED">Mixed</SelectItem>
+                    <SelectItem value="FEMALE">Female</SelectItem>
+                    <SelectItem value="MALE">Male</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           
-          <div>
-            <FormField
-              control={form.control}
-              name="schoolEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Email</FormLabel>
+          <FormField
+            control={form.control}
+            name="schoolCurriculum"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>School Curriculum</FormLabel>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    onFieldChange("schoolCurriculum", value as "CBC" | "CBD" | "Other");
+                  }}
+                  value={field.value}
+                >
                   <FormControl>
-                    <Input 
-                      type="email"
-                      placeholder="Enter school email" 
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        onFieldChange("schoolEmail", e.target.value);
-                      }} 
-                      className={hasFieldError("schoolEmail") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                    />
+                    <SelectTrigger 
+                      className={`w-full ${hasFieldError("schoolCurriculum") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                    >
+                      <SelectValue defaultValue={field.value} placeholder="Select curriculum" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                  <SelectContent>
+                    <SelectItem value="CBC">CBC</SelectItem>
+                    <SelectItem value="CBD">CBD</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           
-          <div>
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select 
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      onFieldChange("status", value as "public" | "private" | "Government Aided");
-                    }}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger 
-                        className={hasFieldError("status") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                      >
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="public">Public</SelectItem>
-                      <SelectItem value="private">Private</SelectItem>
-                      <SelectItem value="Government Aided">Government Aided</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="schoolOwner"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>School Owner</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter school owner" 
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      onFieldChange("schoolOwner", e.target.value);
+                    }} 
+                    className={`w-full ${hasFieldError("schoolOwner") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />               
           
-          <div>
-            <FormField
-              control={form.control}
-              name="typeOfSchool"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type of School</FormLabel>
-                  <Select 
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      onFieldChange("typeOfSchool", value as "TVET" | "General Education");
-                    }}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger 
-                        className={hasFieldError("typeOfSchool") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                      >
-                        <SelectValue defaultValue={field.value} placeholder="Select type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="TVET">TVET</SelectItem>
-                      <SelectItem value="General Education">General Education</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          
-          <div>
-            <FormField
-              control={form.control}
-              name="schoolOwner"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Owner</FormLabel>
+          <FormField
+            control={form.control}
+            name="accommodationStatus"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Accommodation Status</FormLabel>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    onFieldChange("accommodationStatus", value as "DAY" | "BOARDING" | "MIXED");
+                  }}
+                  value={field.value}
+                >
                   <FormControl>
-                    <Input 
-                      placeholder="Enter school owner" 
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        onFieldChange("schoolOwner", e.target.value);
-                      }} 
-                      className={hasFieldError("schoolOwner") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                    />
+                    <SelectTrigger 
+                      className={`w-full ${hasFieldError("accommodationStatus") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                    >
+                      <SelectValue placeholder="Select accommodation status" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                  <SelectContent>
+                    <SelectItem value="DAY">Day</SelectItem>
+                    <SelectItem value="BOARDING">Boarding</SelectItem>
+                    <SelectItem value="MIXED">Mixed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           
-          <div>
-            <FormField
-              control={form.control}
-              name="contact"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Enter contact number" 
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        onFieldChange("contact", e.target.value);
-                      }} 
-                      className={hasFieldError("contact") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="yearOfEstablishment"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Year of Establishment</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="YYYY" 
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      onFieldChange("yearOfEstablishment", e.target.value);
+                    }} 
+                    className={`w-full ${hasFieldError("yearOfEstablishment") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           
-          <div>
-            <FormField
-              control={form.control}
-              name="accommodationStatus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Accommodation Status</FormLabel>
-                  <Select 
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      onFieldChange("accommodationStatus", value as "day" | "boarding" | "mixed");
-                    }}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger 
-                        className={hasFieldError("accommodationStatus") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                      >
-                        <SelectValue placeholder="Select accommodation status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="day">Day</SelectItem>
-                      <SelectItem value="boarding">Boarding</SelectItem>
-                      <SelectItem value="mixed">Mixed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="schoolEmail"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>School Email</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter school email" 
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      onFieldChange("schoolEmail", e.target.value);
+                    }} 
+                    className={`w-full ${hasFieldError("schoolEmail") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           
-          <div>
-            <FormField
-              control={form.control}
-              name="yearOfEstablishment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Year of Establishment</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="YYYY" 
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        onFieldChange("yearOfEstablishment", e.target.value);
-                      }} 
-                      className={hasFieldError("yearOfEstablishment") ? "border-red-500 focus-visible:ring-red-500" : ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="contact"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Contact</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter contact number" 
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      onFieldChange("contact", e.target.value);
+                    }} 
+                    className={`w-full ${hasFieldError("contact") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </div>
     </Form>
   );
-}; 
+};

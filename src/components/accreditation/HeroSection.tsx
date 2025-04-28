@@ -103,16 +103,15 @@ export const HeroSection = () => {
     <section className="bg-gradient-to-br from-primary to-secondary py-0 pb-24 relative overflow-hidden">
       {/* Navigation Bar - Sticky */}
       <div
-        className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-secondary shadow-md" : "bg-transparent"
-        }`}
+        className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-secondary shadow-md" : "bg-transparent"
+          }`}
       >
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <div className="relative h-10 w-40 bg-white rounded-sm p-1 overflow-hidden shadow-sm">
               <Image
-                src="/nesa-logo.png"
+                src="/nesalogo-removebg.png"
                 alt="NESA Logo"
                 className="object-contain p-0.5"
                 fill
@@ -189,7 +188,7 @@ export const HeroSection = () => {
       {/* Hero Content */}
       <div className="container mx-auto px-4">
         <div className="relative z-10 text-center max-w-3xl mx-auto mt-16 md:mt-24">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
             School Accreditation Portal
           </h1>
 
@@ -254,7 +253,7 @@ export const HeroSection = () => {
               <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg overflow-hidden z-50">
                 <div className="p-6 text-center">
                   <p className="text-gray-500">
-                    No services found matching "{searchTerm}"
+                    No services found matching &ldquo;{searchTerm}&rdquo;
                   </p>
                 </div>
               </div>
@@ -262,9 +261,9 @@ export const HeroSection = () => {
           </div>
 
           {/* Optional: Popular Searches */}
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
+          {/* <div className="mt-6 flex flex-wrap justify-center gap-2">
             <span className="text-white/75 text-sm">Popular:</span>
-            {["Accreditation", "Certificate", "Registration", "Renewal"].map(
+            {["New school", "Certificate", "Registration", "Renewal"].map(
               (term) => (
                 <button
                   key={term}
@@ -275,7 +274,7 @@ export const HeroSection = () => {
                 </button>
               )
             )}
-          </div>
+          </div> */}
         </div>
       </div>
 
