@@ -16,7 +16,7 @@ import { StudentSummary } from "../components/StudentSummary";
 
 export const StudentInfoForm = () => {
   const { formData, updateFormData, formErrors } = useFormContext();
-  
+
   const {
     form,
     onFieldChange,
@@ -37,10 +37,15 @@ export const StudentInfoForm = () => {
             </ul>
           </div>
         )}
-        
+
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-xl font-medium mb-6">Student Information</h3>
-          
+          <div className="p-4 bg-primary/5 border border-primary rounded-md text-sm text-primary mb-6">
+            <p>
+              Enter the number of students by gender and special needs, if you already have them or Enter their expected number
+            </p>
+          </div>
+
           <div className="space-y-6 mx-auto">
             {/* Student Summary Cards */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6">
@@ -50,7 +55,7 @@ export const StudentInfoForm = () => {
                 numStudentsWithSEN={form.watch("numStudentsWithSEN")}
               />
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Number of Boys */}
               <FormField
@@ -60,15 +65,15 @@ export const StudentInfoForm = () => {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium">Number of Boys</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter number of boys" 
+                      <Input
+                        placeholder="Enter number of boys"
                         type="number"
                         min="0"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
                           onFieldChange("numBoys", e.target.value);
-                        }} 
+                        }}
                         className={`h-12 ${hasFieldError("numBoys") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                       />
                     </FormControl>
@@ -76,7 +81,7 @@ export const StudentInfoForm = () => {
                   </FormItem>
                 )}
               />
-              
+
               {/* Number of Girls */}
               <FormField
                 control={form.control}
@@ -85,15 +90,15 @@ export const StudentInfoForm = () => {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium">Number of Girls</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter number of girls" 
+                      <Input
+                        placeholder="Enter number of girls"
                         type="number"
                         min="0"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
                           onFieldChange("numGirls", e.target.value);
-                        }} 
+                        }}
                         className={`h-12 ${hasFieldError("numGirls") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                       />
                     </FormControl>
@@ -102,7 +107,7 @@ export const StudentInfoForm = () => {
                 )}
               />
             </div>
-            
+
             {/* Students with SEN */}
             <FormField
               control={form.control}
@@ -111,15 +116,15 @@ export const StudentInfoForm = () => {
                 <FormItem>
                   <FormLabel className="text-gray-700 font-medium">Students with SEN</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter number of students with special educational needs" 
+                    <Input
+                      placeholder="Enter number of students with special educational needs"
                       type="number"
                       min="0"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("numStudentsWithSEN", e.target.value);
-                      }} 
+                      }}
                       className={`h-12 ${hasFieldError("numStudentsWithSEN") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
                   </FormControl>

@@ -51,11 +51,8 @@ export const RequestTypesSection = () => {
 
   const startAccreditationFlow = (requestType: Combination) => {
     setSelectedRequestType(requestType.fullName);
-    console.log("Selected request type:", requestType);
-    console.log("school:", school);
     if (!school) {
       openSchoolDialog();
-      console.log("School is not selected, opening dialog");
     } else {
       router.push(`/applyfor/${requestType.id}`);
     }

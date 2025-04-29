@@ -6,7 +6,7 @@ export const basicInfoSchema = z.object({
   typeOfSchool: z.enum(["MIXED", "FEMALE", "MALE"], {
     required_error: "Type of school is required",
   }),
-  schoolCurriculum: z.enum(["CBC", "CBD", "Other"], {
+  schoolCurriculum: z.enum(["NATIONAL", "INTERNATIONAL", "BOTH"], {
     required_error: "School curriculum is required",
   }),
   schoolOwner: z
@@ -18,8 +18,13 @@ export const basicInfoSchema = z.object({
   }),
   yearOfEstablishment: z
     .string()
-    .min(4, { message: "Year is required" })
-    .max(4, { message: "Year should be 4 digits" }),
+    .refine(
+      (val) => val === undefined || (val.length === 4 && /^\d+$/.test(val)),
+      {
+        message: "Year of establishment must be a 4-digit number",
+      }
+    )
+    .optional(),
 });
 
 // Location Details Schema

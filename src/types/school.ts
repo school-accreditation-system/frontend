@@ -14,6 +14,6 @@ export interface School {
   shortName: string;
   email: string;
   phone: string;
-  village: string;
+  village: Location;
   headTeacher: HeadTeacher;
 }

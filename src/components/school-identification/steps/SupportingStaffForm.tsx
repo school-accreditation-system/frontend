@@ -28,23 +28,23 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
   const form = useForm<SupportingStaffFormValues>({
     resolver: zodResolver(supportingStaffSchema),
     defaultValues: {
-      cleaners: formData.cleaners || 0,
-      watchmen: formData.watchmen || 0,
-      schoolCooks: formData.schoolCooks || 0,
-      storekeeper: formData.storekeeper || 0,
-      drivers: formData.drivers || 0,
+      cleaners: formData.cleaners ?? 0,
+      watchmen: formData.watchmen ?? 0,
+      schoolCooks: formData.schoolCooks ?? 0,
+      storekeeper: formData.storekeeper ?? 0,
+      drivers: formData.drivers ?? 0,
       otherSupportingStaff: formData.otherSupportingStaff || ''
     },
     mode: 'onChange'
   });
-  
+
   // When external errors change, trigger validation to show the errors
   useEffect(() => {
     if (errors.length > 0) {
       form.trigger();
     }
   }, [errors, form]);
-  
+
   const onFieldChange = (name: string, value: number | string) => {
     const updatedData = { [name]: value } as Partial<SupportingStaffFormValues>;
     updateFormData(updatedData);
@@ -56,13 +56,13 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
   const schoolCooks = form.watch('schoolCooks') || 0;
   const storekeeper = form.watch('storekeeper') || 0;
   const drivers = form.watch('drivers') || 0;
-  
+
   const totalSupportingStaff = cleaners + watchmen + schoolCooks + storekeeper + drivers;
-  
+
 
   return (
     <Form {...form}>
-      <motion.div 
+      <motion.div
         className="space-y-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -78,18 +78,12 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
           </div>
         </div>
 
-                <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="p-4 bg-primary/5 border border-primary rounded-md mt-6"
-        >
-          <p className="text-sm text-primary">
-            <strong>Note:</strong> All supporting staff information will be used for accreditation and reporting purposes.
-            Please ensure accurate numbers are provided.
+        <div className="p-4 bg-primary/5 border border-primary rounded-md text-sm text-primary mb-6">
+          <p>
+            Enter the number of supporting staff, if you already have them or Enter their expected number
           </p>
-        </motion.div>
-        
+        </div>
+
         {/* Display summary of provided data */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -125,7 +119,7 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
             </div>
           </div>
         </motion.div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -139,16 +133,17 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
                 <FormItem>
                   <FormLabel>Cleaners</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       min="0"
                       {...field}
-                      value={field.value.toString()}
+                      value={field.value === 0 && !document.activeElement?.id?.includes("cleaners") ? "" : field.value.toString()}
                       onChange={(e) => {
+                        // When input is empty or invalid, default to 0
                         const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                         field.onChange(isNaN(value) ? 0 : value);
                         onFieldChange("cleaners", isNaN(value) ? 0 : value);
-                      }} 
+                      }}
                       className={errors.some(e => e.includes("cleaners")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -170,16 +165,16 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
                 <FormItem>
                   <FormLabel>Watchmen</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       min="0"
                       {...field}
-                      value={field.value.toString()}
+                      value={field.value === 0 && !document.activeElement?.id?.includes("watchmen") ? "" : field.value.toString()}
                       onChange={(e) => {
                         const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                         field.onChange(isNaN(value) ? 0 : value);
                         onFieldChange("watchmen", isNaN(value) ? 0 : value);
-                      }} 
+                      }}
                       className={errors.some(e => e.includes("watchmen")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -201,16 +196,16 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
                 <FormItem>
                   <FormLabel>School Cooks</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       min="0"
                       {...field}
-                      value={field.value.toString()}
+                      value={field.value === 0 && !document.activeElement?.id?.includes("schoolCooks") ? "" : field.value.toString()}
                       onChange={(e) => {
                         const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                         field.onChange(isNaN(value) ? 0 : value);
                         onFieldChange("schoolCooks", isNaN(value) ? 0 : value);
-                      }} 
+                      }}
                       className={errors.some(e => e.toLowerCase().includes("cooks") && !e.toLowerCase().includes("valid")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -232,16 +227,16 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
                 <FormItem>
                   <FormLabel>Storekeeper</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       min="0"
                       {...field}
-                      value={field.value.toString()}
+                      value={field.value === 0 && !document.activeElement?.id?.includes("storekeeper") ? "" : field.value.toString()}
                       onChange={(e) => {
                         const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                         field.onChange(isNaN(value) ? 0 : value);
                         onFieldChange("storekeeper", isNaN(value) ? 0 : value);
-                      }} 
+                      }}
                       className={errors.some(e => e.includes("storekeeper")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -263,16 +258,16 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
                 <FormItem>
                   <FormLabel>Drivers</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       min="0"
                       {...field}
-                      value={field.value.toString()}
+                      value={field.value === 0 && !document.activeElement?.id?.includes("drivers") ? "" : field.value.toString()}
                       onChange={(e) => {
                         const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                         field.onChange(isNaN(value) ? 0 : value);
                         onFieldChange("drivers", isNaN(value) ? 0 : value);
-                      }} 
+                      }}
                       className={errors.some(e => e.includes("drivers")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -296,15 +291,15 @@ export const SupportingStaffForm = ({ formData, updateFormData, errors = [] }: S
               <FormItem>
                 <FormLabel>Other Supporting Staff (Specify)</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    placeholder="List any other supporting staff not covered above" 
+                  <Textarea
+                    placeholder="List any other supporting staff not covered above"
                     className="resize-none"
                     rows={3}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       onFieldChange("otherSupportingStaff", e.target.value);
-                    }} 
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

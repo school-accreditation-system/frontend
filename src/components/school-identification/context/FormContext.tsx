@@ -6,7 +6,7 @@ import { ZodError, ZodSchema } from "zod";
 import { IDENTIFICATION_STEPS } from "../constants";
 import { SchoolIdentificationFormValues } from "../types/schema";
 import { useSaveSchoolIdentification, useUpdateSchoolIdentification, useGetSchoolIdentification } from "@/hooks/useSchoolIdentification";
-import { useParams } from "next/navigation";
+import { useSchool } from "@/components/auth/SchoolContext";
 type FormContextType = {
   currentStep: number;
   setCurrentStep: (step: number) => void;
@@ -28,7 +28,7 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const schoolId = localStorage.getItem("schoolId");
+  const { school } = useSchool()
   const [formData, setFormData] = useState<
     Partial<SchoolIdentificationFormValues>
   >({});
@@ -36,13 +36,15 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
   const [stepsWithErrors, setStepsWithErrors] = useState<string[]>([]);
+  const schoolId = school?.id;
   const { mutate: saveSchoolIdentification, isPending: isSaving } =
-    useSaveSchoolIdentification(schoolId as string);
+    schoolId ? useSaveSchoolIdentification(schoolId) : { mutate: () => { }, isPending: false };
   const { mutate: updateSchoolIdentification, isPending: isUpdating } =
-    useUpdateSchoolIdentification(schoolId as string);
+    schoolId ? useUpdateSchoolIdentification(schoolId) : { mutate: () => { }, isPending: false };
   const { data: schoolIdentification, isLoading } = useGetSchoolIdentification(
-    schoolId as string
+    schoolId
   );
+
 
   useEffect(() => {
     if (!isLoading && schoolIdentification) {
@@ -157,7 +159,7 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
         updateSchoolIdentification(formData, {
           onSuccess: (data) => {
             toast({
-              title: "Success", 
+              title: "Success",
               description: data.message,
               status: "success",
             });

@@ -16,9 +16,9 @@ import { useForm } from "react-hook-form";
 import { AdministrativeStaffFormValues, administrativeStaffSchema } from "../types/schema";
 import { useFormContext } from "../context/FormContext";
 export const AdministrativeStaffForm = () => {
-    const { formData, updateFormData, formErrors } = useFormContext();
+  const { formData, updateFormData, formErrors } = useFormContext();
   const stepErrors = formErrors['administrative-staff'] || [];
-  
+
   const form = useForm<AdministrativeStaffFormValues>({
     resolver: zodResolver(administrativeStaffSchema),
     defaultValues: {
@@ -50,7 +50,9 @@ export const AdministrativeStaffForm = () => {
       form.trigger();
     }
   }, [stepErrors, form]);
-  
+
+  console.log("Year of Est ======> ", formData.yearOfEstablishment)
+
   const onFieldChange = (name: string, value: any) => {
     const updatedData = { [name]: value } as Partial<AdministrativeStaffFormValues>;
     updateFormData('administrative-staff', updatedData);
@@ -58,7 +60,7 @@ export const AdministrativeStaffForm = () => {
 
   const hasFieldError = (fieldName: keyof AdministrativeStaffFormValues) => {
     return (
-      form.formState.errors[fieldName] || 
+      form.formState.errors[fieldName] ||
       stepErrors.some(e => e.toLowerCase().includes(fieldName.toLowerCase()))
     );
   };
@@ -68,10 +70,10 @@ export const AdministrativeStaffForm = () => {
       <div className="space-y-6">
         <div className="p-4 bg-primary/5 border border-primary rounded-md text-sm text-primary mb-6">
           <p>
-            Please enter information about additional administrative staff. This information is important 
+            Please enter information about additional administrative staff if you already have them or the enter their expected number. This information is important
             for understanding the overall staffing structure of the school.
           </p>
-        </div>      
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <FormField
@@ -81,14 +83,14 @@ export const AdministrativeStaffForm = () => {
                 <FormItem>
                   <FormLabel>Number of Secretaries</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="Enter number of secretaries" 
+                      placeholder="Enter number of secretaries"
                       {...field}
                       onChange={(e) => {
                         field.onChange(parseInt(e.target.value) || 0);
                         onFieldChange("numberOfSecretary", parseInt(e.target.value) || 0);
-                      }} 
+                      }}
                       className={hasFieldError("numberOfSecretary") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -97,7 +99,7 @@ export const AdministrativeStaffForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -106,14 +108,14 @@ export const AdministrativeStaffForm = () => {
                 <FormItem>
                   <FormLabel>Number of Librarians</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="Enter number of librarians" 
+                      placeholder="Enter number of librarians"
                       {...field}
                       onChange={(e) => {
                         field.onChange(parseInt(e.target.value) || 0);
                         onFieldChange("numberOfLibrarian", parseInt(e.target.value) || 0);
-                      }} 
+                      }}
                       className={hasFieldError("numberOfLibrarian") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -122,7 +124,7 @@ export const AdministrativeStaffForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -131,14 +133,14 @@ export const AdministrativeStaffForm = () => {
                 <FormItem>
                   <FormLabel>Number of Accountants</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="Enter number of accountants" 
+                      placeholder="Enter number of accountants"
                       {...field}
                       onChange={(e) => {
                         field.onChange(parseInt(e.target.value) || 0);
                         onFieldChange("numberOfAccountant", parseInt(e.target.value) || 0);
-                      }} 
+                      }}
                       className={hasFieldError("numberOfAccountant") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -147,7 +149,7 @@ export const AdministrativeStaffForm = () => {
               )}
             />
           </div>
-          
+
           <div>
             <FormField
               control={form.control}
@@ -156,14 +158,14 @@ export const AdministrativeStaffForm = () => {
                 <FormItem>
                   <FormLabel>Number of Deputy Head Teachers</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="Enter number of deputy head teachers" 
+                      placeholder="Enter number of deputy head teachers"
                       {...field}
                       onChange={(e) => {
                         field.onChange(parseInt(e.target.value) || 0);
                         onFieldChange("numberOfDeputyHeadTeacher", parseInt(e.target.value) || 0);
-                      }} 
+                      }}
                       className={hasFieldError("numberOfDeputyHeadTeacher") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
@@ -172,7 +174,7 @@ export const AdministrativeStaffForm = () => {
               )}
             />
           </div>
-          
+
           <div className="md:col-span-2">
             <FormField
               control={form.control}
@@ -181,13 +183,13 @@ export const AdministrativeStaffForm = () => {
                 <FormItem>
                   <FormLabel>Other Administrative Staff (please specify)</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Enter details of other administrative staff" 
+                    <Textarea
+                      placeholder="Enter details of other administrative staff"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         onFieldChange("numberOfOtherStaff", e.target.value);
-                      }} 
+                      }}
                       className={hasFieldError("numberOfOtherStaff") ? "border-red-500 focus-visible:ring-red-500" : ""}
                     />
                   </FormControl>
