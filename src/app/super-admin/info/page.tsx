@@ -1,11 +1,7 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { toast } from "react-hot-toast";
-import {
-  MantineReactTable,
-  useMantineReactTable,
-  type MRT_ColumnDef,
-} from 'mantine-react-table';
+import { Table } from "@/components/Table/Table";
 
 // Define types for our data
 type Level = {
@@ -46,7 +42,7 @@ const CombinationManagementPage = () => {
   const [levels, setLevels] = useState<Level[]>([]);
   const [combinations, setCombinations] = useState<Combination[]>([]);
   const [selectedLevel, setSelectedLevel] = useState<string>("");
-  
+
   // State for new combination form
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [newCombination, setNewCombination] = useState<NewCombination>({
@@ -59,14 +55,20 @@ const CombinationManagementPage = () => {
     combination: "",
     combinationIndicators: "",
     schoolCombinations: "",
-    assessments: ""
+    assessments: "",
   });
-  
+
   // State for loading and error indicators
   const [isLoadingLevels, setIsLoadingLevels] = useState(false);
   const [isLoadingCombinations, setIsLoadingCombinations] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // State for sorting and pagination
+  const [sortField, setSortField] = useState<string>("code");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // Fetch all levels when component mounts
   useEffect(() => {
@@ -74,19 +76,22 @@ const CombinationManagementPage = () => {
       setIsLoadingLevels(true);
       setError(null);
       try {
-        const response = await fetch("http://localhost:8081/api/qamis/combination/getallLevels", {
-          headers: {
-            "qamis-request-key": "1234567890"
+        const response = await fetch(
+          "http://localhost:8081/api/qamis/combination/getallLevels",
+          {
+            headers: {
+              "qamis-request-key": "1234567890",
+            },
           }
-        });
-        
+        );
+
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-        
+
         const data = await response.json();
         setLevels(data);
-        
+
         // Automatically select the first level if available
         if (data.length > 0) {
           setSelectedLevel(data[0].id);
@@ -98,28 +103,31 @@ const CombinationManagementPage = () => {
         setIsLoadingLevels(false);
       }
     };
-    
+
     fetchLevels();
   }, []);
-  
+
   // Fetch combinations when selected level changes
   useEffect(() => {
     if (!selectedLevel) return;
-    
+
     const fetchCombinations = async () => {
       setIsLoadingCombinations(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
-          headers: {
-            "qamis-request-key": "1234567890"
+        const response = await fetch(
+          `http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,
+          {
+            headers: {
+              "qamis-request-key": "1234567890",
+            },
           }
-        });
-        
+        );
+
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-        
+
         const data = await response.json();
         setCombinations(data);
       } catch (error: any) {
@@ -129,16 +137,20 @@ const CombinationManagementPage = () => {
         setIsLoadingCombinations(false);
       }
     };
-    
+
     fetchCombinations();
   }, [selectedLevel]);
 
   // Handle input changes for the new combination form
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setNewCombination(prev => ({
+    setNewCombination((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -147,21 +159,24 @@ const CombinationManagementPage = () => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`http://localhost:8081/api/qamis/combination/save-combination?parentId=${selectedLevel}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "qamis-request-key": "1234567890"
-        },
-        body: JSON.stringify(newCombination)
-      });
-      
+      const response = await fetch(
+        `http://localhost:8081/api/qamis/combination/save-combination?parentId=${selectedLevel}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "qamis-request-key": "1234567890",
+          },
+          body: JSON.stringify(newCombination),
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-      
+
       // Reset form and refresh combinations
       setNewCombination({
         code: "",
@@ -173,14 +188,16 @@ const CombinationManagementPage = () => {
         combination: "",
         combinationIndicators: "",
         schoolCombinations: "",
-        assessments: ""
+        assessments: "",
       });
-      
+
       setIsFormOpen(false);
       toast.success("Combination saved successfully!");
-      
+
       // Refresh the combinations list
-      const refreshResponse = await fetch(`http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`);
+      const refreshResponse = await fetch(
+        `http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`
+      );
       if (refreshResponse.ok) {
         const data = await refreshResponse.json();
         setCombinations(data);
@@ -197,10 +214,10 @@ const CombinationManagementPage = () => {
   // Format category for display
   const formatCategory = (category: string | null) => {
     if (!category) return "N/A";
-    
+
     return category
       .split("_")
-      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
       .join(" ");
   };
 
@@ -208,7 +225,9 @@ const CombinationManagementPage = () => {
   const handleEditCombination = (combination: Combination) => {
     console.log("Edit combination:", combination);
     // Implementation would go here
-    toast.info("Edit functionality would open a form with this combination's details");
+    toast.info(
+      "Edit functionality would open a form with this combination's details"
+    );
   };
 
   const handleDeleteCombination = (id: string) => {
@@ -217,67 +236,75 @@ const CombinationManagementPage = () => {
     toast.info(`Delete functionality would remove combination with ID: ${id}`);
   };
 
-  // Define table columns for Mantine React Table
-  const columns = useMemo<MRT_ColumnDef<Combination>[]>(
+  // Handle sorting logic
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  // Define table columns for the reusable Table component
+  const columns = useMemo(
     () => [
       {
-        accessorKey: 'code',
-        header: 'Code',
-        size: 100,
+        key: "code",
+        header: "Code",
+        sortable: true,
       },
       {
-        accessorKey: 'fullName',
-        header: 'Full Name',
-        size: 200,
+        key: "fullName",
+        header: "Full Name",
+        sortable: true,
       },
       {
-        accessorKey: 'shortName',
-        header: 'Short Name',
-        size: 120,
+        key: "shortName",
+        header: "Short Name",
+        sortable: true,
       },
       {
-        accessorKey: 'category',
-        header: 'Category',
-        size: 180,
-        Cell: ({ cell }) => (
+        key: "category",
+        header: "Category",
+        sortable: true,
+        render: (value: string | null) => (
           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-            {formatCategory(cell.getValue<string | null>())}
+            {formatCategory(value)}
           </span>
         ),
       },
       {
-        accessorKey: 'combinationType',
-        header: 'Type',
-        size: 120,
-        Cell: ({ cell }) => (
+        key: "combinationType",
+        header: "Type",
+        sortable: true,
+        render: (value: string) => (
           <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-            {cell.getValue<string>()}
+            {value}
           </span>
         ),
       },
       {
-        accessorKey: 'description',
-        header: 'Description',
-        size: 200,
-        Cell: ({ cell }) => cell.getValue<string | null>() || "N/A",
+        key: "description",
+        header: "Description",
+        sortable: true,
+        render: (value: string | null) => value || "N/A",
       },
       {
-        id: 'actions',
-        header: 'Actions',
-        size: 150,
-        enableSorting: false,
-        enableColumnFilter: false,
-        Cell: ({ row }) => (
+        key: "actions",
+        header: "Actions",
+        sortable: false,
+        render: (_: any, item: Combination) => (
           <div className="flex space-x-2">
-            <button 
-              className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              onClick={() => handleEditCombination(row.original)}
+            <button
+              className="px-2 py-1 bg-primary text-white rounded hover:hover:bg-primary/90 hover:cursor-pointer transition-colors"
+              onClick={() => handleEditCombination(item)}
             >
               Edit
             </button>
-            <button 
-              className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-              onClick={() => handleDeleteCombination(row.original.id)}
+            <button
+              className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 hover:cursor-pointer transition-colors"
+              onClick={() => handleDeleteCombination(item.id)}
             >
               Delete
             </button>
@@ -285,20 +312,20 @@ const CombinationManagementPage = () => {
         ),
       },
     ],
-    [],
+    []
   );
 
   // Get the current level name
   const currentLevelName = useMemo(() => {
     if (!selectedLevel || !levels.length) return "Loading...";
-    const level = levels.find(l => l.id === selectedLevel);
+    const level = levels.find((l) => l.id === selectedLevel);
     return level ? level.fullName : "Unknown Level";
   }, [selectedLevel, levels]);
 
   // Count combinations by category
   const combinationCountsByCategory = useMemo(() => {
     if (!combinations.length) return {};
-    
+
     return combinations.reduce<Record<string, number>>((acc, comb) => {
       const category = comb.category || "Uncategorized";
       acc[category] = (acc[category] || 0) + 1;
@@ -306,34 +333,51 @@ const CombinationManagementPage = () => {
     }, {});
   }, [combinations]);
 
-  // Initialize the Mantine React Table
-  const table = useMantineReactTable({
-    columns,
-    data: combinations,
-    enableColumnFilters: true,
-    enableGlobalFilter: true,
-    enablePagination: true,
-    enableSorting: true,
-    initialState: { 
-      density: 'md',
-      pagination: { pageIndex: 0, pageSize: 10 },
-      showGlobalFilter: true,
-    },
-    mantineTableProps: {
-      withBorder: true,
-      withColumnBorders: true,
-      striped: true,
-    },
-    state: {
-      isLoading: isLoadingCombinations,
-    },
-  });
+  // Get the sorted data
+  const sortedData = useMemo(() => {
+    return [...combinations].sort((a, b) => {
+      const aValue = a[sortField as keyof typeof a];
+      const bValue = b[sortField as keyof typeof b];
+
+      if (aValue === null && bValue === null) return 0;
+      if (aValue === null) return sortDirection === "asc" ? 1 : -1;
+      if (bValue === null) return sortDirection === "asc" ? -1 : 1;
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortDirection === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+
+      if (aValue === bValue) return 0;
+
+      if (sortDirection === "asc") {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  }, [combinations, sortField, sortDirection]);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Get paginated data based on current page
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return sortedData.slice(startIndex, endIndex);
+  }, [sortedData, currentPage, pageSize]);
 
   return (
     <div className="p-6 mx-auto bg-white rounded-lg shadow-md max-w-7xl">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 className="text-2xl font-bold text-primary mb-2 md:mb-0">Combination Management</h1>
+        <h1 className="text-2xl font-bold text-primary mb-2 md:mb-0">
+          Combination Management
+        </h1>
         <button
           onClick={() => setIsFormOpen(true)}
           className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
@@ -353,24 +397,37 @@ const CombinationManagementPage = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-blue-50 p-4 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-blue-800">Total Combinations</h3>
-          <p className="text-3xl font-bold text-blue-600">{combinations.length}</p>
+          <h3 className="text-lg font-semibold text-blue-800">
+            Total Combinations
+          </h3>
+          <p className="text-3xl font-bold text-blue-600">
+            {combinations.length}
+          </p>
         </div>
-        
+
         <div className="bg-green-50 p-4 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-green-800">Current Level</h3>
-          <p className="text-3xl font-bold text-green-600">{currentLevelName}</p>
+          <h3 className="text-lg font-semibold text-green-800">
+            Current Level
+          </h3>
+          <p className="text-3xl font-bold text-green-600">
+            {currentLevelName}
+          </p>
         </div>
-        
+
         <div className="bg-purple-50 p-4 rounded-lg shadow">
           <h3 className="text-lg font-semibold text-purple-800">Categories</h3>
-          <p className="text-3xl font-bold text-purple-600">{Object.keys(combinationCountsByCategory).length}</p>
+          <p className="text-3xl font-bold text-purple-600">
+            {Object.keys(combinationCountsByCategory).length}
+          </p>
         </div>
       </div>
 
       {/* Level Selector */}
       <div className="mb-6">
-        <label htmlFor="level" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="level"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Select Level
         </label>
         <select
@@ -383,7 +440,7 @@ const CombinationManagementPage = () => {
           {isLoadingLevels ? (
             <option>Loading levels...</option>
           ) : (
-            levels.map(level => (
+            levels.map((level) => (
               <option key={level.id} value={level.id}>
                 {level.fullName} ({level.shortName})
               </option>
@@ -395,13 +452,21 @@ const CombinationManagementPage = () => {
       {/* Category breakdown */}
       {Object.keys(combinationCountsByCategory).length > 0 && (
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Combinations by Category</h3>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Combinations by Category
+          </h3>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(combinationCountsByCategory).map(([category, count]) => (
-              <div key={category} className="px-3 py-2 bg-indigo-50 text-indigo-700 rounded-lg">
-                {formatCategory(category)}: <span className="font-bold">{count}</span>
-              </div>
-            ))}
+            {Object.entries(combinationCountsByCategory).map(
+              ([category, count]) => (
+                <div
+                  key={category}
+                  className="px-3 py-2 bg-indigo-50 text-indigo-700 rounded-lg"
+                >
+                  {formatCategory(category)}:{" "}
+                  <span className="font-bold">{count}</span>
+                </div>
+              )
+            )}
           </div>
         </div>
       )}
@@ -412,15 +477,30 @@ const CombinationManagementPage = () => {
           <p className="text-gray-500">No combinations found for this level</p>
           <button
             onClick={() => setIsFormOpen(true)}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
           >
             Add First Combination
           </button>
         </div>
       ) : (
-        /* Mantine React Table */
+        /* Reusable Table Component */
         <div className="mb-6 overflow-hidden rounded-lg shadow">
-          <MantineReactTable table={table} />
+          <Table
+            data={paginatedData}
+            columns={columns}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            totalItems={combinations.length}
+            emptyStateMessage={
+              isLoadingCombinations
+                ? "Loading combinations..."
+                : "No combinations found for this level"
+            }
+          />
         </div>
       )}
 
@@ -438,7 +518,15 @@ const CombinationManagementPage = () => {
                   className="text-gray-500 hover:text-gray-700"
                   aria-label="Close"
                 >
-                  <svg className="w-6 h-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
                     <path d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
                 </button>
@@ -447,7 +535,10 @@ const CombinationManagementPage = () => {
               <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="code"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Code*
                     </label>
                     <input
@@ -460,9 +551,12 @@ const CombinationManagementPage = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
-                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="fullName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Full Name*
                     </label>
                     <input
@@ -475,9 +569,12 @@ const CombinationManagementPage = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
-                    <label htmlFor="shortName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="shortName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Short Name*
                     </label>
                     <input
@@ -490,9 +587,12 @@ const CombinationManagementPage = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
-                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="category"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Category*
                     </label>
                     <select
@@ -503,15 +603,26 @@ const CombinationManagementPage = () => {
                       className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     >
-                      <option value="SCIENCE_COMBINATIONS">Science Combinations</option>
-                      <option value="ARTS_COMBINATIONS">Arts Combinations</option>
-                      <option value="TECHNICAL_COMBINATIONS">Technical Combinations</option>
-                      <option value="LANGUAGE_COMBINATIONS">Language Combinations</option>
+                      <option value="SCIENCE_COMBINATIONS">
+                        Science Combinations
+                      </option>
+                      <option value="ARTS_COMBINATIONS">
+                        Arts Combinations
+                      </option>
+                      <option value="TECHNICAL_COMBINATIONS">
+                        Technical Combinations
+                      </option>
+                      <option value="LANGUAGE_COMBINATIONS">
+                        Language Combinations
+                      </option>
                     </select>
                   </div>
-                  
+
                   <div className="md:col-span-2">
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Description
                     </label>
                     <textarea
@@ -524,7 +635,7 @@ const CombinationManagementPage = () => {
                     ></textarea>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end gap-3">
                   <button
                     type="button"

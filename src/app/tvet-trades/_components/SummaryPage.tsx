@@ -14,7 +14,7 @@ const SummaryPage = ({ data, onContinue }) => {
         </p>
         <button
           onClick={() => router.push("/")}
-          className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
         >
           Go to Search
         </button>
@@ -25,7 +25,7 @@ const SummaryPage = ({ data, onContinue }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">School Assessment Summary</h1>
-      
+
       <div className="mb-6 border-b pb-4">
         <h2 className="text-xl font-semibold mb-3">School Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -51,7 +51,9 @@ const SummaryPage = ({ data, onContinue }) => {
           </div>
           <div>
             <p className="text-gray-600">Contact:</p>
-            <p className="font-medium">{data.email} | {data.phone}</p>
+            <p className="font-medium">
+              {data.email} | {data.phone}
+            </p>
           </div>
           <div>
             <p className="text-gray-600">Website:</p>
@@ -59,14 +61,16 @@ const SummaryPage = ({ data, onContinue }) => {
           </div>
           <div>
             <p className="text-gray-600">Faculty Strength:</p>
-            <p className="font-medium">{data.numberOfStudents} students, {data.numberOfTeachers} teachers</p>
+            <p className="font-medium">
+              {data.numberOfStudents} students, {data.numberOfTeachers} teachers
+            </p>
           </div>
         </div>
       </div>
 
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-3">Self-Assessment Results</h2>
-        
+
         <div className="space-y-4">
           <div className="flex items-center">
             <div className="w-1/3 text-gray-600">Academic Performance:</div>
@@ -145,7 +149,9 @@ const SummaryPage = ({ data, onContinue }) => {
           </div>
 
           <div className="mt-4">
-            <h3 className="font-medium text-gray-700 mb-2">Areas of Improvement:</h3>
+            <h3 className="font-medium text-gray-700 mb-2">
+              Areas of Improvement:
+            </h3>
             <p className="text-gray-600 bg-gray-50 p-3 rounded-md">
               {data.assessment.areasOfImprovement}
             </p>
@@ -162,7 +168,7 @@ const SummaryPage = ({ data, onContinue }) => {
         </button>
         <button
           onClick={onContinue}
-          className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
         >
           Choose Combination
         </button>

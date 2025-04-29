@@ -1,13 +1,9 @@
+/* eslint-disable max-lines */
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import {
-  MantineReactTable,
-  useMantineReactTable,
-  type MRT_ColumnDef,
-} from "mantine-react-table";
-import InspectionModal from "./InspectionModal";
 import { Button } from "@/components/ui/button";
+import { Table } from "@/components/Table/Table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import InspectionModal from "./InspectionModal";
 
 export const rankingScore = [
   { id: 1, name: "Outstanding", score: 89 },
@@ -129,15 +126,15 @@ const initialRolesByDepartment = [
 function generateApplicationId(schoolName, index) {
   // Extract initials from school name
   const initials = schoolName
-    .split(' ')
-    .map(word => word[0])
-    .join('')
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
     .toUpperCase();
-  
+
   // Format: [Initials]-[Year]-[Sequence Number padded to 3 digits]
   const year = new Date().getFullYear();
-  const sequence = String(index + 1).padStart(3, '0');
-  
+  const sequence = String(index + 1).padStart(3, "0");
+
   return `${initials}-${year}-${sequence}`;
 }
 // Initial inspections data structure
@@ -151,7 +148,7 @@ const initialInspections = schoolsData.map((school) => ({
   approved: false,
   ranking: "",
   score: "",
-  applicationId:generateApplicationId(school.name, school.id - 1),  
+  applicationId: generateApplicationId(school.name, school.id - 1),
 }));
 
 // Hardcoded team for testing
@@ -234,6 +231,7 @@ const TeamSchoolsPage = () => {
 
         if (teamsJson) {
           const parsedTeams = JSON.parse(teamsJson);
+          // eslint-disable-next-line max-depth
           if (Array.isArray(parsedTeams)) {
             foundTeam = parsedTeams.find((team) => team.id === userData.teamId);
           }
@@ -409,235 +407,132 @@ const TeamSchoolsPage = () => {
     }
   };
 
-  // Define columns for the MantineReactTable with applicationId instead of id
-const columns = useMemo<MRT_ColumnDef<any>[]>(
-  () => [
-    {
-      accessorKey: "applicationId",
-      header: "Application ID",
-      size: 120,
-      Cell: ({ cell }) => {
-        const applicationId = cell.getValue<string>();
-        return (
-          <span className="font-medium text-blue-600">
-            {applicationId || `APP-${cell.row.original.id}`}
-          </span>
-        );
+  // Update columns definition for the reusable Table component
+  const columns = useMemo(
+    () => [
+      {
+        key: "id",
+        header: "School ID",
       },
-    },
-    {
-      accessorKey: "name",
-      header: "School Name",
-      size: 160,
-    },
-    {
-      accessorKey: "district",
-      header: "District",
-      size: 100,
-    },
-    {
-      accessorKey: "type",
-      header: "Type",
-      size: 120,
-      Cell: ({ cell }) => (
-        <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-          {cell.getValue<string>()}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      size: 120,
-      Cell: ({ cell }) => {
-        const status = cell.getValue<string>();
-        let bgColor = "bg-gray-100";
-        let textColor = "text-gray-700";
-
-        switch (status) {
-          case "Completed":
-            bgColor = "bg-green-100";
-            textColor = "text-green-700";
-            break;
-          case "In Progress":
-            bgColor = "bg-blue-100";
-            textColor = "text-blue-700";
-            break;
-          case "Submitted":
-            bgColor = "bg-purple-100";
-            textColor = "text-purple-700";
-            break;
-        }
-
-        return (
-          <span
-            className={`px-2.5 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}
-          >
-            {status}
-          </span>
-        );
+      {
+        key: "name",
+        header: "School Name",
       },
-    },
-    {
-      accessorKey: "ranking",
-      header: "Ranking",
-      size: 100,
-      Cell: ({ cell }) => {
-        const ranking = cell.getValue<string>();
-        if (!ranking) return <span className="text-gray-400">Not ranked</span>;
-        
-        let bgColor = "bg-gray-50";
-        let textColor = "text-gray-700";
-
-        switch (ranking) {
-          case "Excellent":
-            bgColor = "bg-green-50";
-            textColor = "text-green-700";
-            break;
-          case "Good":
-            bgColor = "bg-blue-50";
-            textColor = "text-blue-700";
-            break;
-          case "Average":
-            bgColor = "bg-yellow-50";
-            textColor = "text-yellow-700";
-            break;
-          case "Poor":
-            bgColor = "bg-red-50";
-            textColor = "text-red-700";
-            break;
-        }
-
-        return (
-          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
-            {ranking}
-          </span>
-        );
+      {
+        key: "district",
+        header: "District",
       },
-    },
-    {
-      accessorKey: "score",
-      header: "Score",
-      size: 80,
-      Cell: ({ cell }) => {
-        const score = cell.getValue<number>();
-        if (!score && score !== 0) return <span className="text-gray-400">—</span>;
-        
-        return (
-          <span className="font-medium">
-            {score}
+      {
+        key: "type",
+        header: "Type",
+        render: (value: string) => (
+          <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+            {value}
           </span>
-        );
+        ),
       },
-    },
-    {
-      accessorKey: "submittedTo",
-      header: "Submitted To",
-      size: 130,
-      Cell: ({ cell }) => {
-        const submittedTo = cell.getValue<string>();
-        return submittedTo ? (
-          <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
-            {submittedTo.toUpperCase()}
-          </span>
-        ) : (
-          <span className="text-gray-400 text-sm">Not submitted</span>
-        );
-      },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      size: 220,
-      enableSorting: false,
-      enableColumnFilter: false,
-      Cell: ({ row }) => {
-        const school = row.original;
-        const { allRoles, eligibleRoles } = getEligibleRoles();
+      {
+        key: "status",
+        header: "Status",
+        render: (value: string) => {
+          let bgColor = "bg-gray-100";
+          let textColor = "text-gray-700";
 
-        // Don't show submit button if already submitted
-        const alreadySubmitted = !!school.submittedTo;
+          switch (value) {
+            case "Completed":
+              bgColor = "bg-green-100";
+              textColor = "text-green-700";
+              break;
+            case "In Progress":
+              bgColor = "bg-blue-100";
+              textColor = "text-blue-700";
+              break;
+            case "Submitted":
+              bgColor = "bg-purple-100";
+              textColor = "text-purple-700";
+              break;
+          }
 
-        return (
-          <div className="flex space-x-2">
-            <Button
-              onClick={() => handleInspect(school)}
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+          return (
+            <span
+              className={`px-2.5 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}
             >
-              Inspect
-            </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-3 bg-white border-gray-200 text-sm"
-                  disabled={alreadySubmitted} // Disable if already submitted
-                >
-                  {alreadySubmitted ? "Submitted" : "Submit to"}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Submit to:</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {rolesByDepartment.map((roleInfo) => (
-                  <DropdownMenuItem
-                    key={roleInfo.id}
-                    onClick={() =>
-                      handleInspectionRole(school, roleInfo.role)
-                    }
-                    disabled={!isEligibleRole(roleInfo.role)} // Only enable eligible roles
-                    className={
-                      !isEligibleRole(roleInfo.role)
-                        ? "opacity-60 cursor-not-allowed"
-                        : "cursor-pointer"
-                    }
-                  >
-                    {roleInfo.role.charAt(0).toUpperCase() +
-                      roleInfo.role.slice(1)}
-                    {!isEligibleRole(roleInfo.role) && " (Not eligible)"}
-                  </DropdownMenuItem>
-                ))}
-                {rolesByDepartment.length === 0 && (
-                  <DropdownMenuItem disabled>
-                    No roles available
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        );
+              {value}
+            </span>
+          );
+        },
       },
-    },
-  ],
-  [loggedInUserRole, rolesByDepartment, inspections]
-);
+      {
+        key: "submittedTo",
+        header: "Submitted To",
+        render: (value: string) => {
+          return value ? (
+            <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+              {value.toUpperCase()}
+            </span>
+          ) : (
+            <span className="text-gray-400 text-sm">Not submitted</span>
+          );
+        },
+      },
+      {
+        key: "actions",
+        header: "Actions",
+        render: (_, school) => {
+          const { allRoles, eligibleRoles } = getEligibleRoles();
+          const alreadySubmitted = !!school.submittedTo;
 
-  console.log("new-inspections", inspections);
-  // Create table instance
-  const table = useMantineReactTable({
-    columns,
-    data: assignedSchoolsData,
-    enableColumnFilters: true,
-    enableGlobalFilter: true,
-    enableSorting: true,
-    enablePagination: true,
-    initialState: {
-      pagination: { pageSize: 10, pageIndex: 0 },
-      // sorting: [{ id: "id", desc: false }],
-    },
-    mantineTableProps: {
-      striped: true,
-      highlightOnHover: true,
-    },
-    renderTopToolbarCustomActions: () => (
-      <div className="text-lg font-semibold text-blue-600 flex items-center space-x-4">
-        <span>Assigned Schools</span>
-      
-      </div>
-    ),
-  });
+          return (
+            <div className="flex space-x-2">
+              <Button
+                onClick={() => handleInspect(school)}
+                className="px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 text-sm"
+              >
+                Inspect
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 bg-white border-gray-200 text-sm"
+                    disabled={alreadySubmitted}
+                  >
+                    {alreadySubmitted ? "Submitted" : "Submit to"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel>Submit to:</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {rolesByDepartment
+                    .filter((roleInfo) => isEligibleRole(roleInfo.role))
+                    .map((roleInfo) => (
+                      <DropdownMenuItem
+                        key={roleInfo.id}
+                        onClick={() =>
+                          handleInspectionRole(school, roleInfo.role)
+                        }
+                        className="cursor-pointer"
+                      >
+                        {roleInfo.role.charAt(0).toUpperCase() +
+                          roleInfo.role.slice(1)}
+                      </DropdownMenuItem>
+                    ))}
+                  {rolesByDepartment.length === 0 && (
+                    <DropdownMenuItem disabled>
+                      No roles available
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          );
+        },
+      },
+    ],
+    [loggedInUserRole, rolesByDepartment, inspections]
+  );
 
   // If data isn't loaded yet, show loading state
   if (!dataLoaded) {
@@ -651,8 +546,8 @@ const columns = useMemo<MRT_ColumnDef<any>[]>(
   }
 
   return (
-    <div className="p-6  mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center text-blue-500">
+    <div className="p-6 max-w-7xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6 text-center text-primary">
         {currentTeam
           ? `Schools Assigned to ${currentTeam.name}`
           : "Your Team's Schools"}
@@ -709,7 +604,21 @@ const columns = useMemo<MRT_ColumnDef<any>[]>(
             </div>
           ) : (
             <div className="overflow-hidden rounded-lg shadow">
-              <MantineReactTable table={table} />
+              <div className="p-4 border-b">
+                <div className="text-lg font-semibold text-blue-600 flex items-center space-x-4">
+                  <span>Assigned Schools</span>
+                  {loggedInUserRole && (
+                    <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded">
+                      Logged in as: {loggedInUserRole.toUpperCase()}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <Table
+                data={assignedSchoolsData}
+                columns={columns}
+                emptyStateMessage="No schools assigned to your team"
+              />
             </div>
           )}
         </>

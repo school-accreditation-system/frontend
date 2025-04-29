@@ -10,10 +10,10 @@ import React, { useEffect, useState } from "react";
  * @param {string} props.className - Additional CSS classes for the container
  * @param {Object} props.labels - Custom text labels
  */
-const Pagination = ({ 
-  totalItems, 
-  pageSize = 10, 
-  onPageChange, 
+const Pagination = ({
+  totalItems,
+  pageSize = 10,
+  onPageChange,
   itemName = "items",
   className = "",
   labels = {
@@ -21,11 +21,11 @@ const Pagination = ({
     to: "to",
     of: "of",
     prev: "Prev",
-    next: "Next"
-  }
+    next: "Next",
+  },
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Calculate derived values instead of using them as dependencies
   const totalPages = Math.ceil(totalItems / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
@@ -44,7 +44,7 @@ const Pagination = ({
         startIndex: (currentPage - 1) * pageSize,
         endIndex: Math.min((currentPage - 1) * pageSize + pageSize, totalItems),
         pageSize,
-        currentPage
+        currentPage,
       };
       onPageChange(currentPage, pageData);
     }
@@ -76,10 +76,8 @@ const Pagination = ({
         <div className="text-sm text-gray-600">
           {totalItems > 0 ? (
             <>
-              {labels.showing}{" "}
-              {totalItems > 0 ? startIndex + 1 : 0} {labels.to}{" "}
-              {endIndex} {labels.of}{" "}
-              {totalItems} {itemName}
+              {labels.showing} {totalItems > 0 ? startIndex + 1 : 0} {labels.to}{" "}
+              {endIndex} {labels.of} {totalItems} {itemName}
             </>
           ) : (
             `No ${itemName} found`
@@ -95,7 +93,7 @@ const Pagination = ({
               className={`px-3 py-1 rounded ${
                 currentPage === 1
                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  : "bg-primary text-white hover:bg-blue-600"
+                  : "bg-primary text-white hover:bg-primary/90"
               }`}
             >
               {labels.prev}
@@ -103,53 +101,65 @@ const Pagination = ({
 
             {/* Page numbers */}
             <div className="flex">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
-                // Show current page, first page, last page, and one page before and after current
-                if (
-                  pageNumber === 1 ||
-                  pageNumber === totalPages ||
-                  pageNumber === currentPage ||
-                  pageNumber === currentPage - 1 ||
-                  pageNumber === currentPage + 1
-                ) {
-                  return (
-                    <button
-                      key={pageNumber}
-                      onClick={() => goToPage(pageNumber)}
-                      className={`w-8 h-8 mx-1 flex items-center justify-center rounded ${
-                        currentPage === pageNumber
-                          ? "bg-primary text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                      aria-current={currentPage === pageNumber ? "page" : undefined}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                }
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (pageNumber) => {
+                  // Show current page, first page, last page, and one page before and after current
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    pageNumber === currentPage ||
+                    pageNumber === currentPage - 1 ||
+                    pageNumber === currentPage + 1
+                  ) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => goToPage(pageNumber)}
+                        className={`w-8 h-8 mx-1 flex items-center justify-center rounded ${
+                          currentPage === pageNumber
+                            ? "bg-primary text-white"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                        aria-current={
+                          currentPage === pageNumber ? "page" : undefined
+                        }
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  }
 
-                // Show ellipsis for gaps
-                if (pageNumber === 2 && currentPage > 3) {
-                  return (
-                    <span key={`ellipsis-1`} className="mx-1" aria-hidden="true">
-                      &hellip;
-                    </span>
-                  );
-                }
+                  // Show ellipsis for gaps
+                  if (pageNumber === 2 && currentPage > 3) {
+                    return (
+                      <span
+                        key={`ellipsis-1`}
+                        className="mx-1"
+                        aria-hidden="true"
+                      >
+                        &hellip;
+                      </span>
+                    );
+                  }
 
-                if (
-                  pageNumber === totalPages - 1 &&
-                  currentPage < totalPages - 2
-                ) {
-                  return (
-                    <span key={`ellipsis-2`} className="mx-1" aria-hidden="true">
-                      &hellip;
-                    </span>
-                  );
-                }
+                  if (
+                    pageNumber === totalPages - 1 &&
+                    currentPage < totalPages - 2
+                  ) {
+                    return (
+                      <span
+                        key={`ellipsis-2`}
+                        className="mx-1"
+                        aria-hidden="true"
+                      >
+                        &hellip;
+                      </span>
+                    );
+                  }
 
-                return null;
-              })}
+                  return null;
+                }
+              )}
             </div>
 
             {/* Next button */}
@@ -159,7 +169,7 @@ const Pagination = ({
               className={`px-3 py-1 rounded ${
                 currentPage === totalPages
                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  : "bg-primary text-white hover:bg-blue-600"
+                  : "bg-primary text-white hover:bg-primary/90"
               }`}
             >
               {labels.next}

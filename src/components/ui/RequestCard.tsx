@@ -13,7 +13,7 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { IconWrapper } from "./IconWrapper";
 
-interface FeatureCardProps {
+interface RequestCardProps {
   title: string;
   description: string;
   icon: ReactNode;
@@ -24,7 +24,7 @@ interface FeatureCardProps {
   index?: number; // For staggered animations
 }
 
-export const FeatureCard = ({
+export const RequestCard = ({
   title,
   description,
   icon,
@@ -36,22 +36,23 @@ export const FeatureCard = ({
 }: FeatureCardProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 1, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{
         duration: 0.3,
-        delay: index * 0.1,
-        ease: "easeInOut",
+        delay: index * 0.1, // Staggered animation based on index
+        ease: "easeOut",
       }}
+      whileHover={{ y: -5 }}
     >
       <Card
         className={cn(
-          "h-full rounded-none flex flex-col cursor-default transition-all duration-300 hover:shadow-md border-0 shadow-none bg-blue-50/50 p-4 sm:py-12 sm:px-6",
+          "h-full flex flex-col transition-all duration-300 hover:shadow-lg border",
           className || "bg-white"
         )}
       >
-        <CardHeader className="text-center">
+        <CardHeader className="pb-0 pt-6 space-y-0 text-center">
           <motion.div
             className="mx-auto"
             whileHover={{ scale: 1.1, rotate: 5 }}
@@ -59,29 +60,29 @@ export const FeatureCard = ({
           >
             <IconWrapper>{icon}</IconWrapper>
           </motion.div>
-          <h3 className="text-xl font-semibold">{title}</h3>
+          <h3 className="text-xl font-semibold mt-3">{title}</h3>
         </CardHeader>
 
-        <CardContent>
-          <p className="text-gray-600 text-center text-base ">
+        <CardContent className="flex-grow py-2 px-5">
+          <p className="text-muted-foreground text-center text-base">
             {description ||
               `Click here to apply for ${title?.toLocaleLowerCase()} and follow the steps to the end`}
           </p>
         </CardContent>
 
         {actionLabel && (onClick || href) && (
-          <CardFooter className="flex justify-center items-center">
+          <CardFooter className="pt-2 pb-6 flex justify-center">
             {href ? (
-              <Link
-                href={href}
-                className="bg-primary hover:hover:bg-primary/90 font-medium text-white hover:cursor-pointer transition-all duration-300 rounded-md px-6 h-9 flex items-center justify-center"
+              <Button
+                asChild
+                className="bg-primary hover:hover:bg-primary/90 hover:cursor-pointer transition-all duration-300 rounded-full px-6"
               >
-                {actionLabel}
-              </Link>
+                <Link href={href}>{actionLabel}</Link>
+              </Button>
             ) : (
               <Button
                 onClick={onClick}
-                className="transition-all duration-300 rounded-md px-6 shadow-sm hover:shadow-md"
+                className="bg-primary hover:hover:bg-primary/90 hover:cursor-pointer transition-all duration-300 rounded-full px-6 shadow-sm hover:shadow-md"
               >
                 {actionLabel}
               </Button>

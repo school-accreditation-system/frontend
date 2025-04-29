@@ -7,7 +7,7 @@ const FormSteps = ({ currentStep }) => {
     { id: "identification", name: "School Identification" },
     { id: "assessment", name: "Self Assessment" },
     { id: "summary", name: "Summary" },
-    { id: "tvet-trades", name: "Apply for tvet-trade" }
+    { id: "tvet-trades", name: "Apply for tvet-trade" },
   ];
 
   return (
@@ -20,28 +20,43 @@ const FormSteps = ({ currentStep }) => {
               <div
                 className={`w-10 h-10 flex items-center justify-center rounded-full ${
                   currentStep === step.id
-                    ? "bg-blue-500 text-white"
-                    : steps.indexOf(steps.find(s => s.id === currentStep)) > index
+                    ? "bg-primary text-white"
+                    : steps.indexOf(steps.find((s) => s.id === currentStep)) >
+                      index
                     ? "bg-green-500 text-white"
                     : "bg-gray-200 text-gray-600"
                 }`}
               >
-                {steps.indexOf(steps.find(s => s.id === currentStep)) > index ? (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                {steps.indexOf(steps.find((s) => s.id === currentStep)) >
+                index ? (
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 ) : (
                   index + 1
                 )}
               </div>
-              <div className="text-xs mt-2 text-gray-600 font-medium">{step.name}</div>
+              <div className="text-xs mt-2 text-gray-600 font-medium">
+                {step.name}
+              </div>
             </div>
-            
+
             {/* Connector line */}
             {index < steps.length - 1 && (
               <div
                 className={`flex-1 h-1 mx-2 ${
-                  steps.indexOf(steps.find(s => s.id === currentStep)) > index
+                  steps.indexOf(steps.find((s) => s.id === currentStep)) > index
                     ? "bg-green-500"
                     : "bg-gray-200"
                 }`}

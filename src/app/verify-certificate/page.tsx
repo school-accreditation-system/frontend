@@ -1,78 +1,78 @@
-'use client';
-import React, { useState } from 'react';
-import { handlePrintCertificate } from './_components/printCertificate';
+"use client";
+import React, { useState } from "react";
+import { handlePrintCertificate } from "./_components/printCertificate";
 
 const CertificateVerificationPage = () => {
   // State for the certificate ID input
-  const [certificateId, setCertificateId] = useState('');
+  const [certificateId, setCertificateId] = useState("");
   // State for storing the certificate details
   const [certificate, setCertificate] = useState(null);
   // State for loading indicator
   const [isLoading, setIsLoading] = useState(false);
   // State for error message
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   // State for verification method
-  const [verificationMethod, setVerificationMethod] = useState('id');
+  const [verificationMethod, setVerificationMethod] = useState("id");
 
   // Mock data for demonstration - in a real app, this would come from an API
   const mockCertificates = {
-    'CERT-SEC-2025-001': {
-      institutionName: 'Excellence Secondary School',
-      certificateType: 'Full Accreditation',
-      issuedDate: '2025-01-15',
-      expiryDate: '2030-01-14',
-      level: 'Secondary',
-      address: '123 Education Avenue, Capital City',
-      director: 'Dr. Jane Smith',
-      status: 'Valid',
-      verificationQR: 'https://example.com/qr/CERT-SEC-2025-001'
+    "CERT-SEC-2025-001": {
+      institutionName: "Excellence Secondary School",
+      certificateType: "Full Accreditation",
+      issuedDate: "2025-01-15",
+      expiryDate: "2030-01-14",
+      level: "Secondary",
+      address: "123 Education Avenue, Capital City",
+      director: "Dr. Jane Smith",
+      status: "Valid",
+      verificationQR: "https://example.com/qr/CERT-SEC-2025-001",
     },
-    'CERT-PRI-2025-002': {
-      institutionName: 'Bright Future Primary School',
-      certificateType: 'Provisional Accreditation',
-      issuedDate: '2025-02-10',
-      expiryDate: '2027-02-09',
-      level: 'Primary',
-      address: '456 Learning Street, Education District',
-      director: 'Prof. John Doe',
-      status: 'Valid',
-      verificationQR: 'https://example.com/qr/CERT-PRI-2025-002'
+    "CERT-PRI-2025-002": {
+      institutionName: "Bright Future Primary School",
+      certificateType: "Provisional Accreditation",
+      issuedDate: "2025-02-10",
+      expiryDate: "2027-02-09",
+      level: "Primary",
+      address: "456 Learning Street, Education District",
+      director: "Prof. John Doe",
+      status: "Valid",
+      verificationQR: "https://example.com/qr/CERT-PRI-2025-002",
     },
-    'CERT-TVT-2024-003': {
-      institutionName: 'Technical Skills Institute',
-      certificateType: 'Full Accreditation',
-      issuedDate: '2024-11-20',
-      expiryDate: '2029-11-19',
-      level: 'TVET',
-      address: '789 Vocational Road, Industrial Zone',
-      director: 'Dr. Robert Johnson',
-      status: 'Valid',
-      verificationQR: 'https://example.com/qr/CERT-TVT-2024-003'
+    "CERT-TVT-2024-003": {
+      institutionName: "Technical Skills Institute",
+      certificateType: "Full Accreditation",
+      issuedDate: "2024-11-20",
+      expiryDate: "2029-11-19",
+      level: "TVET",
+      address: "789 Vocational Road, Industrial Zone",
+      director: "Dr. Robert Johnson",
+      status: "Valid",
+      verificationQR: "https://example.com/qr/CERT-TVT-2024-003",
     },
-    'CERT-ORD-2023-004': {
-      institutionName: 'Community Ordinary School',
-      certificateType: 'Full Accreditation',
-      issuedDate: '2023-09-05',
-      expiryDate: '2023-09-04',
-      level: 'Ordinary',
-      address: '101 Community Lane, Rural District',
-      director: 'Ms. Sarah Williams',
-      status: 'Expired',
-      verificationQR: 'https://example.com/qr/CERT-ORD-2023-004'
-    }
+    "CERT-ORD-2023-004": {
+      institutionName: "Community Ordinary School",
+      certificateType: "Full Accreditation",
+      issuedDate: "2023-09-05",
+      expiryDate: "2023-09-04",
+      level: "Ordinary",
+      address: "101 Community Lane, Rural District",
+      director: "Ms. Sarah Williams",
+      status: "Expired",
+      verificationQR: "https://example.com/qr/CERT-ORD-2023-004",
+    },
   };
 
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Reset states
     setCertificate(null);
-    setError('');
-    
+    setError("");
+
     // Validate input
     if (!certificateId.trim()) {
-      setError('Please enter a certificate ID');
+      setError("Please enter a certificate ID");
       return;
     }
 
@@ -82,13 +82,13 @@ const CertificateVerificationPage = () => {
     // Simulate API call delay
     setTimeout(() => {
       const foundCertificate = mockCertificates[certificateId];
-      
+
       if (foundCertificate) {
         setCertificate(foundCertificate);
       } else {
-        setError('Certificate not found. Please check the ID and try again.');
+        setError("Certificate not found. Please check the ID and try again.");
       }
-      
+
       setIsLoading(false);
     }, 800);
   };
@@ -99,7 +99,7 @@ const CertificateVerificationPage = () => {
     if (!file) return;
 
     setIsLoading(true);
-    setError('');
+    setError("");
     setCertificate(null);
 
     // In a real application, you would process the QR code image here
@@ -107,7 +107,8 @@ const CertificateVerificationPage = () => {
     setTimeout(() => {
       // Randomly select a certificate for demonstration
       const certificateIds = Object.keys(mockCertificates);
-      const randomId = certificateIds[Math.floor(Math.random() * certificateIds.length)];
+      const randomId =
+        certificateIds[Math.floor(Math.random() * certificateIds.length)];
       setCertificate(mockCertificates[randomId]);
       setCertificateId(randomId);
       setIsLoading(false);
@@ -116,25 +117,29 @@ const CertificateVerificationPage = () => {
 
   // Status badge component with color coding
   const StatusBadge = ({ status }) => {
-    const colorClass = status === 'Valid' ? 'bg-green-500' : 'bg-red-500';
-    
+    const colorClass = status === "Valid" ? "bg-green-500" : "bg-red-500";
+
     return (
-      <span className={`${colorClass} text-white px-3 py-1 rounded-full text-sm font-medium`}>
+      <span
+        className={`${colorClass} text-white px-3 py-1 rounded-full text-sm font-medium`}
+      >
         {status}
       </span>
     );
   };
- 
-
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-primary py-6 px-6">
-          <h1 className="text-2xl font-bold text-white">Certificate Verification</h1>
-          <p className="text-green-100 mt-1">Verify the authenticity of school accreditation certificates</p>
+          <h1 className="text-2xl font-bold text-white">
+            Certificate Verification
+          </h1>
+          <p className="text-green-100 mt-1">
+            Verify the authenticity of school accreditation certificates
+          </p>
         </div>
-        
+
         <div className="px-6 py-8">
           {/* Verification Method Selection */}
           <div className="mb-6">
@@ -144,11 +149,11 @@ const CertificateVerificationPage = () => {
             <div className="grid grid-cols-2 gap-4">
               <button
                 className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  verificationMethod === 'id'
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  verificationMethod === "id"
+                    ? "bg-primary text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
-                onClick={() => setVerificationMethod('id')}
+                onClick={() => setVerificationMethod("id")}
               >
                 Certificate ID
               </button>
@@ -164,12 +169,15 @@ const CertificateVerificationPage = () => {
               </button> */}
             </div>
           </div>
-          
+
           {/* Certificate ID Form */}
-          {verificationMethod === 'id' && (
+          {verificationMethod === "id" && (
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="certificateId">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="certificateId"
+                >
                   Certificate ID
                 </label>
                 <div className="mt-1 flex rounded-md shadow-sm">
@@ -183,19 +191,19 @@ const CertificateVerificationPage = () => {
                   />
                   <button
                     type="submit"
-                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                     disabled={isLoading}
                   >
-                    {isLoading ? 'Verifying...' : 'Verify'}
+                    {isLoading ? "Verifying..." : "Verify"}
                   </button>
                 </div>
                 {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
               </div>
             </form>
           )}
-          
+
           {/* QR Code Upload Form */}
-          {verificationMethod === 'qr' && (
+          {verificationMethod === "qr" && (
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Upload QR Code Image
@@ -234,7 +242,9 @@ const CertificateVerificationPage = () => {
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
-                  <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
                 </div>
               </div>
               {isLoading && (
@@ -245,72 +255,102 @@ const CertificateVerificationPage = () => {
               {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
             </div>
           )}
-          
+
           {/* Display Certificate Results */}
           {certificate && (
             <div className="mt-8 border rounded-lg overflow-hidden">
               <div className="px-6 py-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">Certificate Information</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Certificate Information
+                </h3>
                 <StatusBadge status={certificate.status} />
               </div>
               <div className="px-6 py-5 divide-y divide-gray-200">
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Institution Name</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificate.institutionName}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Institution Name
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificate.institutionName}
+                  </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Certificate Type</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificate.certificateType}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Certificate Type
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificate.certificateType}
+                  </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Level</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificate.level}</dd>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificate.level}
+                  </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Issued Date</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificate.issuedDate}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Issued Date
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificate.issuedDate}
+                  </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Expiry Date</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificate.expiryDate}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Expiry Date
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificate.expiryDate}
+                  </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Address</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificate.address}</dd>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificate.address}
+                  </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Director</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificate.director}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Director
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificate.director}
+                  </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Certificate ID</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{certificateId}</dd>
+                  <dt className="text-sm font-medium text-gray-500">
+                    Certificate ID
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {certificateId}
+                  </dd>
                 </div>
                 <div className="py-4">
                   <div className="flex justify-end space-x-3">
                     <a
                       href="#"
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                        onClick={() =>
-                                              handlePrintCertificate({
-                                                logo: "/nesalogo-removebg.png",
-                                                sealImage: "/accredited-logo.jpg",
-                                                waterMark: "/nesa-logo.png",
-                                                schoolName: "Ecole Primaire et Maternelle LADIVINE",
-                                                schoolType: "Primary Level Education",
-                                                issuerName: "Names...",
-                                                issuerPosition: "Director General",
-                                                validFromDate: "April 2025",
-                                                validToDate: "31st August 2026",
-                                                certificateNumber: "NESA/2025/0001",
-                                              })
-                                            }
+                      onClick={() =>
+                        handlePrintCertificate({
+                          logo: "/nesalogo-removebg.png",
+                          sealImage: "/accredited-logo.jpg",
+                          waterMark: "/nesa-logo.png",
+                          schoolName: "Ecole Primaire et Maternelle LADIVINE",
+                          schoolType: "Primary Level Education",
+                          issuerName: "Names...",
+                          issuerPosition: "Director General",
+                          validFromDate: "April 2025",
+                          validToDate: "31st August 2026",
+                          certificateNumber: "NESA/2025/0001",
+                        })
+                      }
                     >
                       Print Verification
                     </a>
                     {/* <a
                       href="#"
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                       onClick={(e) => e.preventDefault()}
                     >
                       Download PDF
@@ -320,19 +360,30 @@ const CertificateVerificationPage = () => {
               </div>
             </div>
           )}
-          
+
           {/* Info Panel */}
           {!certificate && !isLoading && (
             <div className="mt-8 bg-blue-50 p-4 rounded-md">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  <svg
+                    className="h-5 w-5 text-blue-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div className="ml-3 flex-1 md:flex md:justify-between">
                   <p className="text-sm text-blue-700">
-                    Enter a certificate ID or upload a QR code to verify the authenticity of a school accreditation certificate.
+                    Enter a certificate ID or upload a QR code to verify the
+                    authenticity of a school accreditation certificate.
                   </p>
                 </div>
               </div>
@@ -340,18 +391,24 @@ const CertificateVerificationPage = () => {
           )}
         </div>
       </div>
-      
+
       {/* Sample IDs for Testing */}
       <div className="max-w-3xl mx-auto mt-6 bg-white rounded-lg shadow-md overflow-hidden">
         <div className="px-6 py-4">
-          <h3 className="font-medium text-gray-900">Sample Certificate IDs for Testing:</h3>
+          <h3 className="font-medium text-gray-900">
+            Sample Certificate IDs for Testing:
+          </h3>
           <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">Secondary (Valid)</p>
+              <p className="text-xs font-medium text-gray-500">
+                Secondary (Valid)
+              </p>
               <p className="text-sm">CERT-SEC-2025-001</p>
             </div>
             <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">Primary (Provisional)</p>
+              <p className="text-xs font-medium text-gray-500">
+                Primary (Provisional)
+              </p>
               <p className="text-sm">CERT-PRI-2025-002</p>
             </div>
             <div className="bg-gray-100 p-2 rounded">
@@ -359,7 +416,9 @@ const CertificateVerificationPage = () => {
               <p className="text-sm">CERT-TVT-2024-003</p>
             </div>
             <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">Ordinary (Expired)</p>
+              <p className="text-xs font-medium text-gray-500">
+                Ordinary (Expired)
+              </p>
               <p className="text-sm">CERT-ORD-2023-004</p>
             </div>
           </div>

@@ -196,7 +196,7 @@ const TeamManagement = () => {
         console.error("Error loading teams:", error);
       }
     };
-    
+
     loadSavedTeams();
   }, []);
 
@@ -294,7 +294,7 @@ const TeamManagement = () => {
       // Get existing teams from localStorage
       const teamsJson = localStorage.getItem("teams");
       let teams = [];
-      
+
       if (teamsJson) {
         teams = JSON.parse(teamsJson);
         // Ensure teams is an array
@@ -302,38 +302,38 @@ const TeamManagement = () => {
           teams = [];
         }
       }
-      
+
       // Generate a unique ID for the new team
-      const newId = teams.length > 0 
-        ? Math.max(...teams.map(team => parseInt(team.id))) + 1 
-        : 1;
-      
+      const newId =
+        teams.length > 0
+          ? Math.max(...teams.map((team) => parseInt(team.id))) + 1
+          : 1;
+
       // Create new team object
       const newTeam = {
         id: newId,
         name: teamName || `Team ${newId}`,
         createdAt: new Date().toISOString(),
         status: "pending",
-        members: selectedEmployees
+        members: selectedEmployees,
       };
-      
+
       // Add new team to the array
       teams.push(newTeam);
-      
+
       // Save updated teams array to localStorage
       localStorage.setItem("teams", JSON.stringify(teams));
-      
+
       // Update state
       setSavedTeams(teams);
-      
+
       // Show success message
       setMessage("Team saved successfully!");
       setMessageType("success");
-      
+
       // Reset form
       setSelectedEmployees([]);
       setTeamName("");
-      
     } catch (error) {
       console.error("Error saving team:", error);
       setMessage("Failed to save team. Please try again.");
@@ -344,7 +344,7 @@ const TeamManagement = () => {
   // Delete a saved team
   const handleDeleteTeam = (teamId) => {
     try {
-      const updatedTeams = savedTeams.filter(team => team.id !== teamId);
+      const updatedTeams = savedTeams.filter((team) => team.id !== teamId);
       localStorage.setItem("teams", JSON.stringify(updatedTeams));
       setSavedTeams(updatedTeams);
       setMessage("Team deleted successfully");
@@ -375,7 +375,7 @@ const TeamManagement = () => {
                   onClick={() => handleSelectDepartment(department)}
                   className={`w-full text-left p-2 rounded-md flex justify-between items-center transition-colors ${
                     selectedDepartment?.id === department.id
-                      ? "bg-blue-500 text-white"
+                      ? "bg-primary text-white"
                       : "hover:bg-blue-100"
                   }`}
                 >
@@ -428,7 +428,7 @@ const TeamManagement = () => {
                             {selectedEmployees.some(
                               (emp) => emp.id === employee.id
                             ) ? (
-                              <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs">
+                              <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs">
                                 ✓
                               </div>
                             ) : (
@@ -461,12 +461,16 @@ const TeamManagement = () => {
               Select a department to see its employees
             </div>
           )}
-          
+
           {/* Message display */}
           {message && (
-            <div className={`mt-3 p-2 rounded-md text-sm font-medium ${
-              messageType === "error" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
-            }`}>
+            <div
+              className={`mt-3 p-2 rounded-md text-sm font-medium ${
+                messageType === "error"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-green-100 text-green-700"
+              }`}
+            >
               {message}
             </div>
           )}
@@ -520,25 +524,36 @@ const TeamManagement = () => {
                 <ul className="mt-2 text-sm text-gray-600">
                   <li>Total team members: {selectedEmployees.length}/3</li>
                   <li>
-                    Departments represented: {
-                      [...new Set(selectedEmployees.map(emp => {
-                        const dept = departmentsData.find(d => d.id === emp.department);
-                        return dept ? dept.name : "Unknown";
-                      }))].join(", ")
-                    }
+                    Departments represented:{" "}
+                    {[
+                      ...new Set(
+                        selectedEmployees.map((emp) => {
+                          const dept = departmentsData.find(
+                            (d) => d.id === emp.department
+                          );
+                          return dept ? dept.name : "Unknown";
+                        })
+                      ),
+                    ].join(", ")}
                   </li>
                   <li>
-                    Positions: {
-                      [...new Set(selectedEmployees.map(emp => emp.position))].length
-                    } different roles
+                    Positions:{" "}
+                    {
+                      [...new Set(selectedEmployees.map((emp) => emp.position))]
+                        .length
+                    }{" "}
+                    different roles
                   </li>
                 </ul>
               </div>
-              
+
               <div className="border-t pt-4">
                 <div className="flex flex-col sm:flex-row gap-4 items-end">
                   <div className="flex-grow">
-                    <label htmlFor="teamName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="teamName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Team Name
                     </label>
                     <input
@@ -555,7 +570,7 @@ const TeamManagement = () => {
                     className={`px-4 py-2 rounded-md ${
                       selectedEmployees.length !== 3
                         ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-blue-500 hover:bg-blue-600 text-white"
+                        : "bg-primary hover:bg-primary/90 text-white"
                     } transition-colors`}
                     disabled={selectedEmployees.length !== 3}
                   >
@@ -566,20 +581,23 @@ const TeamManagement = () => {
             </div>
           )}
         </div>
-        
+
         {/* Saved Teams */}
         {savedTeams.length > 0 && (
           <div className="bg-white p-4 rounded-lg shadow-md md:col-span-2 mt-4">
             <h2 className="text-xl font-semibold mb-4 text-blue-500 border-b pb-2">
               Saved Teams ({savedTeams.length})
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {savedTeams.map(team => (
-                <div key={team.id} className="border rounded-lg p-3 hover:shadow-md transition-shadow">
+              {savedTeams.map((team) => (
+                <div
+                  key={team.id}
+                  className="border rounded-lg p-3 hover:shadow-md transition-shadow"
+                >
                   <div className="flex justify-between items-start">
                     <h3 className="font-bold text-blue-700">{team.name}</h3>
-                    <button 
+                    <button
                       onClick={() => handleDeleteTeam(team.id)}
                       className="text-red-500 hover:text-red-700 text-sm"
                       aria-label="Delete team"
@@ -587,17 +605,26 @@ const TeamManagement = () => {
                       Delete
                     </button>
                   </div>
-                  
+
                   <div className="text-xs text-gray-500 mb-2">
                     Created: {new Date(team.createdAt).toLocaleDateString()}
                   </div>
-                  
+
                   <div className="mt-2">
                     <p className="text-sm font-medium">Members:</p>
                     <ul className="text-sm">
-                      {team.members.map(member => (
-                        <li key={member.id} className="py-1 border-b border-gray-100 last:border-b-0">
-                          {member.name} ({departmentsData.find(d => d.id === member.department)?.name})
+                      {team.members.map((member) => (
+                        <li
+                          key={member.id}
+                          className="py-1 border-b border-gray-100 last:border-b-0"
+                        >
+                          {member.name} (
+                          {
+                            departmentsData.find(
+                              (d) => d.id === member.department
+                            )?.name
+                          }
+                          )
                         </li>
                       ))}
                     </ul>
