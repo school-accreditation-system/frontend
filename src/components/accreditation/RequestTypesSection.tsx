@@ -2,7 +2,6 @@
 
 import {
   SchoolFinderDialog,
-  School as SchoolType,
 } from "@/components/school-finder";
 import ErrorPopover from "@/components/ui/ErrorPopover";
 import { FeatureCard } from "@/components/ui/FeatureCard";
@@ -13,6 +12,7 @@ import { CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSchool } from "@/components/auth/SchoolContext.tsx";
+import { School } from "@/types/school";
 
 export const RequestTypesSection = () => {
   const router = useRouter();
@@ -42,6 +42,7 @@ export const RequestTypesSection = () => {
     } else {
       setSelectedRequestType(type);
       if (!school) {
+
         openSchoolDialog();
       } else {
         router.push(`/${type}`);
@@ -50,6 +51,7 @@ export const RequestTypesSection = () => {
   };
 
   const startAccreditationFlow = (requestType: Combination) => {
+    localStorage.setItem("requestType", JSON.stringify(requestType));
     setSelectedRequestType(requestType.fullName);
     if (!school) {
       openSchoolDialog();
@@ -58,7 +60,7 @@ export const RequestTypesSection = () => {
     }
   };
 
-  const handleSchoolSelect = (schoolObj: SchoolType) => {
+  const handleSchoolSelect = (schoolObj: School) => {
     setSchool(schoolObj);
     if (selectedRequestType) {
       if (window.location.pathname.includes("/applyfor/")) {
@@ -66,11 +68,7 @@ export const RequestTypesSection = () => {
         const requestTypeId = matches ? matches[1] : null;
         if (requestTypeId) {
           router.push(`/applyfor/${requestTypeId}`);
-        } else {
-          router.push(`/${selectedRequestType}`);
         }
-      } else {
-        router.push(`/${selectedRequestType}`);
       }
     }
   };

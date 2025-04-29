@@ -28,7 +28,7 @@ export const SchoolSearchStep = ({
   onStartVerification,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedSchool, setSelectedSchool] = useState<SchoolDTO | null>(null);
+  const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSchoolSelected, setIsSchoolSelected] = useState(false);
   const [verificationError, setVerificationError] = useState("");
@@ -40,15 +40,17 @@ export const SchoolSearchStep = ({
   } = useGetSchools(debouncedSearchQuery);
   const { setSchool } = useSchool();
 
-  const handleSchoolSelect = (school: SchoolDTO) => {
+  const handleSchoolSelect = (school: School) => {
     setSelectedSchool(school);
+    // setSchool(school)
     setVerificationError("");
     setIsSchoolSelected(true);
   };
   const handleContinue = () => {
+    console.log("Selected school:", selectedSchool);
     if (!selectedSchool) return;
     setIsVerifying(true);
-    setSchool(selectedSchool);
+    // setSchool(selectedSchool);
     setTimeout(() => {
       try {
         if (!selectedSchool.email) {

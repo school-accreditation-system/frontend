@@ -1,19 +1,20 @@
-/* eslint-disable max-nested-callbacks */
+ 
 'use client';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { schoolsData } from '@/constants/schoolsData';
 import { AlertTriangle, ArrowLeft, CheckCircle, LockKeyhole, Mail, RefreshCw, Timer } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { School, VerifyOtpStepProps } from '../types';
+import { useRouter } from 'next/navigation';
 
-export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
+export const VerifyOtpStep = ({
   email,
   onVerify,
-  onBack
+  selectedSchool,
+  onBack,
 }) => {
   const [otpCode, setOtpCode] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -21,6 +22,7 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
   const [timeLeft, setTimeLeft] = useState<number>(120); // 2 minutes
   const [canResend, setCanResend] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const router = useRouter();
 
   // Countdown for OTP expiration
   useEffect(() => {
@@ -52,29 +54,18 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
     setIsVerifying(true);
     setError('');
 
-    // TODO: Implement the API call to verify the OTP (call backend here)
+    // Simulate API call for verification
     setTimeout(() => {
-      // FIXME: Remove this once the API call is implemented
-      if (otpCode === '123456') {
+      if (otpCode === '123456') { // Simulated success condition
         setIsSuccess(true);
 
-        // FIXME: Remove this once the API call is implemented
-        // Wait a moment to show success state before proceeding
+        // Simulate a delay for showing success state
         setTimeout(() => {
-          // FIXME: Remove this once the API call is implemented
-          const existingSchool = schoolsData.find(s => s.email === email);
-
-          const verifiedSchool: School = existingSchool || {
-            id: Date.now(), // In a real app, this would come from the backend
-            name: "Newly Registered School",
-            address: "New School Address, Kigali",
-            email: email,
-            phone: "+250788123456",
-            schoolIdentification: false,
-            selfAssessment: false,
-          };
-
-          onVerify(verifiedSchool);
+          onVerify(selectedSchool);
+          const requestType = JSON.parse(localStorage.getItem("requestType") || '{}');
+          if (requestType && requestType.id) {
+            router.push(`/applyfor/${requestType.id}`);
+          }
         }, 1000);
       } else {
         setError('Invalid verification code. Please check and try again.');
@@ -173,12 +164,12 @@ export const VerifyOtpStep: React.FC<VerifyOtpStepProps> = ({
             )}
 
             {/* FIXME: Remove this once the API call is implemented */}
-            <Card className="border-0 bg-muted/50">
+            {/* <Card className="border-0 bg-muted/50">
               <CardContent className="p-2.5 sm:p-3 text-xs text-muted-foreground">
                 <p className="font-medium mb-1">For demo purposes:</p>
                 <p>Use code <span className="font-mono font-bold">123456</span> to simulate a successful verification.</p>
               </CardContent>
-            </Card>
+            </Card> */}
 
             <div className="flex justify-between items-center pt-4 border-t">
               <Button

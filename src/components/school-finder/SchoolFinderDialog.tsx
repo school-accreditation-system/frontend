@@ -38,7 +38,7 @@ export const SchoolFinderDialog = ({
   const [pendingSchool, setPendingSchool] = useState<School | null>(null);
   const isClosingRef = useRef(false);
 
-  const { school } = useSchool();
+  const { school, setSchool } = useSchool();
 
   useEffect(() => {
     if (isOpen && school) {
@@ -67,9 +67,10 @@ export const SchoolFinderDialog = ({
   };
 
   const handleVerification = (school: School) => {
-    if (pendingSchool) {
-      onSchoolSelect(pendingSchool);
-    } else {
+    setPendingSchool(school);
+    console.log('Selected school:==>', school);
+    if (school) {
+      setSchool(school);
       onSchoolSelect(school);
     }
     handleClose();
@@ -98,12 +99,10 @@ export const SchoolFinderDialog = ({
       >
         <DialogHeader className="space-y-2 sm:space-y-3">
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            {step === 'search' && title || "Select Your School"}
-            {step === 'verify' && "Verify School Email"}
+            {step === 'search' ? title : "Verify School Email"}
           </DialogTitle>
           <DialogDescription className="text-sm sm:text-base text-muted-foreground">
-            {step === 'search' && description}
-            {step === 'verify' && `Enter the verification code sent to ${verificationEmail}`}
+            {step === 'search' ? description : `Enter the verification code sent to ${verificationEmail}`}
           </DialogDescription>
         </DialogHeader>
 
@@ -121,6 +120,7 @@ export const SchoolFinderDialog = ({
               email={verificationEmail}
               onVerify={handleVerification}
               onBack={handleBack}
+              selectedSchool={pendingSchool}
             />
           )}
         </div>

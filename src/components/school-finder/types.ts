@@ -1,4 +1,4 @@
-import { SchoolDTO } from "@/hooks/useSchool";
+import { SchoolDTO, School as SchoolType} from "@/hooks/useSchool";
 
 export interface School {
   id: number;
@@ -12,12 +12,14 @@ export interface School {
   hasOrdinaryLevel?: boolean;
   hasAdvancedLevel?: boolean;
   hasBoardingStatus?: boolean;
+  selectedSchool: SchoolType;
 }
 
 export interface SchoolFinderDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSchoolSelect: (school: School) => void;
+
   title?: string;
   description?: string;
 }
@@ -31,6 +33,7 @@ export interface SchoolSearchStepProps {
 export interface VerifyOtpStepProps {
   email: string;
   onVerify: (school: School) => void;
+  selectedSchool: School;
   onBack: () => void;
 }
 
