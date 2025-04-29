@@ -109,45 +109,45 @@ const Table = ({ data = [] }: TableProps) => {
         },
       },
       // Action column with buttons
-      {
-        id: 'actions',
-        header: 'Actions',
-        size: 150,
-        enableSorting: false,
-        enableColumnFilter: false,
-        Cell: ({ row }) => {
-          const inspection = row.original;
+      // {
+      //   id: 'actions',
+      //   header: 'Actions',
+      //   size: 150,
+      //   enableSorting: false,
+      //   enableColumnFilter: false,
+      //   Cell: ({ row }) => {
+      //     const inspection = row.original;
           
-          return (
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleViewDetails(inspection.id)}
-                className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
-              >
-                View more
-              </button>
+      //     return (
+      //       <div className="flex gap-2">
+      //         <button
+      //           onClick={() => handleViewDetails(inspection.id)}
+      //           className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+      //         >
+      //           View more
+      //         </button>
               
-              {/* {inspection.inspectionStatus !== 'Completed' && (
-                <button
-                  onClick={() => handleEdit(inspection.id)}
-                  className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
-                >
-                  Edit
-                </button>
-              )}
+      //         {/* {inspection.inspectionStatus !== 'Completed' && (
+      //           <button
+      //             onClick={() => handleEdit(inspection.id)}
+      //             className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+      //           >
+      //             Edit
+      //           </button>
+      //         )}
               
-              {inspection.inspectionStatus === 'Scheduled' && (
-                <button
-                  onClick={() => handleStartInspection(inspection.id)}
-                  className="px-2 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700 transition-colors"
-                >
-                  Start
-                </button>
-              )} */}
-            </div>
-          );
-        },
-      },
+      //         {inspection.inspectionStatus === 'Scheduled' && (
+      //           <button
+      //             onClick={() => handleStartInspection(inspection.id)}
+      //             className="px-2 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700 transition-colors"
+      //           >
+      //             Start
+      //           </button>
+      //         )} */}
+      //       </div>
+      //     );
+      //   },
+      // },
     ],
     [],
   );
