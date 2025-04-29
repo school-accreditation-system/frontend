@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutDashboard, User, LogOut, Menu } from "lucide-react";
+import { Home, LayoutDashboard, User, LogOut, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import logo from "../../../public/nesa-logo.png";
@@ -14,83 +14,69 @@ export const NavBar = () => {
   const links = [
     { href: "/", label: "Home", icon: Home },
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/profile", label: "Profile", icon: User },
   ];
 
   return (
-    <header className="bg-gradient-to-br from-primary to-secondary shadow-lg sticky top-0 z-10">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo and site name */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12 flex items-center justify-center">
-              <Image
-                src={logo}
-                alt="NESA Logo"
-                className="object-contain"
-                fill
-                sizes="(max-width: 768px) 40px, 48px"
-                priority
-              />
-            </div>
-            <span className="font-semibold text-white hidden sm:inline-block group-hover:text-blue-100 transition-colors duration-200">
-              School Accreditation
-            </span>
-          </Link>
+    <header className="bg-gradient-to-br from-primary to-secondary shadow-lg sticky top-0 z-20">
+      <div className="flex items-center justify-between h-16 px-4">
+        {/* Logo and site name */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative w-12 h-12 flex items-center justify-center">
+            <Image
+              src={logo}
+              alt="NESA Logo"
+              className="object-contain"
+              fill
+              sizes="(max-width: 768px) 40px, 48px"
+              priority
+            />
+          </div>
+          <span className="font-semibold text-white hidden sm:inline-block group-hover:text-blue-100 transition-colors duration-200">
+            School Accreditation
+          </span>
+        </Link>
 
-          {/* Mobile menu button */}
-          <button
-            className="sm:hidden text-white hover:text-blue-200 transition-colors p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <Menu size={24} />
-          </button>
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden text-white hover:text-blue-200 transition-all duration-300 ease-in-out p-2"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
 
-          {/* Desktop Navigation links */}
-          <nav className="hidden sm:flex items-center gap-2">
-            {links.map((link) => {
-              const Icon = link.icon;
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`relative px-4 py-2 rounded-md flex items-center gap-2 font-medium transition-all duration-200
+        {/* Desktop Navigation links */}
+        <nav className="hidden md:flex items-center gap-2">
+          {links.map((link) => {
+            const Icon = link.icon;
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`relative px-4 py-2 rounded-md flex items-center gap-2 font-medium transition-all duration-200
                     ${
                       isActive
                         ? "text-blue-600 bg-white shadow-sm"
                         : "text-white hover:bg-white/10"
                     }`}
-                >
-                  <Icon size={18} />
-                  <span>{link.label}</span>
-                  {isActive && (
-                    <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"
-                      layoutId="navbar-indicator"
-                    />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* User menu */}
-          <div className="flex items-center gap-2">
-            <button className="p-2 rounded-full text-white hover:bg-white/10 transition-all duration-200 relative group">
-              <User size={20} />
-              <span className="absolute -bottom-10 right-0 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
-                Profile
-              </span>
-            </button>
-            <button className="p-2 rounded-full text-white hover:bg-white/10 transition-all duration-200 relative group">
-              <LogOut size={20} />
-              <span className="absolute -bottom-10 right-0 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
-                Log Out
-              </span>
-            </button>
-          </div>
-        </div>
+              >
+                <Icon size={18} />
+                <span>{link.label}</span>
+                {isActive && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"
+                    layoutId="navbar-indicator"
+                  />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+        <button className="hidden md:flex items-center gap-2 justify-center text-white capitalize font-medium hover:bg-white/10 px-4 py-2 rounded-md hover:cursor-pointer">
+          <LogOut size={20} /> logout
+        </button>
       </div>
 
       {/* Mobile menu */}
@@ -99,9 +85,9 @@ export const NavBar = () => {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="sm:hidden bg-indigo-800 shadow-inner"
+          className="md:hidden bg-primary z-20"
         >
-          <div className="container mx-auto px-4 py-2 space-y-1">
+          <div className="p-2">
             {links.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -122,23 +108,13 @@ export const NavBar = () => {
                 </Link>
               );
             })}
-            <div className="border-t border-indigo-700 my-2 pt-2">
-              <Link
-                href="/profile"
-                className="flex items-center gap-2 px-4 py-3 text-white hover:bg-white/10 rounded-md"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <User size={20} />
-                <span>Profile</span>
-              </Link>
-              <button
-                className="flex items-center gap-2 px-4 py-3 text-white hover:bg-white/10 rounded-md w-full"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <LogOut size={20} />
-                <span>Log Out</span>
-              </button>
-            </div>
+            <button
+              className="flex items-center gap-2 px-4 py-3 text-white hover:bg-white/10 rounded-md w-full"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <LogOut size={20} />
+              <span>Log Out</span>
+            </button>
           </div>
         </motion.div>
       )}

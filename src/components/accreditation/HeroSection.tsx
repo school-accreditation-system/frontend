@@ -1,274 +1,85 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import Link from "next/link";
-
-import { useEffect, useRef, useState } from "react";
-import { Input } from "../ui/input";
-
-import { openDialog, resetDialog } from "@/app/slicers/DialogSlice";
-import {
-  resetRequestType,
-  setRequestType
-} from "@/app/slicers/RequestTypeSlice";
-import { ALL_REQUEST_TYPES } from "@/constants/RequestTypes";
-import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-import { Button } from "../ui/button";
 
 export const HeroSection = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredRequests, setFilteredRequests] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-  const searchRef = useRef(null);
-
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const dispatch = useDispatch();
-  const dialog = useSelector((state) => state.dialog);
-  const router = useRouter();
-
-  // Handle scroll event to change navbar appearance
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Handle click outside search results to close them
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowResults(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Filter requests based on search term
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredRequests([]);
-      setShowResults(false);
-    } else {
-      const filtered = ALL_REQUEST_TYPES.filter((service) =>
-        service.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredRequests(filtered);
-      setShowResults(true);
-    }
-  }, [searchTerm]);
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-
-    if (filteredRequests.length > 0) {
-      const requestType = filteredRequests[0].requestType;
-      dispatch(setRequestType(requestType));
-
-      // if(selectedRequestType === "new-school-registration") router.push("/register-school")
-    }
-  };
-
-  const clearSearch = () => {
-    setSearchTerm("");
-    setShowResults(false);
-  };
-  const handleRequestNavigation = useCallback(() => {
-    setShowResults(false);
-    dispatch(openDialog());
-  }, [dispatch]);
-  useEffect(() => {
-    if (!dialog.isOpen && dialog.wasOpened) {
-      dispatch(resetDialog());
-      dispatch(resetRequestType());
-    }
-  }, [dialog, router]);
-
   return (
-    <section className="bg-gradient-to-br from-primary to-secondary py-0 pb-24 relative overflow-hidden">
-      {/* Navigation Bar - Sticky */}
-      <div
-        className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-secondary shadow-md" : "bg-transparent"
-          }`}
-      >
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <div className="relative h-10 w-40 bg-white rounded-sm p-1 overflow-hidden shadow-sm">
-              <Image
-                src="/nesalogo-removebg.png"
-                alt="NESA Logo"
-                className="object-contain p-0.5"
-                fill
-                priority={true}
+    <div className="relative bg-gradient-to-r from-primary to-secondary py-16 sm:py-24 cursor-default">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-20">
+        <svg className="h-full w-full" viewBox="0 0 800 800">
+          <defs>
+            <pattern
+              id="grid"
+              width="80"
+              height="80"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 80 0 L 0 0 0 80"
+                fill="none"
+                stroke="white"
+                strokeWidth="1"
               />
-            </div>
-          </Link>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-white rounded-full p-1 transition-all duration-200 hover:border hover:border-white hover:bg-white/10"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <Menu size={22} />
-          </button>
-
-          {/* Desktop Navigation Items */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/signup"
-              className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
-            >
-              <User className="h-4 w-4 mr-2" />
-              Sign Up
-            </Link>
-
-            <Link
-              href="/login"
-              className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
-            >
-              <LogIn className="h-4 w-4 mr-2" />
-              Log In
-            </Link>
-
-            {/* <div className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm">
-              <Globe className="h-4 w-4 mr-2" />
-              English
-            </div> */}
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-primary py-2 px-4 shadow-md">
-            <div className="flex flex-col space-y-2">
-              <Link
-                href="/signup"
-                className="flex items-center text-white px-3 py-2 rounded-sm border border-transparent hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
-              >
-                <User className="h-4 w-4 mr-2" />
-                Sign Up
-              </Link>
-
-              <Link
-                href="/login"
-                className="flex items-center text-white px-3 py-2 rounded-sm border border-transparent hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm"
-              >
-                <LogIn className="h-4 w-4 mr-2" />
-                Log In
-              </Link>
-
-              <div className="flex items-center text-white px-3 py-2 rounded-sm border border-transparent hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm cursor-pointer">
-                <Globe className="h-4 w-4 mr-2" />
-                English
-              </div>
-            </div>
-          </div>
-        )}
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
       </div>
 
-      {/* Empty space to compensate for fixed navbar */}
-      <div className="h-16"></div>
-
-      {/* Hero Content */}
-      <div className="container mx-auto px-4">
-        <div className="relative z-10 text-center max-w-3xl mx-auto mt-16 md:mt-24">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+      <div className="relative max-w-7xl mx-auto px-4 flex flex-col md:flex-row md:justify-around items-center gap-6">
+        {/* Left side - Content */}
+        <div className="flex flex-col gap-6">
+          <h1 className="text-4xl font-bold text-white">
             School Accreditation Portal
           </h1>
-
-          <p className="text-white/90 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
-            Find all your educational accreditation services in one place
+          <p className="text-xl text-blue-100 max-w-2xl">
+            Find all your educational accreditation services in one place.
+            Register your school, apply for accreditation, and verify approved
+            schools easily.
           </p>
 
-          {/* Search Box with Results Dropdown */}
-          <div ref={searchRef} className="relative mt-8 max-w-2xl mx-auto">
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <Input
-                placeholder="Search for services or requests"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onFocus={() => searchTerm.trim() !== "" && setShowResults(true)}
-                className="w-full rounded-md p-6 pl-12 pr-12 text-gray-800 placeholder:text-gray-400 bg-white border-0 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0 text-base"
-                style={{ backgroundColor: "white" }}
-              />
-              {searchTerm && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 hover:cursor-pointer text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              )}
-            </div>
-
-            {/* Search Results */}
-            {showResults && filteredRequests.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg overflow-hidden max-h-48 overflow-y-auto z-50">
-                <div className="p-2">
-                  {filteredRequests.map((request, index) => (
-                    <div key={index}>
-                      <div
-                        // href={`/${request.requestType}`}
-                        className="flex items-center p-3 hover:bg-gray-100 rounded-md transition-colors"
-                        onClick={handleRequestNavigation}
-                      >
-                        <div className="text-left">
-                          <h3 className="font-medium text-gray-800">
-                            {request.title}
-                          </h3>
-                          {request.description && (
-                            <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">
-                              {request.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* No Results Message */}
-            {showResults && searchTerm && filteredRequests.length === 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg overflow-hidden z-50">
-                <div className="p-6 text-center">
-                  <p className="text-gray-500">
-                    No services found matching &ldquo;{searchTerm}&rdquo;
-                  </p>
-                </div>
-              </div>
-            )}
+          <div className="flex items-center gap-6 max-w-lg">
+            <Link
+              href="/accredited-schools"
+              className="border w-full text-base text-primary font-medium bg-white px-4 h-9 flex items-center justify-center rounded-md hover:bg-primary hover:text-white"
+            >
+              view accredited schools
+            </Link>
+            <Link
+              href="/login"
+              className="border w-full text-base text-primary font-medium bg-white px-4 h-9 flex items-center justify-center rounded-md hover:bg-primary hover:text-white"
+            >
+              Staff Login
+            </Link>
           </div>
-          <Button className="mt-4 border[5px] border-white text-white font-semibold py-6 px-6 text-2xl rounded-lg hover:cursor-pointer shadow-md hover:bg-primary/80 transition duration-200"
-            onClick={() => {
-              router.push("/accredited-schools");
-            }}>
-            Click here to check Accredited Schools
-          </Button>
-        </div>
-      </div>‚
 
-      {/* Decorative elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-secondary/30 to-transparent"></div>
-    </section>
+          <div className="flex items-center px-2 py-1 bg-white rounded-lg shadow-md max-w-lg">
+            <Search className="text-primary w-5 h-5" />
+            <Input
+              type="search"
+              placeholder="Quick search enter school name, location, etc. to search"
+              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 capitalize shadow-none"
+            />
+            <Button size="sm">Search</Button>
+          </div>
+        </div>
+
+        {/* Right side - Image */}
+        <div className="hidden md:block w-64 h-64 relative">
+          <Image
+            src="/nesa-logo.png"
+            alt="NESA Accreditation"
+            layout="fill"
+            objectFit="contain"
+            draggable={false}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
