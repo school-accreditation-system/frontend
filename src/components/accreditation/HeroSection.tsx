@@ -2,21 +2,22 @@
 
 import Link from "next/link";
 
+import { useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
-import { useEffect, useState, useRef } from "react";
 
-import REQUEST_TYPES, { ALL_REQUEST_TYPES } from "@/constants/RequestTypes";
-import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
-import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
 import { openDialog, resetDialog } from "@/app/slicers/DialogSlice";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
 import {
   resetRequestType,
-  selectRequestType,
-  setRequestType,
+  setRequestType
 } from "@/app/slicers/RequestTypeSlice";
+import { ALL_REQUEST_TYPES } from "@/constants/RequestTypes";
+import { Globe, LogIn, Menu, Search, User, X } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+import { Button } from "../ui/button";
 
 export const HeroSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,8 +31,6 @@ export const HeroSection = () => {
   const dispatch = useDispatch();
   const dialog = useSelector((state) => state.dialog);
   const router = useRouter();
-
-  const selectedRequestType = useSelector(selectRequestType);
 
   // Handle scroll event to change navbar appearance
   useEffect(() => {
@@ -146,10 +145,10 @@ export const HeroSection = () => {
               Log In
             </Link>
 
-            <div className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm">
+            {/* <div className="flex items-center text-white px-3 py-1.5 rounded-sm border border-transparent hover:cursor-pointer hover:border-white/50 hover:bg-white/10 transition-all duration-200 text-sm">
               <Globe className="h-4 w-4 mr-2" />
               English
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -259,24 +258,14 @@ export const HeroSection = () => {
               </div>
             )}
           </div>
-
-          {/* Optional: Popular Searches */}
-          {/* <div className="mt-6 flex flex-wrap justify-center gap-2">
-            <span className="text-white/75 text-sm">Popular:</span>
-            {["New school", "Certificate", "Registration", "Renewal"].map(
-              (term) => (
-                <button
-                  key={term}
-                  onClick={() => setSearchTerm(term)}
-                  className="text-white text-sm px-3 py-1 hover:cursor-pointer rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-                >
-                  {term}
-                </button>
-              )
-            )}
-          </div> */}
+          <Button className="mt-4 border[5px] border-white text-white font-semibold py-6 px-6 text-2xl rounded-lg hover:cursor-pointer shadow-md hover:bg-primary/80 transition duration-200"
+            onClick={() => {
+              router.push("/accredited-schools");
+            }}>
+            Click here to check Accredited Schools
+          </Button>
         </div>
-      </div>
+      </div>‚
 
       {/* Decorative elements */}
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-secondary/30 to-transparent"></div>

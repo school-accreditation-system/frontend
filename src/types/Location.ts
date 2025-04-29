@@ -1,6 +1,9 @@
 export interface Location {
-    locationCode: string;
-    name: string;
-    type: LocationType;
-    parentCode?: string;
+  locationId: string;
+  locationCode: string;
+  name: string;
+  type: LocationType;
+  parentCode?: string;
+  parent: Location | null;
+  location: Location | null;
 }
