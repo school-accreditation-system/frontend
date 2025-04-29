@@ -5,13 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { AlertCircle, Users } from 'lucide-react';
 import { useEffect } from 'react';
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { teachingStaffSchema, TeachingStaffFormValues } from '../types/schema';
@@ -32,22 +32,22 @@ export const TeachingStaffForm = () => {
     },
     mode: 'onChange'
   });
-  
+
   useEffect(() => {
     if (stepErrors.length > 0) {
       form.trigger();
     }
   }, [stepErrors, form]);
 
-   // When external errors change, trigger validation to show the errors
+  // When external errors change, trigger validation to show the errors
   useEffect(() => {
     if (stepErrors.length > 0) {
       form.trigger();
     }
     console.log("stepErrors", stepErrors);
   }, [stepErrors, form]);
-  
-  
+
+
   const onFieldChange = (name: string, value: number) => {
     const updatedData = { [name]: value } as Partial<TeachingStaffFormValues>;
     updateFormData('teaching-staff', updatedData);
@@ -60,41 +60,46 @@ export const TeachingStaffForm = () => {
 
   const totalTeachers = maleTotalTeachers + femaleTotalTeachers;
   const totalAssistantTeachers = maleAssistantTeachers + femaleAssistantTeachers;
-  
+
   const assistantTeachersExceedTotal = totalAssistantTeachers > totalTeachers;
-  
+
   return (
     <Form {...form}>
-      <motion.div 
+      <motion.div
         className="space-y-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ staggerChildren: 0.1 }}
       >
         <div className="bg-gray-50 p-4 rounded-lg mb-6">
+          <div className="p-4 bg-primary/5 border border-primary rounded-md text-sm text-primary mb-6">
+            <p>
+              Enter the number of teaching staff, if you already have them or Enter their expected number
+            </p>
+          </div>
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-primary/10 rounded-full">
               <Users className="text-primary" size={20} />
             </div>
             <h3 className="font-medium text-gray-800">Staff Summary</h3>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white p-3 rounded-md shadow-sm border border-gray-100">
               <p className="text-xs text-gray-500">Total Teachers</p>
               <p className="text-2xl font-bold text-gray-800">{totalTeachers}</p>
             </div>
-            
+
             <div className="bg-white p-3 rounded-md shadow-sm border border-gray-100">
               <p className="text-xs text-gray-500">Male Teachers</p>
               <p className="text-2xl font-bold text-blue-600">{maleTotalTeachers}</p>
             </div>
-            
+
             <div className="bg-white p-3 rounded-md shadow-sm border border-gray-100">
               <p className="text-xs text-gray-500">Female Teachers</p>
               <p className="text-2xl font-bold text-pink-600">{femaleTotalTeachers}</p>
             </div>
-            
+
             <div className={`bg-white p-3 rounded-md shadow-sm border ${assistantTeachersExceedTotal ? 'border-red-200' : 'border-gray-100'}`}>
               <p className="text-xs text-gray-500">Assistant Teachers</p>
               <p className={`text-2xl font-bold ${assistantTeachersExceedTotal ? 'text-red-600' : 'text-green-600'}`}>
@@ -107,7 +112,7 @@ export const TeachingStaffForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h3 className="font-medium text-gray-700 mb-4">Full-Time Teachers</h3>
-            
+
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -121,7 +126,7 @@ export const TeachingStaffForm = () => {
                   <FormItem>
                     <FormLabel>Number of Male Teachers</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         min="0"
                         {...field}
@@ -130,7 +135,7 @@ export const TeachingStaffForm = () => {
                           const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                           field.onChange(isNaN(value) ? 0 : value);
                           onFieldChange("maleTotalTeachers", isNaN(value) ? 0 : value);
-                        }} 
+                        }}
                         className={stepErrors.some(e => e.includes("male") || e.includes("Male")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                       />
                     </FormControl>
@@ -152,7 +157,7 @@ export const TeachingStaffForm = () => {
                   <FormItem>
                     <FormLabel>Number of Female Teachers</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         min="0"
                         {...field}
@@ -161,7 +166,7 @@ export const TeachingStaffForm = () => {
                           const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                           field.onChange(isNaN(value) ? 0 : value);
                           onFieldChange("femaleTotalTeachers", isNaN(value) ? 0 : value);
-                        }} 
+                        }}
                         className={stepErrors.some(e => e.includes("female") || e.includes("Female")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                       />
                     </FormControl>
@@ -171,10 +176,10 @@ export const TeachingStaffForm = () => {
               />
             </motion.div>
           </div>
-          
+
           <div>
             <h3 className="font-medium text-gray-700 mb-4">Assistant Teachers</h3>
-            
+
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -188,7 +193,7 @@ export const TeachingStaffForm = () => {
                   <FormItem>
                     <FormLabel>Number of Male Assistant Teachers</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         min="0"
                         {...field}
@@ -197,7 +202,7 @@ export const TeachingStaffForm = () => {
                           const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                           field.onChange(isNaN(value) ? 0 : value);
                           onFieldChange("maleAssistantTeachers", isNaN(value) ? 0 : value);
-                        }} 
+                        }}
                         className={stepErrors.some(e => e.includes("assistant") || e.includes("Assistant")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                       />
                     </FormControl>
@@ -219,7 +224,7 @@ export const TeachingStaffForm = () => {
                   <FormItem>
                     <FormLabel>Number of Female Assistant Teachers</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         min="0"
                         {...field}
@@ -228,7 +233,7 @@ export const TeachingStaffForm = () => {
                           const value = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                           field.onChange(isNaN(value) ? 0 : value);
                           onFieldChange("femaleAssistantTeachers", isNaN(value) ? 0 : value);
-                        }} 
+                        }}
                         className={stepErrors.some(e => e.includes("assistant") || e.includes("Assistant")) ? "border-red-500 focus-visible:ring-red-500" : ""}
                       />
                     </FormControl>
@@ -252,19 +257,12 @@ export const TeachingStaffForm = () => {
             <div>
               <p className="text-sm font-medium">Invalid number of assistant teachers</p>
               <p className="text-sm mt-1">
-                The total number of assistant teachers ({totalAssistantTeachers}) cannot exceed 
+                The total number of assistant teachers ({totalAssistantTeachers}) cannot exceed
                 the total number of teachers ({totalTeachers}).
               </p>
             </div>
           </motion.div>
         )}
-        
-        <div className="p-4 bg-blue-50 border border-blue-100 rounded-md mt-6">
-          <p className="text-sm text-blue-700">
-            These numbers will be used for accreditation and reporting purposes. 
-            Please ensure they are accurate.
-          </p>
-        </div>
       </motion.div>
     </Form>
   );

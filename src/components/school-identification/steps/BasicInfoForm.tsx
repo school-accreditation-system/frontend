@@ -25,9 +25,9 @@ import { BasicInfoFormValues, basicInfoSchema } from "../types/schema";
 
 export const BasicInfoForm = () => {
   const { formData, updateFormData, formErrors } = useFormContext();
-  
+
   const stepErrors = formErrors['basic-info'] || [];
-  
+
   const form = useForm<BasicInfoFormValues>({
     resolver: zodResolver(basicInfoSchema),
     defaultValues: {
@@ -46,7 +46,7 @@ export const BasicInfoForm = () => {
   // Sync form data on component mount and when formData changes
   useEffect(() => {
     if (Object.keys(formData).length > 0) {
-      
+
       // First reset with basic values
       form.reset({
         schoolEmail: formData.schoolEmail || "",
@@ -58,7 +58,7 @@ export const BasicInfoForm = () => {
         accommodationStatus: formData.accommodationStatus || undefined,
         yearOfEstablishment: formData.yearOfEstablishment || ""
       });
-      
+
       // Then ensure select fields get their values set properly
       if (formData.status) form.setValue("status", formData.status);
       if (formData.typeOfSchool) form.setValue("typeOfSchool", formData.typeOfSchool);
@@ -86,22 +86,22 @@ export const BasicInfoForm = () => {
 
   const hasFieldError = useCallback((fieldName: keyof BasicInfoFormValues) => {
     return (
-      form.formState.errors[fieldName] || 
+      form.formState.errors[fieldName] ||
       stepErrors.some(e => e.toLowerCase().includes(fieldName.toLowerCase()))
     );
   }, [form.formState.errors, stepErrors]);
 
   return (
     <Form {...form}>
-      <div className="space-y-6">        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">                    
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="status"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Status</FormLabel>
-                <Select 
+                <Select
                   onValueChange={(value) => {
                     field.onChange(value);
                     onFieldChange("status", value as "PUBLIC" | "PRIVATE" | "GOVERNMENT_AIDED");
@@ -109,7 +109,7 @@ export const BasicInfoForm = () => {
                   value={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger 
+                    <SelectTrigger
                       className={`w-full ${hasFieldError("status") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     >
                       <SelectValue placeholder="Select status" />
@@ -125,14 +125,14 @@ export const BasicInfoForm = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="typeOfSchool"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Type of School</FormLabel>
-                <Select 
+                <Select
                   onValueChange={(value) => {
                     field.onChange(value);
                     onFieldChange("typeOfSchool", value as "MIXED" | "FEMALE" | "MALE");
@@ -140,7 +140,7 @@ export const BasicInfoForm = () => {
                   value={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger 
+                    <SelectTrigger
                       className={`w-full ${hasFieldError("typeOfSchool") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     >
                       <SelectValue defaultValue={field.value} placeholder="Select type" />
@@ -156,38 +156,38 @@ export const BasicInfoForm = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="schoolCurriculum"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>School Curriculum</FormLabel>
-                <Select 
+                <Select
                   onValueChange={(value) => {
                     field.onChange(value);
-                    onFieldChange("schoolCurriculum", value as "CBC" | "CBD" | "Other");
+                    onFieldChange("schoolCurriculum", value as "NATIONAL" | "INTERNATIONAL" | "INTERNATIONAL");
                   }}
                   value={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger 
+                    <SelectTrigger
                       className={`w-full ${hasFieldError("schoolCurriculum") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     >
                       <SelectValue defaultValue={field.value} placeholder="Select curriculum" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="CBC">CBC</SelectItem>
-                    <SelectItem value="CBD">CBD</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="NATIONAL">NATIONAL</SelectItem>
+                    <SelectItem value="INTERNATIONAL">INTERNATIONAL</SelectItem>
+                    <SelectItem value="BOTH">BOTH</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="schoolOwner"
@@ -195,28 +195,28 @@ export const BasicInfoForm = () => {
               <FormItem className="w-full">
                 <FormLabel>School Owner</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter school owner" 
+                  <Input
+                    placeholder="Enter school owner"
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       onFieldChange("schoolOwner", e.target.value);
-                    }} 
+                    }}
                     className={`w-full ${hasFieldError("schoolOwner") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          />               
-          
+          />
+
           <FormField
             control={form.control}
             name="accommodationStatus"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Accommodation Status</FormLabel>
-                <Select 
+                <Select
                   onValueChange={(value) => {
                     field.onChange(value);
                     onFieldChange("accommodationStatus", value as "DAY" | "BOARDING" | "MIXED");
@@ -224,7 +224,7 @@ export const BasicInfoForm = () => {
                   value={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger 
+                    <SelectTrigger
                       className={`w-full ${hasFieldError("accommodationStatus") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     >
                       <SelectValue placeholder="Select accommodation status" />
@@ -240,7 +240,7 @@ export const BasicInfoForm = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="yearOfEstablishment"
@@ -248,13 +248,13 @@ export const BasicInfoForm = () => {
               <FormItem className="w-full">
                 <FormLabel>Year of Establishment</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="YYYY" 
+                  <Input
+                    placeholder="YYYY"
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       onFieldChange("yearOfEstablishment", e.target.value);
-                    }} 
+                    }}
                     className={`w-full ${hasFieldError("yearOfEstablishment") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                   />
                 </FormControl>
@@ -262,7 +262,7 @@ export const BasicInfoForm = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="schoolEmail"
@@ -270,13 +270,13 @@ export const BasicInfoForm = () => {
               <FormItem className="w-full">
                 <FormLabel>School Email</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter school email" 
+                  <Input
+                    placeholder="Enter school email"
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       onFieldChange("schoolEmail", e.target.value);
-                    }} 
+                    }}
                     className={`w-full ${hasFieldError("schoolEmail") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                   />
                 </FormControl>
@@ -284,7 +284,7 @@ export const BasicInfoForm = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="contact"
@@ -292,13 +292,13 @@ export const BasicInfoForm = () => {
               <FormItem className="w-full">
                 <FormLabel>Contact</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter contact number" 
+                  <Input
+                    placeholder="Enter contact number"
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       onFieldChange("contact", e.target.value);
-                    }} 
+                    }}
                     className={`w-full ${hasFieldError("contact") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                   />
                 </FormControl>

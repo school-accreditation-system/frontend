@@ -1,5 +1,6 @@
 'use client';
 
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -16,14 +17,12 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useFormContext } from "../context/FormContext";
-import { LocationDetailsFormValues } from "../types/schema";
 import { useLocationForm } from "../hooks/useLocationForm";
 
 export const LocationDetailsForm = () => {
   const { formData, updateFormData, formErrors } = useFormContext();
-  
+
   const {
     form,
     isAtSchool,
@@ -42,10 +41,10 @@ export const LocationDetailsForm = () => {
 
   return (
     <Form {...form}>
-      <div className="space-y-6"> 
+      <div className="space-y-6">
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-xl font-medium mb-6">Location Details</h3>
-          
+
           <div className="space-y-6 max-w-7xl mx-auto">
             {/* First row: Province & District */}
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
@@ -57,7 +56,7 @@ export const LocationDetailsForm = () => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="text-gray-700 font-medium">Province</FormLabel>
-                      <Select 
+                      <Select
                         onValueChange={(value) => {
                           field.onChange(value);
                           onFieldChange("province", value);
@@ -65,7 +64,7 @@ export const LocationDetailsForm = () => {
                         value={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger 
+                          <SelectTrigger
                             className={`h-12 w-full ${hasFieldError("province") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           >
                             <SelectValue placeholder="Select your province" />
@@ -84,7 +83,7 @@ export const LocationDetailsForm = () => {
                   )}
                 />
               </div>
-              
+
               {/* District Selection */}
               <div className="w-full md:w-[48%]">
                 <FormField
@@ -93,7 +92,7 @@ export const LocationDetailsForm = () => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="text-gray-700 font-medium">District</FormLabel>
-                      <Select 
+                      <Select
                         onValueChange={(value) => {
                           field.onChange(value);
                           onFieldChange("district", value);
@@ -102,7 +101,7 @@ export const LocationDetailsForm = () => {
                         disabled={availableDistricts.length === 0}
                       >
                         <FormControl>
-                          <SelectTrigger 
+                          <SelectTrigger
                             className={`h-12 w-full ${hasFieldError("district") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           >
                             <SelectValue placeholder={availableDistricts.length === 0 ? "Select province first" : "Select your district"} />
@@ -122,7 +121,7 @@ export const LocationDetailsForm = () => {
                 />
               </div>
             </div>
-            
+
             {/* Second row: Sector & Cell */}
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
               {/* Sector Selection */}
@@ -133,7 +132,7 @@ export const LocationDetailsForm = () => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="text-gray-700 font-medium">Sector</FormLabel>
-                      <Select 
+                      <Select
                         onValueChange={(value) => {
                           field.onChange(value);
                           onFieldChange("sector", value);
@@ -142,7 +141,7 @@ export const LocationDetailsForm = () => {
                         disabled={availableSectors.length === 0}
                       >
                         <FormControl>
-                          <SelectTrigger 
+                          <SelectTrigger
                             className={`h-12 w-full ${hasFieldError("sector") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           >
                             <SelectValue placeholder={availableSectors.length === 0 ? "Select district first" : "Select your sector"} />
@@ -161,7 +160,7 @@ export const LocationDetailsForm = () => {
                   )}
                 />
               </div>
-              
+
               {/* Cell Selection */}
               <div className="w-full md:w-[48%]">
                 <FormField
@@ -170,7 +169,7 @@ export const LocationDetailsForm = () => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="text-gray-700 font-medium">Cell</FormLabel>
-                      <Select 
+                      <Select
                         onValueChange={(value) => {
                           field.onChange(value);
                           onFieldChange("cell", value);
@@ -179,7 +178,7 @@ export const LocationDetailsForm = () => {
                         disabled={availableCells.length === 0}
                       >
                         <FormControl>
-                          <SelectTrigger 
+                          <SelectTrigger
                             className={`h-12 w-full ${hasFieldError("cell") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           >
                             <SelectValue placeholder={availableCells.length === 0 ? "Select sector first" : "Select your cell"} />
@@ -199,7 +198,7 @@ export const LocationDetailsForm = () => {
                 />
               </div>
             </div>
-            
+
             {/* Village Selection - Full width */}
             <div className="w-full md:w-1/2 md:mx-auto">
               <FormField
@@ -208,7 +207,7 @@ export const LocationDetailsForm = () => {
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel className="text-gray-700 font-medium">Village</FormLabel>
-                    <Select 
+                    <Select
                       onValueChange={(value) => {
                         field.onChange(value);
                         onFieldChange("village", value);
@@ -217,7 +216,7 @@ export const LocationDetailsForm = () => {
                       disabled={availableVillages.length === 0}
                     >
                       <FormControl>
-                        <SelectTrigger 
+                        <SelectTrigger
                           className={`h-12 w-full ${hasFieldError("village") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                         >
                           <SelectValue placeholder={availableVillages.length === 0 ? "Select cell first" : "Select your village"} />
@@ -237,39 +236,39 @@ export const LocationDetailsForm = () => {
               />
             </div>
           </div>
-        
+
           {/* GPS Coordinates section */}
           <div className="mt-8 pt-6 border-t border-gray-100 max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-5">
               <h4 className="text-lg font-medium">GPS Coordinates</h4>
               <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="atSchool" 
-                  checked={isAtSchool} 
+                <Checkbox
+                  id="atSchool"
+                  checked={isAtSchool}
                   onCheckedChange={handleIsAtSchoolChange}
                   disabled={isGettingLocation}
                 />
-                <label 
-                  htmlFor="atSchool" 
+                <label
+                  htmlFor="atSchool"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   I am currently at the school location
                 </label>
               </div>
             </div>
-            
+
             {locationError && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">
                 {locationError}
               </div>
             )}
-            
+
             {isGettingLocation && (
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-600">
                 Getting your current location...
               </div>
             )}
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <FormField
@@ -279,13 +278,13 @@ export const LocationDetailsForm = () => {
                     <FormItem className="w-full">
                       <FormLabel className="text-gray-700 font-medium">Latitude</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="e.g. -1.9441 (decimal coordinates)" 
+                        <Input
+                          placeholder="e.g. -1.9441 (decimal coordinates)"
                           {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             onFieldChange("latitude", e.target.value);
-                          }} 
+                          }}
                           className={`h-12 ${hasFieldError("latitude") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           disabled={isAtSchool || isGettingLocation}
                         />
@@ -295,7 +294,7 @@ export const LocationDetailsForm = () => {
                   )}
                 />
               </div>
-              
+
               <div>
                 <FormField
                   control={form.control}
@@ -304,13 +303,13 @@ export const LocationDetailsForm = () => {
                     <FormItem className="w-full">
                       <FormLabel className="text-gray-700 font-medium">Longitude</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="e.g. 30.0619 (decimal coordinates)" 
+                        <Input
+                          placeholder="e.g. 30.0619 (decimal coordinates)"
                           {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             onFieldChange("longitude", e.target.value);
-                          }} 
+                          }}
                           className={`h-12 ${hasFieldError("longitude") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           disabled={isAtSchool || isGettingLocation}
                         />

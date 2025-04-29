@@ -15,7 +15,7 @@ export interface ApiResponse<T> {
 
 export const useAddSchool = () => {
   return useMutation<
-    ApiResponse<{ SchoolDTO }>,
+    ApiResponse<{ School }>,
     ErrorResponse,
     {
       school: SchoolDTO;
@@ -35,6 +35,7 @@ export const useAddSchool = () => {
           headTeacher: data.headTeacher,
         }
       );
+      console.log("School saved response ====> ", response.data);
       return response.data;
     },
     staleTime: 1000 * 60 * 60 * 24,
