@@ -9,10 +9,9 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useFormContext } from "../context/FormContext";
-import { StudentInfoFormValues } from "../types/schema";
-import { useStudentInfoForm } from "../hooks/useStudentInfoForm";
 import { StudentSummary } from "../components/StudentSummary";
+import { useFormContext } from "../context/FormContext";
+import { useStudentInfoForm } from "../hooks/useStudentInfoForm";
 
 export const StudentInfoForm = () => {
   const { formData, updateFormData, formErrors } = useFormContext();
