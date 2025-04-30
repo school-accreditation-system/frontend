@@ -9,9 +9,15 @@ const Header = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [userName,setUserName]= useState("")
+     const [loggedInUserRole, setLoggedInUserRole] = useState("inspector"); // Default role
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("loggedInUser"));
     setUserName(data.name)
+
+    const userData = localStorage.getItem("loggedInUser");
+      const parsedUserData = JSON.parse(userData);
+      setLoggedInUserRole(parsedUserData.role || "division"); // Default to division if no role
+
   },[])
   
   const toggleUserMenu = () => {
@@ -101,6 +107,7 @@ const Header = () => {
               <span className="font-medium hidden md:block">{userName}</span>
               <IoIosArrowDown className={`transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
             </button>
+          
             
             {/* User dropdown menu */}
             {showUserMenu && (
@@ -108,6 +115,13 @@ const Header = () => {
                 <div className="p-3 border-b border-gray-200">
                   <p className="font-semibold">{userName}</p>
                   <p className="text-sm text-gray-500">{userName}@gmail.com</p>
+                </div>
+                <div>
+                {loggedInUserRole && (
+          <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded">
+            Logged in as: {loggedInUserRole.toUpperCase()}
+          </span>
+        )}
                 </div>
                 <div className="p-2">
                   {/* <button className="w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm flex items-center gap-2">

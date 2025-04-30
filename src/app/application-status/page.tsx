@@ -1,6 +1,6 @@
 "use client";
 import { Sidebar } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../../../public/nesa-logo.png";
 import waterMark from "../../../public/nesa-logo.png";
 import accreditated_logo from "../../../public/accredited-logo.jpg";
@@ -18,8 +18,103 @@ const AccreditationStatusPage = () => {
   const [error, setError] = useState("");
   // State for school type selection
   const [schoolType, setSchoolType] = useState("secondary");
+  // State to store inspections from localStorage
+  const [inspections, setInspections] = useState([]);
 
-  // Mock data for demonstration - in a real app, this would come from an API
+  // Load inspections from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedInspections = localStorage.getItem("inspections");
+      if (savedInspections) {
+        const parsedInspections = JSON.parse(savedInspections);
+        setInspections(parsedInspections);
+        console.log("Loaded inspections:", parsedInspections);
+      } else {
+        console.log("No inspections found in localStorage");
+      }
+    } catch (error) {
+      console.error("Error loading inspections from localStorage:", error);
+    }
+  }, []);
+
+  // Function to map inspection status to a user-friendly status
+  const mapStatusToDisplay = (inspectionStatus, approved) => {
+    if (approved) return "Approved";
+    
+    switch (inspectionStatus?.toLowerCase()) {
+      case "completed":
+        return "Completed - Pending Approval";
+      case "submitted":
+        return "Under Review";
+      case "in progress":
+        return "In Progress";
+      default:
+        return inspectionStatus || "Pending";
+    }
+  };
+
+  // Function to handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Reset states
+    setStatus(null);
+    setError("");
+
+    // Validate input
+    if (!applicationId.trim()) {
+      setError("Please enter an application ID");
+      return;
+    }
+
+    // Show loading state
+    setIsLoading(true);
+
+    // Search in the inspections from localStorage
+    setTimeout(() => {
+      const foundInspection = inspections.find(
+        (inspection) => 
+          inspection.applicationId === applicationId ||
+          // Fallback to case-insensitive search
+          inspection.applicationId?.toLowerCase() === applicationId.toLowerCase()
+      );
+
+      if (foundInspection) {
+        // Found inspection in localStorage
+        const mappedStatus = {
+          type: foundInspection.type || "Not specified",
+          status: mapStatusToDisplay(foundInspection.status, foundInspection.approved),
+          date: foundInspection.updatedAt || new Date().toISOString().split('T')[0],
+          comments: foundInspection.comments || 
+                   (foundInspection.submittedTo 
+                     ? `Submitted to ${foundInspection.submittedTo.toUpperCase()}` 
+                     : "Under review by NESA staff"),
+          ranking: foundInspection.ranking || null,
+          score: foundInspection.score || null,
+          schoolName: foundInspection.name,
+          district: foundInspection.district,
+          approved: foundInspection.approved,
+          // Include original data for reference
+          original: foundInspection
+        };
+        
+        setStatus(mappedStatus);
+      } else {
+        // Fallback to mock data for demonstration
+        const mockApplication = mockApplications[applicationId];
+        
+        if (mockApplication) {
+          setStatus(mockApplication);
+        } else {
+          setError("Application not found. Please check the ID and try again.");
+        }
+      }
+
+      setIsLoading(false);
+    }, 800);
+  };
+
+  // Mock data for demonstration - fallback if not found in localStorage
   const mockApplications = {
     SEC123: {
       type: "secondary",
@@ -41,41 +136,10 @@ const AccreditationStatusPage = () => {
     },
     TVT101: {
       type: "tvet",
-      status: "Under Review By Head of department",
+      status: "Under Review",
       date: "2025-03-25",
       comments: "Staff credentials being verified",
     },
-  };
-
-  // Function to handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Reset states
-    setStatus(null);
-    setError("");
-
-    // Validate input
-    if (!applicationId.trim()) {
-      setError("Please enter an application ID");
-      return;
-    }
-
-    // Show loading state
-    setIsLoading(true);
-
-    // Simulate API call delay
-    setTimeout(() => {
-      const application = mockApplications[applicationId];
-
-      if (application) {
-        setStatus(application);
-      } else {
-        setError("Application not found. Please check the ID and try again.");
-      }
-
-      setIsLoading(false);
-    }, 800);
   };
 
   // Status badge component with color coding
@@ -87,12 +151,14 @@ const AccreditationStatusPage = () => {
         bgColor = "bg-green-500";
         break;
       case "Pending":
+      case "In Progress":
         bgColor = "bg-yellow-500";
         break;
       case "Rejected":
         bgColor = "bg-red-500";
         break;
       case "Under Review":
+      case "Completed - Pending Approval":
         bgColor = "bg-blue-500";
         break;
       default:
@@ -107,8 +173,6 @@ const AccreditationStatusPage = () => {
       </span>
     );
   };
-
-// if(isLoading) return <h1>{generateQrCode()}</h1>
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -163,6 +227,14 @@ const AccreditationStatusPage = () => {
               <div className="px-6 py-5 divide-y divide-gray-200">
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">
+                    School Name
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {status.schoolName || "Not available"}
+                  </dd>
+                </div>
+                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt className="text-sm font-medium text-gray-500">
                     Application ID
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -177,6 +249,16 @@ const AccreditationStatusPage = () => {
                     {status.type}
                   </dd>
                 </div>
+                {status.district && (
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt className="text-sm font-medium text-gray-500">
+                      District
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {status.district}
+                    </dd>
+                  </div>
+                )}
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">
                     Last Updated
@@ -185,6 +267,17 @@ const AccreditationStatusPage = () => {
                     {status.date}
                   </dd>
                 </div>
+                {status.ranking && (
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Ranking
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {status.ranking}
+                      {status.score && ` (Score: ${status.score})`}
+                    </dd>
+                  </div>
+                )}
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">
                     Comments
@@ -193,30 +286,32 @@ const AccreditationStatusPage = () => {
                     {status.comments}
                   </dd>
                 </div>
-                {status.status === "Approved" && <div className="py-4">
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() =>
-                        handlePrintCertificate({
-                          logo: "/nesalogo-removebg.png",
-                          sealImage: "/accredited-logo.jpg",
-                          waterMark: "/nesa-logo.png",
-                          schoolName: "Ecole Primaire et Maternelle LADIVINE",
-                          schoolType: "Primary Level Education",
-                          issuerName: "Names...",
-                          issuerPosition: "Director General",
-                          validFromDate: "April 2025",
-                          validToDate: "31st August 2026",
-                          certificateNumber: "NESA/2025/0001",
-                        })
-                      }
-                    >
-                      Print Status
-                    </button>
+                {(status.status === "Approved" || status.approved) && (
+                  <div className="py-4">
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        onClick={() =>
+                          handlePrintCertificate({
+                            logo: "/nesalogo-removebg.png",
+                            sealImage: "/accredited-logo.jpg",
+                            waterMark: "/nesa-logo.png",
+                            schoolName: status.schoolName || "Ecole Primaire et Maternelle LADIVINE",
+                            schoolType: `${status.type || "Education"} Level Education`,
+                            issuerName: "Names...",
+                            issuerPosition: "Director General",
+                            validFromDate: "April 2025",
+                            validToDate: "31st August 2026",
+                            certificateNumber: applicationId || "NESA/2025/0001",
+                          })
+                        }
+                      >
+                        Print Certificate
+                      </button>
+                    </div>
                   </div>
-                </div>}
+                )}
               </div>
             </div>
           )}
@@ -252,27 +347,33 @@ const AccreditationStatusPage = () => {
         </div>
       </div>
 
-      {/* Sample IDs for testing */}
+      {/* Sample IDs for testing - Show actual application IDs from localStorage */}
       <div className="max-w-3xl mx-auto mt-6 bg-white rounded-lg shadow-md overflow-hidden">
         <div className="px-6 py-4">
-          <h3 className="font-medium text-gray-900">Sample IDs for Testing:</h3>
+          <h3 className="font-medium text-gray-900">Available Application IDs:</h3>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">Secondary</p>
-              <p className="text-sm">SEC123</p>
-            </div>
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">Primary</p>
-              <p className="text-sm">PRI456</p>
-            </div>
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">Ordinary</p>
-              <p className="text-sm">ORD789</p>
-            </div>
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">TVET</p>
-              <p className="text-sm">TVT101</p>
-            </div>
+            {inspections.length > 0 ? (
+              inspections.slice(0, 8).map((inspection, index) => (
+                <div key={index} className="bg-gray-100 p-2 rounded">
+                  <p className="text-xs font-medium text-gray-500">{inspection.type || "School"}</p>
+                  <p className="text-sm font-medium cursor-pointer hover:text-blue-600" 
+                     onClick={() => setApplicationId(inspection.applicationId)}>
+                    {inspection.applicationId || `APP-${inspection.id}`}
+                  </p>
+                </div>
+              ))
+            ) : (
+              // Fallback to mock data if no inspections found
+              Object.entries(mockApplications).map(([id, data], index) => (
+                <div key={index} className="bg-gray-100 p-2 rounded">
+                  <p className="text-xs font-medium text-gray-500">{data.type}</p>
+                  <p className="text-sm cursor-pointer hover:text-blue-600"
+                     onClick={() => setApplicationId(id)}>
+                    {id}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

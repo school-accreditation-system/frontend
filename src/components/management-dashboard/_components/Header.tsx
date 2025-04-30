@@ -9,6 +9,7 @@ const Header = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [userName,setUserName]= useState("")
+   const [loggedInUserRole, setLoggedInUserRole] = useState("inspector"); // Default role
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("loggedInUser"));
     setUserName(data.name)
