@@ -34,8 +34,8 @@ const SERVICES = [
     linkColor: 'text-purple-600',
   },
   {
-    title: 'Submit a claim for accreditation',
-    description: 'Got an issue with your accreditation? Submit a claim and let us help you resolve it. Our team is here to assist you every step of the way.',
+    title: 'Submit a claim/feeback on this portal',
+    description: 'Share your experience with us. We value your feedback and are committed to improving our services. Submit a claim or feedback to help us serve you better.',
     icon: <HelpCircle className="w-8 h-8 text-primary" />,
     href: '/submit-claim',
     actionLabel: 'Submit Claim',
@@ -63,7 +63,7 @@ export const ServicesSection = () => {
             {SERVICES.map((service) => (
               <div
                 key={service.title}
-                className="flex flex-col h-full rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg relative"
+                className="flex flex-col h-full rounded-md overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg relative"
               >
                 {/* Top color bar */}
                 <div className={service.topColor + " h-2 w-full"}></div>

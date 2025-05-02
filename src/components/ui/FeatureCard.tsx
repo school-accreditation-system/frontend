@@ -35,19 +35,19 @@ export const FeatureCard = ({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ 
-        duration: 0.3, 
-        delay: index * 0.1, // Staggered animation based on index
-        ease: "easeOut" 
+      transition={{
+        duration: 0.3,
+        delay: index * 0.1,
+        ease: "easeOut"
       }}
       whileHover={{ y: -5 }}
     >
       <Card className={cn(
-        "h-full flex flex-col transition-all duration-300 hover:shadow-lg border",
+        "h-full rounded-none flex flex-col transition-all duration-300 hover:shadow-lg border-0 shadow-none bg-blue-50/50 p-4 sm:p-6",
         className || "bg-white"
       )}>
         <CardHeader className="pb-0 pt-6 space-y-0 text-center">
-          <motion.div 
+          <motion.div
             className="mx-auto"
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -56,21 +56,21 @@ export const FeatureCard = ({
           </motion.div>
           <h3 className="text-xl font-semibold mt-3 mb-2">{title}</h3>
         </CardHeader>
-        
+
         <CardContent className="flex-grow py-2 px-5">
           <p className="text-muted-foreground text-center text-sm">{description || `Click here to apply for ${title?.toLocaleLowerCase()} and follow the steps to the end`}</p>
         </CardContent>
-        
+
         {(actionLabel && (onClick || href)) && (
           <CardFooter className="pt-2 pb-6 flex justify-center">
             {href ? (
-              <Button asChild className="bg-primary hover:bg-primary/90 hover:cursor-pointer transition-all duration-300 rounded-full px-6">
+              <Button asChild className="bg-primary hover:bg-primary/90 hover:cursor-pointer transition-all duration-300 rounded-xs px-6">
                 <Link href={href}>{actionLabel}</Link>
               </Button>
             ) : (
-              <Button 
-                onClick={onClick} 
-                className="bg-primary hover:bg-primary/90 hover:cursor-pointer transition-all duration-300 rounded-full px-6 shadow-sm hover:shadow-md"
+              <Button
+                onClick={onClick}
+                className="bg-primary hover:bg-primary/90 hover:cursor-pointer transition-all duration-300 rounded-xs px-6 shadow-sm hover:shadow-md"
               >
                 {actionLabel}
               </Button>

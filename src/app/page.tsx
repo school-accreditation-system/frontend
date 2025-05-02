@@ -1,14 +1,12 @@
+import { AboutSection } from '@/components/accreditation/AboutSection';
 import { HeroSection } from '@/components/accreditation/HeroSection';
-import { ProcessStepsSection } from '@/components/accreditation/ProcessStepsSection';
 import { RequestTypesSection } from '@/components/accreditation/RequestTypesSection';
 import { ServicesSection } from '@/components/accreditation/ServicesSection';
-import { AboutSection } from '@/components/accreditation/AboutSection';
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <main className="flex flex-col min-h-screen">
+    <main>
       <HeroSection />
-      <ProcessStepsSection />
       <RequestTypesSection />
       <ServicesSection />
       <AboutSection />
