@@ -137,7 +137,10 @@ export function useRegisterSchool() {
     { value: "FEMALE", label: "Female" },
   ];
 
+  console.log("I am here", form.formState.errors);
+
   const onSubmit = async (data: SchoolRegistrationFormData) => {
+    console.log("I am submitting the form", data);
     addSchool(
       {
         school: {

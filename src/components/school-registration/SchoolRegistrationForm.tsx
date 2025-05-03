@@ -65,17 +65,18 @@ export const SchoolRegistrationForm = () => {
     <>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-full mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
+
           {/* School Basic Information - Left Column */}
           <div className="space-y-6 lg:border-r lg:pr-8">
             <div>
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2 col-span-2">
-                    <Label htmlFor="name">School Name</Label>
+                    <Label htmlFor="name">Expected School Name (Example: St. Joseph School)</Label>
                     <Input
                       id="name"
                       {...form.register('name')}
-                      placeholder="Enter school name"
+                      placeholder="Enter school name or expected name"
                       className={`w-full ${form.formState.errors.name ? 'border-red-500' : ''}`}
                     />
                     {form.formState.errors.name && (
@@ -96,40 +97,15 @@ export const SchoolRegistrationForm = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2 w-full">
-                    <Label htmlFor="email">School Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      {...form.register('email')}
-                      placeholder="Enter school email"
-                      className={`w-full ${form.formState.errors.email ? 'border-red-500' : ''}`}
-                    />
-                    {form.formState.errors.email && (
-                      <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
-                    )}
-                  </div>
 
-                  <div className="space-y-2 w-full">
-                    <Label htmlFor="phone">School Phone</Label>
-                    <Input
-                      id="phone"
-                      {...form.register('phone')}
-                      placeholder="Enter school phone number"
-                      className={`w-full ${form.formState.errors.phone ? 'border-red-500' : ''}`}
-                    />
-                    {form.formState.errors.phone && (
-                      <p className="text-sm text-red-500">{form.formState.errors.phone.message}</p>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
 
             <div className="pt-6 border-t border-gray-100">
               <h3 className="text-lg font-medium text-gray-900 mb-4">School Location</h3>
-
+              <p className="text-sm text-muted-foreground mb-4">
+                Please select the province, district, sector, cell and village where your school is located or where it will be located
+              </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2 w-full">
                   <Label htmlFor="province">Province</Label>
@@ -358,9 +334,9 @@ export const SchoolRegistrationForm = () => {
           {/* Head Teacher Information - Right Column */}
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Head Teacher Information</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Owner Information/ Legal Representative</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                These details are needed for official communication with the school
+                Please provide the details of the owner/ legal representative of the school or the school head teacher if available
               </p>
 
               <div className="space-y-4">
@@ -369,7 +345,7 @@ export const SchoolRegistrationForm = () => {
                   <Input
                     id="htFirstName"
                     {...form.register('htFirstName')}
-                    placeholder="Enter head teacher's first name"
+                    placeholder="Enter owner's/ legal representative's first name"
                     className={`w-full ${form.formState.errors.htFirstName ? 'border-red-500' : ''}`}
                   />
                   {form.formState.errors.htFirstName && (
@@ -381,7 +357,7 @@ export const SchoolRegistrationForm = () => {
                   <Input
                     id="htLastName"
                     {...form.register('htLastName')}
-                    placeholder="Enter head teacher's last name"
+                    placeholder="Enter owner's/ legal representative's last name"
                     className={`w-full ${form.formState.errors.htLastName ? 'border-red-500' : ''}`}
                   />
                   {form.formState.errors.htLastName && (
@@ -395,7 +371,7 @@ export const SchoolRegistrationForm = () => {
                       id="htEmail"
                       type="email"
                       {...form.register('htEmail')}
-                      placeholder="Enter head teacher's email"
+                      placeholder="Enter owner's/ legal representative's email"
                       className={`w-full ${form.formState.errors.htEmail ? 'border-red-500' : ''}`}
                     />
                     {form.formState.errors.htEmail && (
@@ -408,7 +384,7 @@ export const SchoolRegistrationForm = () => {
                     <Input
                       id="htPhone"
                       {...form.register('htPhone')}
-                      placeholder="Enter phone number"
+                      placeholder="Enter owner's/ legal representative's phone number"
                       className={`w-full ${form.formState.errors.htPhone ? 'border-red-500' : ''}`}
                     />
                     {form.formState.errors.htPhone && (

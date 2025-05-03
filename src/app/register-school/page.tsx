@@ -10,17 +10,17 @@ export default function RegisterSchoolPage() {
           {/* <div className="bg-primary/10 w- h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Building className="h-4 w-4 text-primary" />
           </div> */}
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Register New School</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Request New School Accreditation</h1>
           <p className="text-muted-foreground">
-            Please provide your school details to register in our system
+            Provide your school details to request accreditation and start operating as an accredited and official recognized school
           </p>
         </div>
 
         <Card className="">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl">School Information</CardTitle>
+            <CardTitle className="text-xl">School Basic Information</CardTitle>
             <CardDescription>
-              Fill in the details below to register your school
+              Fill in the details below to request accreditation
             </CardDescription>
           </CardHeader>
           <CardContent>

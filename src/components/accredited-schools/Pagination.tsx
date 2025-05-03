@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
   currentPage: number;
@@ -14,7 +13,7 @@ interface PaginationProps {
 export const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
-  onPageChange
+  onPageChange,
 }) => {
   // Don't render pagination if there's only one page
   if (totalPages <= 1) return null;
@@ -43,7 +42,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
     // Add ellipsis before middle pages if needed
     if (startPage > 2) {
-      pages.push('ellipsis-start');
+      pages.push("ellipsis-start");
     }
 
     // Add middle pages
@@ -53,7 +52,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
     // Add ellipsis after middle pages if needed
     if (endPage < totalPages - 1) {
-      pages.push('ellipsis-end');
+      pages.push("ellipsis-end");
     }
 
     // Always show last page if there are multiple pages
@@ -71,19 +70,18 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Previous button */}
       <Button
         variant="outline"
-        size="icon"
-        className="h-9 w-9 border-gray-200"
+        className="border-gray-200 hover:bg-primary"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
       >
         <ChevronLeft className="h-4 w-4" />
-        <span className="sr-only">Previous page</span>
+        Previous
       </Button>
 
       {/* Page numbers */}
       {pageNumbers.map((page, index) => {
         // Render ellipsis
-        if (page === 'ellipsis-start' || page === 'ellipsis-end') {
+        if (page === "ellipsis-start" || page === "ellipsis-end") {
           return (
             <span
               key={`ellipsis-${page}-${index}`}
@@ -100,10 +98,11 @@ export const Pagination: React.FC<PaginationProps> = ({
           <Button
             key={`page-${page}`}
             variant={currentPage === page ? "default" : "outline"}
-            className={`h-9 w-9 ${currentPage === page
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "border-gray-200 hover:bg-gray-50"
-              }`}
+            className={`h-9 w-9 ${
+              currentPage === page
+                ? "bg-primary text-white hover:bg-primary/90"
+                : "border-gray-200 hover:bg-gray-50 hover:text-primary"
+            }`}
             onClick={() => onPageChange(page as number)}
           >
             {page}
@@ -115,13 +114,12 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Next button */}
       <Button
         variant="outline"
-        size="icon"
-        className="h-9 w-9 border-gray-200"
+        className="border-gray-200 hover:bg-primary"
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
       >
+        Next
         <ChevronRight className="h-4 w-4" />
-        <span className="sr-only">Next page</span>
       </Button>
     </div>
   );

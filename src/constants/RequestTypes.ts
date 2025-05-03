@@ -1,18 +1,16 @@
-import { act } from "react";
-
 const REQUEST_TYPES = [
   {
     title: "Parent/Guardian?",
     description:
       "You can check the status of your child's school registration and accreditation. This is a crucial step to ensure your child's educational institution meets the required standards.",
     href: "/accredited-schools",
-    actionLabel: "View approved schools",
+    actionLabel: "View accredited schools",
   },
   {
     title: "New school/ Existing school but not Registered?",
     description:
       "If you are a new school or an existing school that is not yet registered, you can apply for registration. Become a recognized institution and gain access to accreditation opportunities.",
-    href: "/school-identification",
+    href: "/register-school",
     actionLabel: "Register Your School",
     requestType: "school-identification",
   },
