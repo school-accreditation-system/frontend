@@ -109,7 +109,8 @@ export default [
       '.next/**',
       'dist/**',
       'build/**',
-      'coverage/**'
+      'coverage/**',
+      'src'
     ]
   }
 ]; 
