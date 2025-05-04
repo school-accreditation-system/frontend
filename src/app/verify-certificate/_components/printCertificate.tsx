@@ -66,13 +66,13 @@ export const handlePrintCertificate = async ({
               }
               
               @page {
-                size: A4 portrait;
+                size: A4 landscape;
                 margin: 0;
               }
             }
             
             body {
-              font-family: 'Arial', sans-serif;
+              font-family: 'Times New Roman', serif;
               margin: 0;
               padding: 0;
               background: white;
@@ -85,53 +85,61 @@ export const handlePrintCertificate = async ({
             
             * {
               box-sizing: border-box;
+              font-family: 'Times New Roman', serif;
             }
             
             .certificate-container {
-              width: 210mm;
-              height: 297mm;
+              width: 297mm;
+              height: 210mm;
               max-width: 100%;
               position: relative;
-              background-color: #f8fbff;
+              background: #dbeafe;
               overflow: hidden;
               text-align: center;
-              padding: 10px;
+              box-shadow: 0 0 20px rgba(0,0,0,0.1);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              border-radius: 15px;
             }
-            
-            .certificate-border {
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              border: 2px solid #a0c8e7;
+
+            .main-container {
+              background: white;
+              width: 98%;
+              height: 97%;
+              position: relative;
               border-radius: 10px;
-              margin: 15px;
-              pointer-events: none;
-              z-index: 1;
+              box-shadow: 0 0 15px rgba(0,0,0,0.05);
             }
-            
+
             .watermarks-container {
               position: absolute;
               top: 0;
               left: 0;
               width: 100%;
               height: 100%;
-              overflow: hidden;
-              z-index: 0;
-              opacity: 0.1;
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              grid-template-rows: repeat(3, 1fr);
+              z-index: 1;
               pointer-events: none;
+              background: transparent;
             }
-            
+
             .watermark {
-              position: absolute;
-              width: 150px;
-              height: 150px;
               background-repeat: no-repeat;
               background-position: center;
-              background-size: contain;
+              background-size: 180px;  /* Fixed size to match example */
+              opacity: 0.05;  /* Much lighter opacity */
+              width: 100%;
+              height: 100%;
+              transform: rotate(-30deg) scale(1.2);  /* Slightly larger scale */
+              display: flex;
+              justify-content: center;
+              align-items: center;
             }
-            
+
+
             .content {
               position: relative;
               z-index: 2;
@@ -139,47 +147,57 @@ export const handlePrintCertificate = async ({
               height: 100%;
               display: flex;
               flex-direction: column;
+              background: transparent;
+              border-radius: 10px;
+              border: 1px solid rgba(25, 118, 210, 0.2);
+            }
+
+            .title {
+              font-size: 3.2rem;
+              font-weight: bold;
+              color: #000000; 
+              margin: 0;
+              padding: 10px 0;
+              letter-spacing: 2px;
+            }
+
+            .subtitle {
+              color: #546E7A;
+              font-size: 1.4rem;
+              margin: 5px 0 10px 0;
+              letter-spacing: 1px;
             }
             
             .logo-container {
               text-align: center;
-              margin-bottom: 15px;
-              margin-top: 10px;
+              margin-bottom: 10px;
             }
             
             .logo-container img {
-              max-height: 350px;
+              max-height: 120px;
+              width: auto;
             }
             
             .title-container {
-              background-color: #4CAF50;
-              padding: 10px 50px;
-              margin: 20px 0;
-            }
-            
-            .title {
-              font-size: 2.4rem;
-              font-weight: bold;
-              color: #000;
-              margin: 0;
-              font-family: 'Times New Roman', serif;
+              padding: 15px 50px;
+              margin: 15px 0 25px 0;
             }
             
             .body-text {
-              font-size: 24px;
-              line-height: 1.6;
-              margin: 30px 0;
+              font-size: 22px;
+              line-height: 1.4;
+              margin: 10px 0;
               text-align: center;
             }
             
             .school-name {
               font-size: 1.5rem;
               font-weight: bold;
-              margin: 15px 0;
+              margin: 10px 0;
             }
             
             .validity {
-              font-size: 1.6rem;
+              font-size: 1.2rem;
               margin: 15px 0;
               text-align: center;
             }
@@ -188,8 +206,7 @@ export const handlePrintCertificate = async ({
               display: flex;
               justify-content: space-between;
               align-items: flex-end;
-              margin-top: auto;
-              padding: 20px;
+              margin-top:auto;
             }
             
             .issuer-section {
@@ -208,89 +225,85 @@ export const handlePrintCertificate = async ({
             .signature-line {
               width: 80%;
               border-top: 1px solid #000;
-              margin: 50px 0 10px;
+              margin: 30px 0 10px;
             }
             
             .issuer-name {
               font-weight: bold;
-              font-size: 20px;
+              font-size: 22px;
             }
             
             .issuer-position {
-              font-size: 18px;
-            }
-            
-            .seal-image {
-              width: 80px;
-              height: 80px;
-              margin-bottom: 10px;
+              font-size: 20px;
             }
             
             .qr-code {
-              width: 100px;
-              height: 100px;
+              width: 90px;
+              height: 90px;
               margin-bottom: 10px;
             }
             
             .certificate-id {
-              font-size: 16px;
+              font-size: 18px;
               margin-top: 5px;
             }
             
             .year {
-              font-size: 1.4rem;
+              font-size: 1.6rem;
+              font-weight: bold;
+              color: #0078c1;
+            }
+            .date {
+              color: #0078c1;
             }
           </style>
         </head>
         <body>
           <div class="certificate-container">
-            <!-- Multiple watermarks in the background -->
-            <div class="watermarks-container" id="watermarksContainer">
-              <!-- Watermarks will be added dynamically via JavaScript -->
-            </div>
-            
-            <!-- Border -->
-            <div class="certificate-border"></div>
-            
-            <!-- Content -->
-            <div class="content">
-              <div class="logo-container">
-                <img src="${getNextImagePath(logo)}" alt="NESA Logo" 
-                     onerror="this.onerror=null; this.style.display='none';" />
-              </div>
-              
-              <div class="title-container">
-                <h1 class="title">Certificate of Accreditation</h1>
-              </div>
-              
-              <div class="body-text">
-                This is to certify that
-                <div class="school-name">${schoolName}</div>
-                is granted<br>
-                <strong class="year">A one year Accreditation</strong><br>
-                for offering the ${schoolType}.
-              </div>
-              
-              <div class="validity">
-                Valid from <strong>${validFromDate}</strong> to <strong>${validToDate}</strong>
-              </div>
-              
-              <div class="footer">
-                <div class="issuer-section">
-                  <div class="signature-line"></div>
-                  <div class="issuer-name">${issuerName}</div>
-                  <div class="issuer-position">${issuerPosition}</div>
+            <div class="main-container">
+              <!-- Watermarks Container -->
+              <div class="watermarks-container"></div>
+      
+              <!-- Content -->
+              <div class="content">
+                <div class="logo-container">
+                  <img src="${getNextImagePath(logo)}" alt="NESA Logo" 
+                       onerror="this.onerror=null; this.style.display='none';" />
                 </div>
                 
-                <div class="seal-section">
-                  ${
-                    qrCodeDataUrl
-                      ? `<img class="qr-code" src="${qrCodeDataUrl}" alt="Certificate QR Code" />`
-                      : `<div id="qrCodePlaceholder" class="qr-code"></div>`
-                  }
-                  <div class="certificate-id">
-                    Certificate Number:<br>
-                    ${certificateNumber}
+                <div class="title-container">
+                  <h1 class="title">Certificate of Accreditation</h1>
+                </div>
+                
+                <div class="body-text">
+                  This is to certify that
+                  <div class="school-name">${schoolName}</div>
+                  is granted<br>
+                  <strong class="year">A one year Accreditation</strong><br>
+                  for offering the ${schoolType}.
+                </div>
+                
+                <div class="validity">
+                  Valid from <strong class="date">${validFromDate}</strong> to <strong class="date">${validToDate}</strong>
+                </div>
+                
+                <div class="footer">
+                  <div class="issuer-section">
+                    <div class="signature-line"></div>
+                    <div class="issuer-name">${issuerName}</div>
+                    <div class="issuer-position">${issuerPosition}</div>
+                  </div>
+                  
+                  <div class="seal-section">
+                    ${
+                      qrCodeDataUrl
+                        ? `<img class="qr-code" src="${qrCodeDataUrl}" alt="Certificate QR Code" />`
+                        : `<div id="qrCodePlaceholder" class="qr-code"></div>`
+                    }
+                    <div class="certificate-id">
+                      Certificate Number:<br>
+                      ${certificateNumber}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -298,6 +311,22 @@ export const handlePrintCertificate = async ({
           </div>
           
           <script>
+            // Function to create watermarks in a grid pattern
+            function createWatermarks() {
+              const container = document.querySelector('.watermarks-container');
+              const watermarkPath = "${getNextImagePath(waterMark)}";
+              const rows = 3;
+              const cols = 4;
+              
+              // Create watermarks in a grid
+              for (let i = 0; i < (rows * cols); i++) {
+                const watermark = document.createElement('div');
+                watermark.className = 'watermark';
+                watermark.style.backgroundImage = "url('" + watermarkPath + "')";
+                container.appendChild(watermark);
+              }
+            }
+            
             // Function to create a fallback QR code if needed
             function createFallbackQRCode() {
               // Only create fallback if the QR code data URL wasn't provided
@@ -331,37 +360,6 @@ export const handlePrintCertificate = async ({
               }
             }
             
-            // Function to create multiple watermarks
-            function createWatermarks() {
-              const container = document.getElementById('watermarksContainer');
-              const watermarkPath = "${getNextImagePath(waterMark)}";
-              const numWatermarks = 15; // Number of watermarks to create
-              
-              // Container dimensions
-              const containerWidth = container.offsetWidth;
-              const containerHeight = container.offsetHeight;
-              
-              // Create multiple watermarks with random positions
-              for (let i = 0; i < numWatermarks; i++) {
-                const watermark = document.createElement('div');
-                watermark.className = 'watermark';
-                
-                // Set random position (ensuring it's not too close to the edges)
-                const left = Math.floor(Math.random() * (containerWidth - 150));
-                const top = Math.floor(Math.random() * (containerHeight - 150));
-                
-                // Add a random rotation for variety
-                const rotation = Math.floor(Math.random() * 40) - 20; // -20 to +20 degrees
-                
-                watermark.style.left = left + 'px';
-                watermark.style.top = top + 'px';
-                watermark.style.transform = 'rotate(' + rotation + 'deg)';
-                watermark.style.backgroundImage = "url('" + watermarkPath + "')";
-                
-                container.appendChild(watermark);
-              }
-            }
-            
             // Run once the document is loaded
             window.onload = function() {
               createWatermarks();
@@ -382,19 +380,4 @@ export const handlePrintCertificate = async ({
   printWindow.document.open();
   printWindow.document.write(certificateHTML);
   printWindow.document.close();
-};
-
-// Helper functions
-const formatDate = (date) => {
-  return date.toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-};
-
-const getTwoYearsFromNow = () => {
-  const date = new Date();
-  date.setFullYear(date.getFullYear() + 2);
-  return date;
 };
