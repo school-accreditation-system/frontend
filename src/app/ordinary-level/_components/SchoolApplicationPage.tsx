@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import SuccessModal from "../_components/SuccessModal";
 import { schoolsData } from "@/constants/schoolsData";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const SchoolApplicationPage = () => {
   const router = useRouter();
