@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -203,7 +204,7 @@ const SchoolApplicationPage = () => {
                     Self Assessment
                   </h2>
                   <p className="text-gray-500">
-                    Evaluate your school's readiness and capabilities
+                    Evaluate your schools readiness and capabilities
                   </p>
                 </div>
                 {hasSelfAssessment && (

@@ -140,10 +140,10 @@ const Page = () => {
   const filteredAndSortedInspections = [...inspections]
     .filter(
       (school) =>
-        school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school.status.toLowerCase().includes(searchTerm.toLowerCase())
+        school?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        school?.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        school?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        school?.status.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
       // Basic sorting
@@ -336,7 +336,7 @@ const canSubmitInspection = (school) => {
   return false;
 };
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6  mx-auto">
       {/* Header with action button */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
@@ -346,11 +346,7 @@ const canSubmitInspection = (school) => {
           <p className="text-gray-500 mt-1">
             Manage and track inspection status
           </p>
-          {loggedInUserRole && (
-            <p className="text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded inline-block mt-2">
-              Logged in as: {loggedInUserRole.toUpperCase()}
-            </p>
-          )}
+          
         </div>
       </div>
 
@@ -444,6 +440,12 @@ const canSubmitInspection = (school) => {
                   Status
                 </th>
                 <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Status
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Status
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
                   Approval Status
                 </th>
                 <th className="py-3.5 px-4 text-left text-sm font-medium">
@@ -493,6 +495,8 @@ const canSubmitInspection = (school) => {
                       )}
                     </div>
                   </td>
+                  <td>{school.ranking}</td>
+                  <td>{school.score}</td>
                   <td className="py-4 px-4">
                     <div className="flex items-center">
                       {school.approved ? (

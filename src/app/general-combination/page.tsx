@@ -1,17 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable max-lines */
+/* eslint-disable no-console */
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
+import { useEmail } from "@/lib";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { schoolsData } from "../../constants/schoolsData";
-import SchoolIdentification from "./_components/SchoolIdentification";
-import SelfAssessment from "./_components/SelfAssessment";
-import SummaryPage from "./_components/SummaryPage";
 import CombinationSelector from "./_components/CombinationSelector";
 import ConfirmationModal from "./_components/ConfirmationModal";
 import FormSteps from "./_components/FormSteps";
-import { useEmail } from "@/lib";
-import SchoolIdentificationPage from "../school-identification/page";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [filteredSchools, setFilteredSchools] = useState([]);

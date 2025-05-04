@@ -1,7 +1,5 @@
 "use client";
-import React from "react";
 import { CATEGORY_ICONS } from "../../../constants/CombinationsData";
-import { Card } from "@/components/ui/card";
 
 const CategorySelector = ({ 
   categories, 

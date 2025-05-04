@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import SchoolAssessmentSteps from '@/components/selfAssessment/SchoolAssessmentSteps';
+import SchoolAssessmentSteps from '@/components/inspector-dashboard/selfAssessment/SchoolAssessmentSteps';
 import { NavBar } from '@/components/navigation/NavBar';
 
 export default function SelfAssessment() {

@@ -17,68 +17,141 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+export const rankingScore = [
+  { id: 1, name: "Outstanding", score: 89 },
+  { id: 2, name: "Good", score: 73 },
+  { id: 3, name: "Satisfactory", score: 63 },
+  { id: 4, name: "Unsatisfactory", score: 47 },
+];
+
 // Sample school data - in a real app, this might come from an API
 const schoolsData = [
-  { id: 1, name: "College Saint Andre", district: "Kigali", type: "MPC" },
-  { id: 2, name: "Lycée de Kigali", district: "Kigali", type: "Science" },
-  { id: 3, name: "FAWE Girls School", district: "Gasabo", type: "Science" },
+  {
+    id: 1,
+    name: "College Saint Andre",
+    district: "Kigali",
+    type: "MPC",
+    ranking: "",
+    score: "",
+    applicationId: "",
+  },
+  {
+    id: 2,
+    name: "Lycée de Kigali",
+    district: "Kigali",
+    type: "Science",
+    ranking: "",
+    score: "",
+    applicationId: "",
+  },
+  {
+    id: 3,
+    name: "FAWE Girls School",
+    district: "Gasabo",
+    type: "Science",
+    ranking: "",
+    score: "",
+    applicationId: "",
+  },
   {
     id: 4,
     name: "Groupe Scolaire Officiel de Butare",
     district: "Huye",
     type: "Liberal Arts",
+    ranking: "",
+    score: "",
+    applicationId: "",
   },
   {
     id: 5,
     name: "Ecole Technique Saint Joseph",
     district: "Muhanga",
     type: "Technical",
+    ranking: "",
+    score: "",
+    applicationId: "",
   },
   {
     id: 6,
     name: "Green Hills Academy",
     district: "Kigali",
     type: "International",
+    ranking: "",
+    score: "",
+    applicationId: "",
   },
   {
     id: 7,
     name: "Rwanda Leading Institute",
     district: "Kicukiro",
     type: "Engineering",
+    ranking: "",
+    score: "",
+    applicationId: "",
   },
-  { id: 8, name: "Riviera High School", district: "Gasabo", type: "Languages" },
+  {
+    id: 8,
+    name: "Riviera High School",
+    district: "Gasabo",
+    type: "Languages",
+    ranking: "",
+    score: "",
+    applicationId: "",
+  },
   {
     id: 9,
     name: "Wellspring Academy",
     district: "Nyarugenge",
     type: "Primary",
+    ranking: "",
+    score: "",
+    applicationId: "",
   },
   {
     id: 10,
     name: "Kigali International Community School",
     district: "Kigali",
     type: "International",
+    ranking: "",
+    score: "",
+    applicationId: "",
   },
 ];
 
 // Role hierarchy
 const initialRolesByDepartment = [
-  {id: 1, role: "analyst", supervisor: "inspector", submittedRole: ""},
-  {id: 2, role: "inspector", supervisor: "division", submittedRole: ""},
-  {id: 3, role: "division", supervisor: "hod", submittedRole: ""},
-  {id: 4, role: "hod", supervisor: "director", submittedRole: ""},
-  {id: 5, role: "director", supervisor: "director", submittedRole: ""}
+  { id: 1, role: "analyst", supervisor: "inspector", submittedRole: "" },
+  { id: 2, role: "inspector", supervisor: "division", submittedRole: "" },
+  { id: 3, role: "division", supervisor: "hod", submittedRole: "" },
+  { id: 4, role: "hod", supervisor: "director", submittedRole: "" },
+  { id: 5, role: "director", supervisor: "director", submittedRole: "" },
 ];
-
+function generateApplicationId(schoolName, index) {
+  // Extract initials from school name
+  const initials = schoolName
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase();
+  
+  // Format: [Initials]-[Year]-[Sequence Number padded to 3 digits]
+  const year = new Date().getFullYear();
+  const sequence = String(index + 1).padStart(3, '0');
+  
+  return `${initials}-${year}-${sequence}`;
+}
 // Initial inspections data structure
-const initialInspections = schoolsData.map(school => ({
+const initialInspections = schoolsData.map((school) => ({
   id: school.id,
   name: school.name,
   district: school.district,
   type: school.type,
   status: Math.random() > 0.5 ? "Completed" : "In Progress",
   submittedTo: "",
-  approved: false
+  approved: false,
+  ranking: "",
+  score: "",
+  applicationId:generateApplicationId(school.name, school.id - 1),  
 }));
 
 // Hardcoded team for testing
@@ -113,13 +186,15 @@ const TeamSchoolsPage = () => {
   const [currentSchool, setCurrentSchool] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loggedInUserRole, setLoggedInUserRole] = useState("inspector"); // Default role
-  const [rolesByDepartment, setRolesByDepartment] = useState(initialRolesByDepartment);
+  const [rolesByDepartment, setRolesByDepartment] = useState(
+    initialRolesByDepartment
+  );
   const [inspections, setInspections] = useState(initialInspections);
 
   // Load data from localStorage on component mount
   useEffect(() => {
     if (dataLoaded) return; // Prevent multiple loads
-    
+
     try {
       // Load user role
       const userData = localStorage.getItem("loggedInUser");
@@ -134,9 +209,12 @@ const TeamSchoolsPage = () => {
         setRolesByDepartment(JSON.parse(savedRoles));
       } else {
         // Initialize localStorage with default roles if not present
-        localStorage.setItem("rolesByDepartment", JSON.stringify(initialRolesByDepartment));
+        localStorage.setItem(
+          "rolesByDepartment",
+          JSON.stringify(initialRolesByDepartment)
+        );
       }
-      
+
       // Load inspections data
       const savedInspections = localStorage.getItem("inspections");
       if (savedInspections) {
@@ -157,9 +235,7 @@ const TeamSchoolsPage = () => {
         if (teamsJson) {
           const parsedTeams = JSON.parse(teamsJson);
           if (Array.isArray(parsedTeams)) {
-            foundTeam = parsedTeams.find(
-              (team) => team.id === userData.teamId
-            );
+            foundTeam = parsedTeams.find((team) => team.id === userData.teamId);
           }
         }
       }
@@ -187,7 +263,6 @@ const TeamSchoolsPage = () => {
 
       setAssignedSchools(schoolIds);
       setDataLoaded(true);
-      
     } catch (error) {
       console.error("Error loading data:", error);
       // Ensure we have default data
@@ -199,26 +274,32 @@ const TeamSchoolsPage = () => {
     }
   }, [dataLoaded]);
 
+  useEffect(() => {
+    const newInspections = localStorage.getItem("inspections");
+    setInspections(JSON.parse(newInspections));
+    console.log(newInspections);
+  }, [router]);
   // Get the role hierarchy and determine which roles the current user can submit to
   const getEligibleRoles = () => {
-    const allRoles = rolesByDepartment.map(r => r.role);
-    const currentRoleIndex = rolesByDepartment.findIndex(r => r.role === loggedInUserRole);
+    const allRoles = rolesByDepartment.map((r) => r.role);
+    const currentRoleIndex = rolesByDepartment.findIndex(
+      (r) => r.role === loggedInUserRole
+    );
 
     console.log("Current Role Index:", currentRoleIndex);
     console.log("All Roles:", allRoles);
-    
+
     if (currentRoleIndex === -1) return { eligibleRoles: [], allRoles };
-    
+
     // Find the next role in the hierarchy that this user can submit to
     const currentRole = rolesByDepartment[currentRoleIndex];
     const supervisorRole = currentRole.supervisor;
 
     console.log("Supervisor Role:", supervisorRole);
 
-    
     // The only eligible role is the direct supervisor of the current role
     const eligibleRoles = [supervisorRole];
-    
+
     return { eligibleRoles, allRoles };
   };
 
@@ -232,36 +313,40 @@ const TeamSchoolsPage = () => {
   const handleInspectionRole = (school, targetRole) => {
     try {
       // 1. Update the inspection status in the inspections array
-      const updatedInspections = inspections.map(inspection => {
-        if (inspection.id === school.id) {
-          return { 
-            ...inspection, 
+      const updatedInspections = inspections.map((inspection) => {
+        console.log("Inspection", inspection); //null
+        console.log("school", school);
+        console.log("targetRole", targetRole);
+        console.log("checking ", inspection.id === school.id);
+        if (inspection?.id === school.id) {
+          return {
+            ...inspection,
             submittedTo: targetRole,
-            status: "Submitted" // Optional: update status when submitted
+            status: "Submitted", // Optional: update status when submitted
           };
         }
         return inspection;
       });
-      
+
       // 2. Update rolesByDepartment to track submission
-      const updatedRoles = rolesByDepartment.map(role => {
+      const updatedRoles = rolesByDepartment.map((role) => {
         if (role.role === targetRole) {
           return {
             ...role,
-            submittedRole: loggedInUserRole // Mark that this user submitted
+            submittedRole: loggedInUserRole, // Mark that this user submitted
           };
         }
         return role;
       });
-      
+
       // 3. Save both updates to localStorage
       localStorage.setItem("inspections", JSON.stringify(updatedInspections));
       localStorage.setItem("rolesByDepartment", JSON.stringify(updatedRoles));
-      
+
       // 4. Update state
       setInspections(updatedInspections);
       setRolesByDepartment(updatedRoles);
-      
+
       // 5. Show success message
       alert(`Inspection submitted to ${targetRole.toUpperCase()}`);
     } catch (error) {
@@ -274,15 +359,18 @@ const TeamSchoolsPage = () => {
   const assignedSchoolsData = useMemo(() => {
     // Merge school data with inspection status
     return schoolsData
-      .filter(school => assignedSchools.includes(school.id))
-      .map(school => {
+      .filter((school) => assignedSchools.includes(school.id))
+      .map((school) => {
         // Find corresponding inspection data
-        const inspectionData = inspections.find(insp => insp.id === school.id) || {};
+        const inspectionData =
+          inspections.find((insp) => insp.id === school.id) || {};
         return {
           ...school,
           status: inspectionData.status || "Not Started",
           submittedTo: inspectionData.submittedTo || "",
-          approved: inspectionData.approved || false
+          approved: inspectionData.approved || false,
+          ranking: inspectionData.ranking,
+          score: inspectionData.score,
         };
       });
   }, [assignedSchools, inspections]);
@@ -307,7 +395,7 @@ const TeamSchoolsPage = () => {
     setIsModalOpen(false);
     if (currentSchool) {
       router.push(
-        `/inspector-dashboard/school-identification?schoolId=${currentSchool.id}&from=inspector-dashboard/applications`
+        `/inspector-dashboard/school-identification?schoolId=${currentSchool.id}&combinationId=${currentSchool.type}&from=inspector-dashboard/applications`
       );
     }
   };
@@ -316,147 +404,217 @@ const TeamSchoolsPage = () => {
     setIsModalOpen(false);
     if (currentSchool) {
       router.push(
-        `/inspector-dashboard/self-assessment?schoolId=${currentSchool.id}&from=inspector-dashboard/applications`
+        `/inspector-dashboard/self-assessment?schoolId=${currentSchool.id}&combinationId=${currentSchool.type}&from=inspector-dashboard/applications`
       );
     }
   };
 
-  // Define columns for the MantineReactTable
-  const columns = useMemo<MRT_ColumnDef<any>[]>(
-    () => [
-      {
-        accessorKey: "id",
-        header: "School ID",
-        size: 80,
-      },
-      {
-        accessorKey: "name",
-        header: "School Name",
-        size: 250,
-      },
-      {
-        accessorKey: "district",
-        header: "District",
-        size: 150,
-      },
-      {
-        accessorKey: "type",
-        header: "Type",
-        size: 120,
-        Cell: ({ cell }) => (
-          <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-            {cell.getValue<string>()}
+  // Define columns for the MantineReactTable with applicationId instead of id
+const columns = useMemo<MRT_ColumnDef<any>[]>(
+  () => [
+    {
+      accessorKey: "applicationId",
+      header: "Application ID",
+      size: 120,
+      Cell: ({ cell }) => {
+        const applicationId = cell.getValue<string>();
+        return (
+          <span className="font-medium text-blue-600">
+            {applicationId || `APP-${cell.row.original.id}`}
           </span>
-        ),
+        );
       },
-      {
-        accessorKey: "status",
-        header: "Status",
-        size: 120,
-        Cell: ({ cell }) => {
-          const status = cell.getValue<string>();
-          let bgColor = "bg-gray-100";
-          let textColor = "text-gray-700";
-          
-          switch (status) {
-            case "Completed":
-              bgColor = "bg-green-100";
-              textColor = "text-green-700";
-              break;
-            case "In Progress":
-              bgColor = "bg-blue-100";
-              textColor = "text-blue-700";
-              break;
-            case "Submitted":
-              bgColor = "bg-purple-100";
-              textColor = "text-purple-700";
-              break;
-          }
-          
-          return (
-            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
-              {status}
-            </span>
-          );
-        }
-      },
-      {
-        accessorKey: "submittedTo",
-        header: "Submitted To",
-        size: 130,
-        Cell: ({ cell }) => {
-          const submittedTo = cell.getValue<string>();
-          return submittedTo ? (
-            <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
-              {submittedTo.toUpperCase()}
-            </span>
-          ) : (
-            <span className="text-gray-400 text-sm">Not submitted</span>
-          );
-        }
-      },
-      {
-        id: "actions",
-        header: "Actions",
-        size: 220,
-        enableSorting: false,
-        enableColumnFilter: false,
-        Cell: ({ row }) => {
-          const school = row.original;
-          const { allRoles, eligibleRoles } = getEligibleRoles();
-          
-          // Don't show submit button if already submitted
-          const alreadySubmitted = !!school.submittedTo;
-          
-          return (
-            <div className="flex space-x-2">
-              <Button
-                onClick={() => handleInspect(school)}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-              >
-                Inspect
-              </Button>
+    },
+    {
+      accessorKey: "name",
+      header: "School Name",
+      size: 160,
+    },
+    {
+      accessorKey: "district",
+      header: "District",
+      size: 100,
+    },
+    {
+      accessorKey: "type",
+      header: "Type",
+      size: 120,
+      Cell: ({ cell }) => (
+        <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+          {cell.getValue<string>()}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      size: 120,
+      Cell: ({ cell }) => {
+        const status = cell.getValue<string>();
+        let bgColor = "bg-gray-100";
+        let textColor = "text-gray-700";
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 px-3 bg-white border-gray-200 text-sm"
-                    disabled={alreadySubmitted} // Disable if already submitted
+        switch (status) {
+          case "Completed":
+            bgColor = "bg-green-100";
+            textColor = "text-green-700";
+            break;
+          case "In Progress":
+            bgColor = "bg-blue-100";
+            textColor = "text-blue-700";
+            break;
+          case "Submitted":
+            bgColor = "bg-purple-100";
+            textColor = "text-purple-700";
+            break;
+        }
+
+        return (
+          <span
+            className={`px-2.5 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}
+          >
+            {status}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "ranking",
+      header: "Ranking",
+      size: 100,
+      Cell: ({ cell }) => {
+        const ranking = cell.getValue<string>();
+        if (!ranking) return <span className="text-gray-400">Not ranked</span>;
+        
+        let bgColor = "bg-gray-50";
+        let textColor = "text-gray-700";
+
+        switch (ranking) {
+          case "Excellent":
+            bgColor = "bg-green-50";
+            textColor = "text-green-700";
+            break;
+          case "Good":
+            bgColor = "bg-blue-50";
+            textColor = "text-blue-700";
+            break;
+          case "Average":
+            bgColor = "bg-yellow-50";
+            textColor = "text-yellow-700";
+            break;
+          case "Poor":
+            bgColor = "bg-red-50";
+            textColor = "text-red-700";
+            break;
+        }
+
+        return (
+          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
+            {ranking}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "score",
+      header: "Score",
+      size: 80,
+      Cell: ({ cell }) => {
+        const score = cell.getValue<number>();
+        if (!score && score !== 0) return <span className="text-gray-400">—</span>;
+        
+        return (
+          <span className="font-medium">
+            {score}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "submittedTo",
+      header: "Submitted To",
+      size: 130,
+      Cell: ({ cell }) => {
+        const submittedTo = cell.getValue<string>();
+        return submittedTo ? (
+          <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+            {submittedTo.toUpperCase()}
+          </span>
+        ) : (
+          <span className="text-gray-400 text-sm">Not submitted</span>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      size: 220,
+      enableSorting: false,
+      enableColumnFilter: false,
+      Cell: ({ row }) => {
+        const school = row.original;
+        const { allRoles, eligibleRoles } = getEligibleRoles();
+
+        // Don't show submit button if already submitted
+        const alreadySubmitted = !!school.submittedTo;
+
+        return (
+          <div className="flex space-x-2">
+            <Button
+              onClick={() => handleInspect(school)}
+              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+            >
+              Inspect
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-3 bg-white border-gray-200 text-sm"
+                  disabled={alreadySubmitted} // Disable if already submitted
+                >
+                  {alreadySubmitted ? "Submitted" : "Submit to"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Submit to:</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {rolesByDepartment.map((roleInfo) => (
+                  <DropdownMenuItem
+                    key={roleInfo.id}
+                    onClick={() =>
+                      handleInspectionRole(school, roleInfo.role)
+                    }
+                    disabled={!isEligibleRole(roleInfo.role)} // Only enable eligible roles
+                    className={
+                      !isEligibleRole(roleInfo.role)
+                        ? "opacity-60 cursor-not-allowed"
+                        : "cursor-pointer"
+                    }
                   >
-                    {alreadySubmitted ? "Submitted" : "Submit to"}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Submit to:</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {rolesByDepartment.map((roleInfo) => (
-                    <DropdownMenuItem
-                      key={roleInfo.id}
-                      onClick={() => handleInspectionRole(school, roleInfo.role)}
-                      disabled={!isEligibleRole(roleInfo.role)} // Only enable eligible roles
-                      className={!isEligibleRole(roleInfo.role) ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}
-                    >
-                      {roleInfo.role.charAt(0).toUpperCase() + roleInfo.role.slice(1)}
-                      {!isEligibleRole(roleInfo.role) && " (Not eligible)"}
-                    </DropdownMenuItem>
-                  ))}
-                  {rolesByDepartment.length === 0 && (
-                    <DropdownMenuItem disabled>
-                      No roles available
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          );
-        },
+                    {roleInfo.role.charAt(0).toUpperCase() +
+                      roleInfo.role.slice(1)}
+                    {!isEligibleRole(roleInfo.role) && " (Not eligible)"}
+                  </DropdownMenuItem>
+                ))}
+                {rolesByDepartment.length === 0 && (
+                  <DropdownMenuItem disabled>
+                    No roles available
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
       },
-    ],
-    [loggedInUserRole, rolesByDepartment, inspections]
-  );
+    },
+  ],
+  [loggedInUserRole, rolesByDepartment, inspections]
+);
 
+  console.log("new-inspections", inspections);
   // Create table instance
   const table = useMantineReactTable({
     columns,
@@ -467,7 +625,7 @@ const TeamSchoolsPage = () => {
     enablePagination: true,
     initialState: {
       pagination: { pageSize: 10, pageIndex: 0 },
-      sorting: [{ id: "id", desc: false }],
+      // sorting: [{ id: "id", desc: false }],
     },
     mantineTableProps: {
       striped: true,
@@ -476,11 +634,7 @@ const TeamSchoolsPage = () => {
     renderTopToolbarCustomActions: () => (
       <div className="text-lg font-semibold text-blue-600 flex items-center space-x-4">
         <span>Assigned Schools</span>
-        {loggedInUserRole && (
-          <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded">
-            Logged in as: {loggedInUserRole.toUpperCase()}
-          </span>
-        )}
+      
       </div>
     ),
   });
@@ -497,7 +651,7 @@ const TeamSchoolsPage = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6  mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-center text-blue-500">
         {currentTeam
           ? `Schools Assigned to ${currentTeam.name}`

@@ -55,6 +55,8 @@ const schoolData = [
   },
 ];
 
+
+
 const SchoolDirectoryPage = () => {
   const [sortField, setSortField] = useState("id");
   const [sortDirection, setSortDirection] = useState("asc");
@@ -62,6 +64,8 @@ const SchoolDirectoryPage = () => {
   const [selectedDistrict, setSelectedDistrict] = useState("All");
   const [currentPageData, setCurrentPageData] = useState([]);
   const [pageSize, setPageSize] = useState(5);
+  const [selectedSchool, setSelectedSchool] = useState(null);
+  const [showTimetable, setShowTimetable] = useState(false);
 
   // Get unique districts for filter dropdown
   const uniqueDistricts = useMemo(() => {
@@ -109,7 +113,6 @@ const SchoolDirectoryPage = () => {
   }, [filteredData, pageSize]);
 
   // Handle page change from pagination component
-  // Fix: Use memoized callback to prevent recreation on every render
   const handlePageChange = useMemo(() => {
     return (page, pageData) => {
       const { startIndex, endIndex } = pageData;
@@ -117,8 +120,19 @@ const SchoolDirectoryPage = () => {
     };
   }, [filteredData]);
 
+  // Handle showing timetable for a school
+  const handleShowTimetable = (schoolId) => {
+    setSelectedSchool(schoolId);
+    setShowTimetable(true);
+  };
+
+  // Handle closing timetable
+  const handleCloseTimetable = () => {
+    setShowTimetable(false);
+  };
+
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-md">
+    <div className="p-6 mx-auto bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-4 text-primary">School Directory</h1>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center mb-6">
@@ -251,6 +265,7 @@ const SchoolDirectoryPage = () => {
                 {sortField === "district" &&
                   (sortDirection === "asc" ? "↑" : "↓")}
               </th>
+             
             </tr>
           </thead>
           <tbody>
@@ -276,13 +291,14 @@ const SchoolDirectoryPage = () => {
                     {school.district}
                   </span>
                 </td>
+               
               </tr>
             ))}
 
             {/* Empty state when no schools match filters */}
             {currentPageData.length === 0 && (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-gray-500">
+                <td colSpan="6" className="py-8 text-center text-gray-500">
                   No schools found matching your search criteria
                 </td>
               </tr>
@@ -298,6 +314,8 @@ const SchoolDirectoryPage = () => {
         onPageChange={handlePageChange}
         itemName="schools"
       />
+
+     
     </div>
   );
 };

@@ -382,7 +382,7 @@ const TeamAssignmentPage = () => {
   });
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6  mx-auto">
 
       <h1 className="text-xl font-bold text-blue-500 py-6">Team Inspection Assignment</h1>
 
