@@ -1,4 +1,4 @@
- 
+
 /* eslint-disable max-depth */
 /* eslint-disable max-lines */
 'use client';
@@ -763,14 +763,14 @@ export const LandOwnershipForm = ({
                     </div>
 
                     {/* Debug information */}
-                    {process.env.NODE_ENV === 'development' && (
+                    {/* {process.env.NODE_ENV === 'development' && (
                         <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-gray-300">
                             <h4 className="text-sm font-bold mb-2">Debug Information</h4>
                             <div className="text-xs overflow-auto max-h-[200px]">
                                 <pre>{debugInfo}</pre>
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* Error notification */}
                     {!incompleteFieldsVisible && Object.keys(form.formState.errors).length > 0 && (

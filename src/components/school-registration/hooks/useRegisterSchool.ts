@@ -7,7 +7,6 @@ import {
 } from "@/hooks/useLocation";
 import { useAddSchool } from "@/hooks/useSchool";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
