@@ -57,7 +57,7 @@ const SchoolInformation = ({ onDataChange }) => {
   const onSubmit = (data) => {
     // Save to localStorage
     localStorage.setItem("schoolInformation", JSON.stringify(data));
-    console.log(data)
+    // console.log(data)
     // Notify parent component if needed
     if (onDataChange) {
       onDataChange(data);

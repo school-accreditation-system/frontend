@@ -1,11 +1,10 @@
+/* eslint-disable no-console */
 "use client"
 
-import React, { useState, useEffect } from 'react'
-import SchoolInformation from './_components/SchoolInformation'
-import ApplicantInformation from './_components/ApplicantInformation'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useState } from 'react'
 import * as z from 'zod'
+import ApplicantInformation from './_components/ApplicantInformation'
+import SchoolInformation from './_components/SchoolInformation'
 
 // Define a schema for the entire form
 const applicationSchema = z.object({

@@ -14,7 +14,7 @@ const ConfirmationModal = ({ isOpen, onClose, school, onConfirm }) => {
         </div>
         
         <div className="mb-6">
-          <p className="text-gray-600">You'll be able to select from combinations (MPC, MPG, MEG) after completing the school information and self-assessment.</p>
+          <p className="text-gray-600">You all be able to select from combinations (MPC, MPG, MEG) after completing the school information and self-assessment.</p>
         </div>
         
         <div className="flex justify-end space-x-3">
