@@ -1,59 +1,60 @@
+/* eslint-disable max-lines */
 // Import the QR code library
-import QRCode from 'qrcode';
+import QRCode from "qrcode";
 
 export const handlePrintCertificate = async ({
-    logo,
-    waterMark,
-    sealImage,
-    schoolName,
-    schoolType,
-    issuerName,
-    issuerPosition,
-    validFromDate,
-    validToDate,
-    certificateNumber,
-  }) => {
-    // Function to get correct Next.js image paths
-    const getNextImagePath = (imagePath) => {
-      if (!imagePath) return "";
+  logo,
+  waterMark,
+  sealImage,
+  schoolName,
+  schoolType,
+  issuerName,
+  issuerPosition,
+  validFromDate,
+  validToDate,
+  certificateNumber,
+}) => {
+  // Function to get correct Next.js image paths
+  const getNextImagePath = (imagePath) => {
+    if (!imagePath) return "";
 
-      // If it's already an absolute URL or data URL, return as is
-      if (
-        typeof imagePath === "string" &&
-        (imagePath.startsWith("http") || imagePath.startsWith("data:"))
-      ) {
-        return imagePath;
-      }
-
-      // Handle Next.js image paths
-      return imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
-    };
-
-    // Generate QR code for the certificate verification
-    const certificateVerificationUrl = `https://your-domain.com/verify/${certificateNumber}`;
-    
-    // Generate QR code first, before opening the print window
-    let qrCodeDataUrl = '';
-    try {
-      qrCodeDataUrl = await QRCode.toDataURL(certificateVerificationUrl, {
-        width: 100,
-        margin: 1,
-        color: {
-          dark: '#000000',
-          light: '#ffffff'
-        }
-      });
-    } catch (error) {
-      console.error("Error generating QR code:", error);
-      // Set a fallback in case of error - either empty or a placeholder
-      qrCodeDataUrl = '';
+    // If it's already an absolute URL or data URL, return as is
+    if (
+      typeof imagePath === "string" &&
+      (imagePath.startsWith("http") || imagePath.startsWith("data:"))
+    ) {
+      return imagePath;
     }
-    
-    // Now create a new window for printing, after the QR code is generated
-    const printWindow = window.open("", "_blank");
-    
-    // Generate the certificate HTML content with the QR code data URL
-    const certificateHTML = `
+
+    // Handle Next.js image paths
+    return imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+  };
+
+  // Generate QR code for the certificate verification
+  const certificateVerificationUrl = `https://your-domain.com/verify/${certificateNumber}`;
+
+  // Generate QR code first, before opening the print window
+  let qrCodeDataUrl = "";
+  try {
+    qrCodeDataUrl = await QRCode.toDataURL(certificateVerificationUrl, {
+      width: 100,
+      margin: 1,
+      color: {
+        dark: "#000000",
+        light: "#ffffff",
+      },
+    });
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    // Set a fallback in case of error - either empty or a placeholder
+    qrCodeDataUrl = "";
+  }
+
+  // Now create a new window for printing, after the QR code is generated
+  const printWindow = window.open("", "_blank");
+
+  // Generate the certificate HTML content with the QR code data URL
+  const certificateHTML = `
       <html>
         <head>
           <title>Certificate of Accreditation</title>
@@ -282,9 +283,10 @@ export const handlePrintCertificate = async ({
                 </div>
                 
                 <div class="seal-section">
-                  ${qrCodeDataUrl ? 
-                    `<img class="qr-code" src="${qrCodeDataUrl}" alt="Certificate QR Code" />` : 
-                    `<div id="qrCodePlaceholder" class="qr-code"></div>`
+                  ${
+                    qrCodeDataUrl
+                      ? `<img class="qr-code" src="${qrCodeDataUrl}" alt="Certificate QR Code" />`
+                      : `<div id="qrCodePlaceholder" class="qr-code"></div>`
                   }
                   <div class="certificate-id">
                     Certificate Number:<br>
@@ -376,12 +378,11 @@ export const handlePrintCertificate = async ({
       </html>
     `;
 
-    // Write to the new window and print
-    printWindow.document.open();
-    printWindow.document.write(certificateHTML);
-    printWindow.document.close();
-  };
-
+  // Write to the new window and print
+  printWindow.document.open();
+  printWindow.document.write(certificateHTML);
+  printWindow.document.close();
+};
 
 // Helper functions
 const formatDate = (date) => {

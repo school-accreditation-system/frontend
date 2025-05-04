@@ -1,11 +1,6 @@
 "use client";
-import { Sidebar } from "lucide-react";
-import React, { useState } from "react";
-import logo from "../../../public/nesa-logo.png";
-import waterMark from "../../../public/nesa-logo.png";
-import accreditated_logo from "../../../public/accredited-logo.jpg";
+import { useState } from "react";
 import { handlePrintCertificate } from "../verify-certificate/_components/printCertificate";
-import { generateQrCode } from "./QrCode";
 
 const AccreditationStatusPage = () => {
   // State for the application ID input
@@ -17,7 +12,6 @@ const AccreditationStatusPage = () => {
   // State for error message
   const [error, setError] = useState("");
   // State for school type selection
-  const [schoolType, setSchoolType] = useState("secondary");
 
   // Mock data for demonstration - in a real app, this would come from an API
   const mockApplications = {
@@ -108,29 +102,31 @@ const AccreditationStatusPage = () => {
     );
   };
 
-// if(isLoading) return <h1>{generateQrCode()}</h1>
+  // if(isLoading) return <h1>{generateQrCode()}</h1>
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="bg-primary py-6 px-6">
+    <div className="min-h-[calc(100vh-64px)] bg-gray-100 p-4 flex flex-col gap-4 cursor-default">
+      <div className="max-w-3xl mx-auto w-full bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-primary p-4">
           <h1 className="text-2xl font-bold text-white">
             School Accreditation System
           </h1>
-          <p className="text-indigo-100 mt-1">Check your application status</p>
+          <p className="text-indigo-100 text-lg">
+            Check your application status
+          </p>
         </div>
 
-        <div className="px-6 py-8">
+        <div className="p-4 flex flex-col gap-4">
           {/* Application ID Form */}
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="applicationId"
-              >
-                Application ID
-              </label>
-              <div className="mt-1 flex rounded-md shadow-sm">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            <label
+              className="block text-gray-700 text-base font-bold"
+              htmlFor="applicationId"
+            >
+              Application ID
+            </label>
+            <div>
+              <div className="flex gap-2 rounded-md">
                 <input
                   type="text"
                   id="applicationId"
@@ -141,10 +137,14 @@ const AccreditationStatusPage = () => {
                 />
                 <button
                   type="submit"
-                  className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="flex items-center justify-center h-9 px-4 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 hover:cursor-pointer"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Checking..." : "Check Status"}
+                  {isLoading ? (
+                    <span className="h-5 w-5 border-2 rounded-full border-t-transparent animate-spin" />
+                  ) : (
+                    "Check Status"
+                  )}
                 </button>
               </div>
               {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
@@ -153,19 +153,19 @@ const AccreditationStatusPage = () => {
 
           {/* Display Status Results */}
           {status && (
-            <div className="mt-8 border rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-hidden">
               <div className="px-6 py-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900">
                   Application Status
                 </h3>
                 <StatusBadge status={status.status} />
               </div>
-              <div className="px-6 py-5 divide-y divide-gray-200">
+              <div className="px-6 divide-y divide-gray-200">
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">
                     Application ID
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  <dd className="text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                     {applicationId}
                   </dd>
                 </div>
@@ -173,7 +173,7 @@ const AccreditationStatusPage = () => {
                   <dt className="text-sm font-medium text-gray-500">
                     School Type
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 capitalize">
+                  <dd className="text-sm text-gray-900 sm:mt-0 sm:col-span-2 capitalize">
                     {status.type}
                   </dd>
                 </div>
@@ -181,7 +181,7 @@ const AccreditationStatusPage = () => {
                   <dt className="text-sm font-medium text-gray-500">
                     Last Updated
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  <dd className="text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                     {status.date}
                   </dd>
                 </div>
@@ -189,15 +189,15 @@ const AccreditationStatusPage = () => {
                   <dt className="text-sm font-medium text-gray-500">
                     Comments
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  <dd className="text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                     {status.comments}
                   </dd>
                 </div>
-                {status.status === "Approved" && <div className="py-4">
-                  <div className="flex justify-end">
+                {status.status === "Approved" && (
+                  <div className="flex justify-end py-4">
                     <button
                       type="button"
-                      className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="flex justify-center items-center h-9 px-4 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 hover:cursor-pointer"
                       onClick={() =>
                         handlePrintCertificate({
                           logo: "/nesalogo-removebg.png",
@@ -216,18 +216,18 @@ const AccreditationStatusPage = () => {
                       Print Status
                     </button>
                   </div>
-                </div>}
+                )}
               </div>
             </div>
           )}
 
           {/* Info Panel */}
           {!status && !isLoading && (
-            <div className="mt-8 bg-blue-50 p-4 rounded-md">
-              <div className="flex">
+            <div className="bg-blue-50 p-4 rounded-md">
+              <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <svg
-                    className="h-5 w-5 text-blue-400"
+                    className="h-5 w-5 text-primary"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -240,12 +240,10 @@ const AccreditationStatusPage = () => {
                     />
                   </svg>
                 </div>
-                <div className="ml-3 flex-1 md:flex md:justify-between">
-                  <p className="text-sm text-blue-700">
-                    Enter your application ID to check the status of your school
-                    accreditation application.
-                  </p>
-                </div>
+                <p className="text-sm text-primary">
+                  Enter your application ID to check the status of your school
+                  accreditation application.
+                </p>
               </div>
             </div>
           )}
@@ -253,23 +251,23 @@ const AccreditationStatusPage = () => {
       </div>
 
       {/* Sample IDs for testing */}
-      <div className="max-w-3xl mx-auto mt-6 bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-6 py-4">
+      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden w-full">
+        <div className="p-4 flex flex-col gap-2">
           <h3 className="font-medium text-gray-900">Sample IDs for Testing:</h3>
-          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <div className="bg-gray-100 p-2 rounded">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="bg-gray-100 p-2 rounded-md">
               <p className="text-xs font-medium text-gray-500">Secondary</p>
               <p className="text-sm">SEC123</p>
             </div>
-            <div className="bg-gray-100 p-2 rounded">
+            <div className="bg-gray-100 p-2 rounded-md">
               <p className="text-xs font-medium text-gray-500">Primary</p>
               <p className="text-sm">PRI456</p>
             </div>
-            <div className="bg-gray-100 p-2 rounded">
+            <div className="bg-gray-100 p-2 rounded-md">
               <p className="text-xs font-medium text-gray-500">Ordinary</p>
               <p className="text-sm">ORD789</p>
             </div>
-            <div className="bg-gray-100 p-2 rounded">
+            <div className="bg-gray-100 p-2 rounded-md">
               <p className="text-xs font-medium text-gray-500">TVET</p>
               <p className="text-sm">TVT101</p>
             </div>
