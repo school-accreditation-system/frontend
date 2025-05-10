@@ -41,10 +41,11 @@ type IndicatorOption = {
   name: string;
   description: string;
 };
-
 const AddCombinationPage = () => {
   const router = useRouter();
   
+  const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
+  console.log("NEXT_PUBLIC_API_URL", NEXT_PUBLIC_API_URL);
   // State for API data
   const [levels, setLevels] = useState<Level[]>([]);
   const [combinations, setCombinations] = useState<Combination[]>([]);
@@ -83,7 +84,7 @@ const AddCombinationPage = () => {
       setIsLoadingLevels(true);
       setError(null);
       try {
-        const response = await fetch("http://localhost:8081/api/qamis/combination/getallLevels", {
+        const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/getallLevels`, {
           headers: {
             "qamis-request-key": "1234567890"
           }
@@ -120,7 +121,7 @@ const AddCombinationPage = () => {
       setIsLoadingCombinations(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
+        const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
           headers: {
             "qamis-request-key": "1234567890"
           }
@@ -175,6 +176,7 @@ const AddCombinationPage = () => {
   // Handle combination change for indicators
   const handleCombinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCombination(e.target.value);
+    setSelectedLevel(e.target.value);
   };
 
   // Handle tab change
@@ -192,7 +194,7 @@ const AddCombinationPage = () => {
     setSuccess(null);
     
     try {
-      const response = await fetch(`http://localhost:8081/api/qamis/combination/save-combination?parentId=${selectedLevel}`, {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/save-combination?parentId=${selectedLevel}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -223,7 +225,7 @@ const AddCombinationPage = () => {
       toast.success("Combination saved successfully!");
       
       // Refresh the combinations list
-      const refreshResponse = await fetch(`http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
+      const refreshResponse = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
         headers:{
           "qamis-request-key": "1234567890"
         }
@@ -288,7 +290,7 @@ const handleSubmitIndicator = async (e: React.FormEvent) => {
   setSuccess(null);
   
   try {
-    const response = await fetch(`http://localhost:8081/api/qamis/options/save-option?indicatorOption&indicatorId=${selectedCombination}`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/options/save-option?indicatorId=${selectedCombination}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
