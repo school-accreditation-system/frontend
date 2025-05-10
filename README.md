@@ -1,4 +1,4 @@
-# ✨ School Accreditation System
+# ✨ School Accreditation System 
 
 A modern, responsive web application for school authentication and accreditation management built with Next.js 14.
 
