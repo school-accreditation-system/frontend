@@ -61,6 +61,7 @@ export const StaffLoginForm = () => {
         { id: 3, email: "division@gmail.com", password: "Password123",role: "division",name:"Rukundo"  },
         { id: 4, email: "hod@gmail.com", password: "Password123",role: "hod",name:"Mugisha"  },
         { id: 5, email: "director@gmail.com", password: "Password123",role: "director",name:"Uwase"  },
+        { id: 6, email: "superadmin@gmail.com", password: "Password123",role: "admin",name:"John"  },
       ];
       let loggedInUser = null;
       
@@ -83,7 +84,11 @@ export const StaffLoginForm = () => {
         router.push("/inspection-plan");
       } else if (loggedInUser.email == "inspector@gmail.com") {
         router.push("/inspector-dashboard");
-      } else if (
+      }
+      else if(loggedInUser.email == "superadmin@gmail.com"){
+        router.push("/super-admin");
+      }
+       else if (
         loggedInUser.email == "division@gmail.com" ||
         "hod@gmail.com" ||
         "director@gmail.com"
