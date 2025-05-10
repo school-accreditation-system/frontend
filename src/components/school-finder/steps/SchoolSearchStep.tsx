@@ -1,13 +1,10 @@
 /* eslint-disable max-lines */
 "use client";
 
-import { SchoolSearchCard } from '@/components/common/SchoolSearchCard';
+import { SchoolSearchCard } from "@/components/common/SchoolSearchCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { SchoolDTO, useGetSchools } from "@/hooks/useSchool";
 import {
@@ -16,17 +13,14 @@ import {
   Check,
   Mail,
   School as SchoolIcon,
-  Search
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useSchool } from "@/components/auth/SchoolContext";
 
-
-export const SchoolSearchStep = ({
-  onStartVerification,
-}) => {
+export const SchoolSearchStep = ({ onStartVerification }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -142,16 +136,15 @@ export const SchoolSearchStep = ({
 
         {searchQuery?.trim().length >= 3 &&
           !isLoading &&
-          schools?.length === 0 && (
-            schools.map((school) => (
-              <SchoolSearchCard
-                key={school.id}
-                school={school}
-                isSelected={false}
-                onSelect={handleSchoolSelect}
-              />
-            ))
-          )}
+          schools?.length === 0 &&
+          schools.map((school) => (
+            <SchoolSearchCard
+              key={school.id}
+              school={school}
+              isSelected={false}
+              onSelect={handleSchoolSelect}
+            />
+          ))}
 
         {schoolsError && (
           <Alert variant="destructive">
@@ -231,7 +224,7 @@ export const SchoolSearchStep = ({
               <Button
                 onClick={handleContinue}
                 disabled={!selectedSchool || isVerifying}
-                className="w-full sm:w-auto order-1 sm:order-2 bg-primary hover:cursor-pointer hover:bg-primary/90 gap-2 text-white px-4 sm:px-6"
+                className="w-full sm:w-auto order-1 sm:order-2 bg-primary hover:cursor-pointer hover:hover:bg-primary/90 gap-2 text-white px-4 sm:px-6"
                 size="default"
               >
                 {isVerifying ? (

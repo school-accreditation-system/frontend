@@ -3,12 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
-const NavigationButtons = ({ 
-  onBack, 
-  onSubmit, 
-  isSubmitting, 
-  isDisabled 
-}) => {
+const NavigationButtons = ({ onBack, onSubmit, isSubmitting, isDisabled }) => {
   return (
     <div className="flex justify-between mt-8">
       <Button
@@ -24,7 +19,11 @@ const NavigationButtons = ({
         onClick={onSubmit}
         disabled={isDisabled || isSubmitting}
         variant={isDisabled ? "outline" : "default"}
-        className={isDisabled ? "bg-gray-300 text-gray-500" : "bg-blue-500 hover:bg-blue-600"}
+        className={
+          isDisabled
+            ? "bg-gray-300 text-gray-500"
+            : "bg-primary hover:bg-primary/90"
+        }
       >
         {isSubmitting ? (
           <span className="flex items-center">
@@ -39,4 +38,4 @@ const NavigationButtons = ({
   );
 };
 
-export default NavigationButtons
+export default NavigationButtons;

@@ -5,8 +5,6 @@ import { TVET_DATA, SECTOR_DETAILS } from "../../../constants/tvetData";
 import SuccessModal from "./SuccessModal";
 import { generateTradeDetails } from "./generateTradeDetails";
 
-
-
 const TVETTradesSelector = ({ onComplete, formData }) => {
   const router = useRouter();
   const [selectedSector, setSelectedSector] = useState(
@@ -264,7 +262,7 @@ const TVETTradesSelector = ({ onComplete, formData }) => {
                 <button
                   type="button"
                   onClick={selectAll}
-                  className="px-3 py-1.5 text-sm rounded-md bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                  className="px-3 py-1.5 text-sm rounded-md bg-primary text-white hover:bg-primary/90 transition-colors"
                 >
                   Select All
                 </button>
@@ -351,7 +349,7 @@ const TVETTradesSelector = ({ onComplete, formData }) => {
                           id={`trade-${trade.id}`}
                           checked={selectedTrades.includes(trade.id)}
                           onChange={() => toggleTrade(trade.id)}
-                          className="mt-1 h-5 w-5 rounded text-blue-500 focus:ring-blue-500"
+                          className="mt-1 h-5 w-5 rounded text-primary focus:ring-blue-500"
                         />
                         <label
                           htmlFor={`trade-${trade.id}`}

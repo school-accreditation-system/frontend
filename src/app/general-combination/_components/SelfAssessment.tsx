@@ -40,7 +40,9 @@ const SelfAssessment = ({ onComplete, formData }) => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-gray-700 mb-2">Academic Performance</label>
+          <label className="block text-gray-700 mb-2">
+            Academic Performance
+          </label>
           <select
             name="academicPerformance"
             value={assessment.academicPerformance}
@@ -94,7 +96,9 @@ const SelfAssessment = ({ onComplete, formData }) => {
         </div>
 
         <div>
-          <label className="block text-gray-700 mb-2">Extracurricular Activities</label>
+          <label className="block text-gray-700 mb-2">
+            Extracurricular Activities
+          </label>
           <select
             name="extracurricular"
             value={assessment.extracurricular}
@@ -112,7 +116,9 @@ const SelfAssessment = ({ onComplete, formData }) => {
         </div>
 
         <div>
-          <label className="block text-gray-700 mb-2">Areas of Improvement</label>
+          <label className="block text-gray-700 mb-2">
+            Areas of Improvement
+          </label>
           <textarea
             name="areasOfImprovement"
             value={assessment.areasOfImprovement}
@@ -133,7 +139,7 @@ const SelfAssessment = ({ onComplete, formData }) => {
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
           >
             Submit
           </button>

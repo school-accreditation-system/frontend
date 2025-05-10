@@ -20,7 +20,7 @@ const Page = () => {
   const email = useEmail();
   const params = usePathname();
   const searchParams = useSearchParams();
-  const router = useRouter()
+  const router = useRouter();
   const url = params + "/" + "?schoolId=" + searchParams.get("schoolId");
   console.log("params", params);
   console.log("search params", searchParams.get("schoolId"));
@@ -41,7 +41,7 @@ const Page = () => {
     setIsModalOpen(false);
     if (selectedSchool.schoolIdentification && selectedSchool.selfAssessment) {
       // setCurrentStep("combination");
-      router.push("/accreditation-application")
+      router.push("/accreditation-application");
       return;
     }
     if (selectedSchool.schoolIdentification) {
@@ -218,57 +218,56 @@ const Page = () => {
                           </svg>
                           Start Identification Process
                         </a>
-                        
                       </div>
                     )}
 
                     {school.selfAssessment ? (
                       <div>
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-4 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-16 h-16 opacity-10">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-full w-full text-blue-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
-                        </div>
-                        <h3 className="text-blue-800 font-medium text-sm mb-2 flex items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 mr-1"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
-                          SELF ASSESSMENT
-                        </h3>
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-blue-700 text-sm font-medium">
-                              Completed
-                            </p>
-                            <p className="text-blue-600 font-bold">
-                              {school.selfAssessment.completedDate ||
-                                "Mar 10, 2023"}
-                            </p>
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-4 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-16 h-16 opacity-10">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-full w-full text-primary"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                              />
+                            </svg>
                           </div>
-                          {/* <div>
+                          <h3 className="text-blue-800 font-medium text-sm mb-2 flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4 mr-1"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                              />
+                            </svg>
+                            SELF ASSESSMENT
+                          </h3>
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="text-blue-700 text-sm font-medium">
+                                Completed
+                              </p>
+                              <p className="text-blue-600 font-bold">
+                                {school.selfAssessment.completedDate ||
+                                  "Mar 10, 2023"}
+                              </p>
+                            </div>
+                            {/* <div>
                             <p className="text-purple-700 text-sm font-medium">
                               Next Assessment
                             </p>
@@ -276,22 +275,31 @@ const Page = () => {
                               {school.selfAssessment.nextDate || "Mar 10, 2024"}
                             </p>
                           </div> */}
-                        </div>
-                        <div className="mt-2 pt-2 border-t border-blue-100">
-                          <div className="w-full bg-blue-100 rounded-full h-2">
-                            <div
-                              className="bg-gradient-to-r from-blue-400 to-indigo-500 h-2 rounded-full"
-                              style={{ width: "80%" }}
-                            ></div>
                           </div>
-                          <p className="text-xs text-blue-600 mt-1">
-                            {school.selfAssessment.score
-                              ? `Assessment score: ${school.selfAssessment.score}%`
-                              : "Assessment score: 80%"}
-                          </p>
+                          <div className="mt-2 pt-2 border-t border-blue-100">
+                            <div className="w-full bg-blue-100 rounded-full h-2">
+                              <div
+                                className="bg-gradient-to-r from-blue-400 to-indigo-500 h-2 rounded-full"
+                                style={{ width: "80%" }}
+                              ></div>
+                            </div>
+                            <p className="text-xs text-blue-600 mt-1">
+                              {school.selfAssessment.score
+                                ? `Assessment score: ${school.selfAssessment.score}%`
+                                : "Assessment score: 80%"}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                        <button className="bg-primary py-2 px-4 rounded-md my-2 text-white hover:cursor-pointer" onClick={() => router.push(`/self-assessment?schoolId=${school.id}&returnTo=${params}`)}>Do another self-assessment</button>
+                        <button
+                          className="bg-primary py-2 px-4 rounded-md my-2 text-white hover:cursor-pointer"
+                          onClick={() =>
+                            router.push(
+                              `/self-assessment?schoolId=${school.id}&returnTo=${params}`
+                            )
+                          }
+                        >
+                          Do another self-assessment
+                        </button>
                       </div>
                     ) : (
                       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center text-center">
@@ -345,7 +353,7 @@ const Page = () => {
                     <div className="flex items-center text-gray-600">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2 text-blue-500"
+                        className="h-5 w-5 mr-2 text-primary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -362,7 +370,7 @@ const Page = () => {
                     <div className="flex items-center text-gray-600">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2 text-blue-500"
+                        className="h-5 w-5 mr-2 text-primary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -379,7 +387,7 @@ const Page = () => {
                     <div className="flex items-center text-gray-600">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2 text-blue-500"
+                        className="h-5 w-5 mr-2 text-primary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -399,7 +407,7 @@ const Page = () => {
                 <div className="bg-gray-50 px-5 py-4 border-t border-gray-100">
                   <button
                     onClick={() => handleSchoolSelect(school)}
-                    className="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-500 transition-colors duration-300 flex items-center justify-center font-medium"
+                    className="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-primary transition-colors duration-300 flex items-center justify-center font-medium"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

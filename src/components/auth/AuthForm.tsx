@@ -1,48 +1,55 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Input } from '../ui/input';
-import { ArrowRight, Loader2, ArrowLeft, RefreshCw, Home } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import Link from 'next/link';
-import { Label } from '../ui/label';
-import { schoolSchema, staffSchema, otpSchema, SchoolFormValues, StaffFormValues, OtpFormValues } from './types/schema';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Input } from "../ui/input";
+import { ArrowRight, Loader2, ArrowLeft, RefreshCw, Home } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import Link from "next/link";
+import { Label } from "../ui/label";
+import {
+  schoolSchema,
+  staffSchema,
+  otpSchema,
+  SchoolFormValues,
+  StaffFormValues,
+  OtpFormValues,
+} from "./types/schema";
 
 interface AuthFormProps {
-  type: 'school' | 'staff';
+  type: "school" | "staff";
 }
 
 export const AuthForm = ({ type }: AuthFormProps) => {
-  const [step, setStep] = useState<'initial' | 'otp'>('initial');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [step, setStep] = useState<"initial" | "otp">("initial");
+  const [searchTerm, setSearchTerm] = useState("");
   const [countdown, setCountdown] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   // School form resolver
   const schoolForm = useForm<SchoolFormValues>({
     resolver: zodResolver(schoolSchema),
-    defaultValues: { schoolName: '' },
-    mode: 'onChange'
+    defaultValues: { schoolName: "" },
+    mode: "onChange",
   });
 
   // Staff form resolver
   const staffForm = useForm<StaffFormValues>({
     resolver: zodResolver(staffSchema),
-    defaultValues: { email: '' },
-    mode: 'onChange'
+    defaultValues: { email: "" },
+    mode: "onChange",
   });
 
   // OTP form resolver
   const otpForm = useForm<OtpFormValues>({
     resolver: zodResolver(otpSchema),
-    defaultValues: { otp: '' },
-    mode: 'onChange'
+    defaultValues: { otp: "" },
+    mode: "onChange",
   });
 
   // Reset forms when type changes
   useEffect(() => {
-    if (type === 'school') {
+    if (type === "school") {
       staffForm.reset();
     } else {
       schoolForm.reset();
@@ -53,11 +60,11 @@ export const AuthForm = ({ type }: AuthFormProps) => {
   const handleSchoolSubmit = async (data: SchoolFormValues) => {
     setIsLoading(true);
     setSearchTerm(data.schoolName);
-    
+
     // TODO: Implement API call here
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setStep('otp');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    setStep("otp");
     startCountdown();
     setIsLoading(false);
   };
@@ -66,11 +73,11 @@ export const AuthForm = ({ type }: AuthFormProps) => {
   const handleStaffSubmit = async (data: StaffFormValues) => {
     setIsLoading(true);
     setSearchTerm(data.email);
-    
+
     // TODO: Implement API call here
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setStep('otp');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    setStep("otp");
     startCountdown();
     setIsLoading(false);
   };
@@ -79,7 +86,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
   const startCountdown = () => {
     setCountdown(30);
     const timer = setInterval(() => {
-      setCountdown(prev => {
+      setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
           return 0;
@@ -99,19 +106,19 @@ export const AuthForm = ({ type }: AuthFormProps) => {
 
     // TODO: Implement OTP verification logic here and remove the console.log
     console.log(data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsLoading(false);
   };
 
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
   return (
     <div className="w-full overflow-hidden rounded-lg shadow-lg">
-      <motion.div 
-        key={step} 
+      <motion.div
+        key={step}
         initial="hidden"
         animate="visible"
         variants={formVariants}
@@ -119,35 +126,39 @@ export const AuthForm = ({ type }: AuthFormProps) => {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-            {step === 'initial' ? 
-              (type === 'school' ? 'Find Your School' : 'NESA Staff Login') : 
-              'Enter Verification Code'
-            }
+            {step === "initial"
+              ? type === "school"
+                ? "Find Your School"
+                : "NESA Staff Login"
+              : "Enter Verification Code"}
           </h2>
         </div>
 
-        {step === 'initial' ? (
-          type === 'school' ? (
+        {step === "initial" ? (
+          type === "school" ? (
             // School form
-            <form onSubmit={schoolForm.handleSubmit(handleSchoolSubmit)} className="space-y-5">
+            <form
+              onSubmit={schoolForm.handleSubmit(handleSchoolSubmit)}
+              className="space-y-5"
+            >
               <div>
-                <Label 
-                  htmlFor="schoolName" 
+                <Label
+                  htmlFor="schoolName"
                   className="block text-sm font-medium text-gray-700 mb-1.5"
                 >
                   School Name
                 </Label>
-                
+
                 <Input
                   id="schoolName"
                   type="text"
                   placeholder="Enter school name..."
                   className="w-full px-4 py-3 h-12 border bg-white border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={isLoading}
-                  {...schoolForm.register('schoolName')}
+                  {...schoolForm.register("schoolName")}
                   aria-invalid={!!schoolForm.formState.errors.schoolName}
                 />
-                
+
                 {/* Error message */}
                 {schoolForm.formState.errors.schoolName && (
                   <p className="mt-1 text-sm text-red-600">
@@ -160,7 +171,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full py-3 px-4 h-12 bg-primary text-white rounded-md font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+                className="w-full py-3 px-4 h-12 bg-primary text-white rounded-md font-medium hover:hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
                 disabled={isLoading || !schoolForm.formState.isValid}
               >
                 {isLoading ? (
@@ -178,25 +189,28 @@ export const AuthForm = ({ type }: AuthFormProps) => {
             </form>
           ) : (
             // Staff form
-            <form onSubmit={staffForm.handleSubmit(handleStaffSubmit)} className="space-y-5">
+            <form
+              onSubmit={staffForm.handleSubmit(handleStaffSubmit)}
+              className="space-y-5"
+            >
               <div>
-                <Label 
-                  htmlFor="email" 
+                <Label
+                  htmlFor="email"
                   className="block text-sm font-medium text-gray-700 mb-1.5"
                 >
                   Email Address
                 </Label>
-                
+
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email..."
                   className="w-full px-4 py-3 h-12 border bg-white border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={isLoading}
-                  {...staffForm.register('email')}
+                  {...staffForm.register("email")}
                   aria-invalid={!!staffForm.formState.errors.email}
                 />
-                
+
                 {/* Error message */}
                 {staffForm.formState.errors.email && (
                   <p className="mt-1 text-sm text-red-600">
@@ -209,7 +223,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full py-3 px-4 h-12 bg-primary text-white rounded-md font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+                className="w-full py-3 px-4 h-12 bg-primary text-white rounded-md font-medium hover:hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
                 disabled={isLoading || !staffForm.formState.isValid}
               >
                 {isLoading ? (
@@ -227,15 +241,21 @@ export const AuthForm = ({ type }: AuthFormProps) => {
             </form>
           )
         ) : (
-          <form onSubmit={otpForm.handleSubmit(handleOtpSubmit)} className="space-y-5">
+          <form
+            onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
+            className="space-y-5"
+          >
             <div>
-              <Label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <Label
+                htmlFor="otp"
+                className="block text-sm font-medium text-gray-700 mb-1.5"
+              >
                 Enter the verification code sent to:
               </Label>
               <p className="text-sm font-medium text-primary mb-4">
-                {type === 'school' ? 'Your school email address' : searchTerm}
+                {type === "school" ? "Your school email address" : searchTerm}
               </p>
-              
+
               <Input
                 id="otp"
                 type="text"
@@ -243,10 +263,10 @@ export const AuthForm = ({ type }: AuthFormProps) => {
                 placeholder="Enter 6-digit code"
                 className="w-full px-4 py-3 h-12 border text-center font-medium text-lg tracking-widest bg-white border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
                 disabled={isLoading}
-                {...otpForm.register('otp')}
+                {...otpForm.register("otp")}
                 aria-invalid={!!otpForm.formState.errors.otp}
               />
-              
+
               {/* Error message */}
               {otpForm.formState.errors.otp && (
                 <p className="mt-1 text-sm text-red-600">
@@ -259,7 +279,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full py-3 px-4 h-12 bg-primary text-white rounded-md font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+              className="w-full py-3 px-4 h-12 bg-primary text-white rounded-md font-medium hover:hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
               disabled={isLoading || !otpForm.formState.isValid}
             >
               {isLoading ? (
@@ -296,11 +316,11 @@ export const AuthForm = ({ type }: AuthFormProps) => {
 
               <button
                 type="button"
-                onClick={() => setStep('initial')}
+                onClick={() => setStep("initial")}
                 className="text-sm text-gray-600 hover:text-gray-900 cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
-                Back to {type === 'school' ? 'school search' : 'email entry'}
+                Back to {type === "school" ? "school search" : "email entry"}
               </button>
             </div>
           </form>
@@ -308,4 +328,4 @@ export const AuthForm = ({ type }: AuthFormProps) => {
       </motion.div>
     </div>
   );
-}; 
+};

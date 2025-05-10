@@ -55,19 +55,19 @@ export const TypeOfRequestForm = ({
   });
 
   const { combinationId } = useParams();
-  const [combination,setCombination]=useState("");
+  const [combination, setCombination] = useState("");
   const search = useSearchParams();
   const { data: combinations, isLoading } = useGetCombinationByLevels(
-    combinationId as string || "d971d476-b338-41f2-9b01-e7e099d4aa21"
+    (combinationId as string) || "d971d476-b338-41f2-9b01-e7e099d4aa21"
   );
   useEffect(() => {
     console.log("combinationId", search);
     search.forEach((value, key) => {
-        if(key==="combinationId"){
-            setCombination(value)
-            console.log(`${key}: ${value}`);
-        }
-      });
+      if (key === "combinationId") {
+        setCombination(value);
+        console.log(`${key}: ${value}`);
+      }
+    });
   }, [search]);
 
   // When form data changes externally, update the form
@@ -276,7 +276,7 @@ export const TypeOfRequestForm = ({
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="hover:bg-blue-500 hover:text-white hover:cursor-pointer"
+                  className="hover:bg-primary hover:text-white hover:cursor-pointer"
                   onClick={handleSelectAll}
                 >
                   Select All
@@ -285,7 +285,7 @@ export const TypeOfRequestForm = ({
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="hover:bg-blue-500 hover:text-white hover:cursor-pointer"
+                  className="hover:bg-primary hover:text-white hover:cursor-pointer"
                   onClick={handleClearAll}
                 >
                   Clear All

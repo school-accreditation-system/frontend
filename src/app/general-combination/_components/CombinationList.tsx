@@ -29,7 +29,7 @@ const CombinationList = ({
             onClick={selectAll}
             variant="default"
             size="sm"
-            className="bg-blue-500 hover:bg-blue-600"
+            className="bg-primary hover:bg-primary/90"
           >
             Select All
           </Button>
