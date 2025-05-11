@@ -9,10 +9,11 @@ const RequestDirectoryPage = () => {
   const [sortDirection, setSortDirection] = useState("desc");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(20);
   // State for request data
   const [requestData, setRequestData] = useState([]);
   const [currentPageData, setCurrentPageData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   // State for request details modal
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -109,18 +110,17 @@ const RequestDirectoryPage = () => {
   // Initialize currentPageData whenever filtered data changes
   useEffect(() => {
     if (filteredData.length > 0) {
-      setCurrentPageData(filteredData.slice(0, pageSize));
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      setCurrentPageData(filteredData.slice(startIndex, endIndex));
     } else {
       setCurrentPageData([]);
     }
-  }, [filteredData, pageSize]);
+  }, [filteredData, pageSize, currentPage]); 
   // Handle page change from pagination component
-  const handlePageChange = useMemo(() => {
-    return (page, pageData) => {
-      const { startIndex, endIndex } = pageData;
-      setCurrentPageData(filteredData.slice(startIndex, endIndex));
-    };
-  }, [filteredData]);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   // Handle showing details for a request
   const handleShowDetails = (request) => {
     setSelectedRequest(request);
@@ -162,11 +162,17 @@ const RequestDirectoryPage = () => {
   const columns = useMemo(
     () => [
       {
-        key: "id",
-        header: "ID",
+        key: "assessment.school.schoolName",
+        header: "School",
         sortable: true,
-        render: (value) => value.substring(0, 8) + "...",
-      },
+        render: (_, row) => {
+          const value = row.assessment?.school?.schoolName;
+          return value ? (
+            <span className="text-blue-600">{value}</span>
+          ) : (
+            <span className="text-gray-400">N/A</span>
+          );
+        }},
       {
         key: "email",
         header: "Email",
@@ -174,10 +180,17 @@ const RequestDirectoryPage = () => {
         render: (value) => <span className="text-blue-600">{value}</span>,
       },
       {
-        key: "nationalId",
-        header: "National ID",
+        key: "assessment.combination.shortName",
+        header: "Combination",
         sortable: true,
-      },
+        render: (_, row) => {
+          const value = row.assessment?.combination?.shortName;
+          return value ? (
+            <span className="text-blue-600">{value}</span>
+          ) : (
+            <span className="text-gray-400">N/A</span>
+          );
+        }},
       {
         key: "applicantRole",
         header: "Role",
@@ -339,7 +352,7 @@ text-sm flex items-center"
         </div>
       )}
       {/* Replace the table with the existing Table component */}
-      <Table
+      {/* <Table
         columns={columns}
         data={currentPageData}
         sortField={sortField}
@@ -354,11 +367,27 @@ text-sm flex items-center"
         currentPage={1}
         onPageChange={handlePageChange}
         totalItems={filteredData.length}
-      />
+      /> */}
+      <Table
+  columns={columns}
+  data={currentPageData}
+  sortField={sortField}
+  sortDirection={sortDirection}
+  onSort={handleSort}
+  emptyStateMessage={
+    requestData.length === 0
+      ? "No request data available. Please check API connection."
+      : "No requests found matching your search criteria"
+  }
+  pageSize={pageSize}
+  currentPage={currentPage} // Now passing the actual current page
+  onPageChange={handlePageChange}
+  totalItems={filteredData.length}
+/>
       {/* Request Details Modal */}
       {showDetails && selectedRequest && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-
+          className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-
 center justify-center z-50"
         >
           <div
