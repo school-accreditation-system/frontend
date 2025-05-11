@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast"; // Assuming you have a toast component
-import { CheckCircle2, Clock, Filter, Search } from "lucide-react";
+import { ArrowDownUp, CheckCircle2, Clock, Filter, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import InspectionModal from "./InspectionModal";
