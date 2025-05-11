@@ -1,12 +1,8 @@
 "use client";
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import {
-  MantineReactTable,
-  useMantineReactTable,
-  type MRT_ColumnDef,
-} from 'mantine-react-table';
+import { Table } from "@/components/Table/Table";
 
 // Import the shadcn/ui components
 import { Button } from "@/components/ui/button";
@@ -17,20 +13,50 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils"; // Make sure you have this utility
-import  DatePicker  from "./DatePicker"; 
+import DatePicker from "./DatePicker";
 
 // Sample school data
 const schoolsData = [
   { id: 1, name: "College Saint Andre", district: "Kigali", type: "MPC" },
   { id: 2, name: "Lycée de Kigali", district: "Kigali", type: "Science" },
   { id: 3, name: "FAWE Girls School", district: "Gasabo", type: "Science" },
-  { id: 4, name: "Groupe Scolaire Officiel de Butare", district: "Huye", type: "Liberal Arts" },
-  { id: 5, name: "Ecole Technique Saint Joseph", district: "Muhanga", type: "Technical" },
-  { id: 6, name: "Green Hills Academy", district: "Kigali", type: "International" },
-  { id: 7, name: "Rwanda Leading Institute", district: "Kicukiro", type: "Engineering" },
+  {
+    id: 4,
+    name: "Groupe Scolaire Officiel de Butare",
+    district: "Huye",
+    type: "Liberal Arts",
+  },
+  {
+    id: 5,
+    name: "Ecole Technique Saint Joseph",
+    district: "Muhanga",
+    type: "Technical",
+  },
+  {
+    id: 6,
+    name: "Green Hills Academy",
+    district: "Kigali",
+    type: "International",
+  },
+  {
+    id: 7,
+    name: "Rwanda Leading Institute",
+    district: "Kicukiro",
+    type: "Engineering",
+  },
   { id: 8, name: "Riviera High School", district: "Gasabo", type: "Languages" },
-  { id: 9, name: "Wellspring Academy", district: "Nyarugenge", type: "Primary" },
-  { id: 10, name: "Kigali International Community School", district: "Kigali", type: "International" },
+  {
+    id: 9,
+    name: "Wellspring Academy",
+    district: "Nyarugenge",
+    type: "Primary",
+  },
+  {
+    id: 10,
+    name: "Kigali International Community School",
+    district: "Kigali",
+    type: "International",
+  },
 ];
 
 // Define the type for team and assignment data
@@ -42,7 +68,7 @@ type TeamMember = {
 type Team = {
   id: number;
   name: string;
-  status:string;
+  status: string;
   members: TeamMember[];
   createdAt: string;
 };
@@ -57,23 +83,25 @@ type AssignedSchools = {
   [teamId: number]: TeamAssignment;
 };
 
-
-
 const TeamAssignmentPage = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [assignedSchools, setAssignedSchools] = useState<AssignedSchools>({});
   const [selectedSchools, setSelectedSchools] = useState<number[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [sortField, setSortField] = useState<string>("id");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // Load teams from localStorage
   useEffect(() => {
     const loadTeams = () => {
       try {
-        const teamsJson = localStorage.getItem('teams');
+        const teamsJson = localStorage.getItem("teams");
         if (teamsJson) {
           const parsedTeams = JSON.parse(teamsJson);
           if (Array.isArray(parsedTeams)) {
@@ -81,20 +109,20 @@ const TeamAssignmentPage = () => {
           }
         }
       } catch (error) {
-        console.error('Error loading teams:', error);
+        console.error("Error loading teams:", error);
       }
     };
 
     // Load assigned schools from localStorage
     const loadAssignedSchools = () => {
       try {
-        const assignedJson = localStorage.getItem('assignedSchools');
+        const assignedJson = localStorage.getItem("assignedSchools");
         if (assignedJson) {
           const parsed = JSON.parse(assignedJson);
           setAssignedSchools(parsed || {});
         }
       } catch (error) {
-        console.error('Error loading assigned schools:', error);
+        console.error("Error loading assigned schools:", error);
       }
     };
 
@@ -103,65 +131,70 @@ const TeamAssignmentPage = () => {
   }, []);
 
   // Filter schools based on search term
-  const filteredSchools = schoolsData.filter(school => 
-    school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    school.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    school.type.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSchools = schoolsData.filter(
+    (school) =>
+      school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      school.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      school.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAssignSchools = (team: Team) => {
-    if (!team || typeof team.id !== 'number') {
-      console.error('Invalid team provided to handleAssignSchools');
+    if (!team || typeof team.id !== "number") {
+      console.error("Invalid team provided to handleAssignSchools");
       return;
     }
-  
+
     setCurrentTeam(team);
-    
+
     try {
       // Get existing assignments with proper type checking
       const teamAssignment = assignedSchools[team.id] || {};
-      
+
       // Safely extract school IDs with proper array check
       let schoolIds: number[] = [];
       if (teamAssignment.schoolIds && Array.isArray(teamAssignment.schoolIds)) {
         schoolIds = teamAssignment.schoolIds;
       }
       setSelectedSchools(schoolIds);
-      
+
       // Set both dates consistently with sensible defaults
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       // Properly parse dates with error handling
       try {
-        setStartDate(teamAssignment.startDate ? new Date(teamAssignment.startDate) : today);
+        setStartDate(
+          teamAssignment.startDate ? new Date(teamAssignment.startDate) : today
+        );
       } catch (e) {
-        console.error('Error parsing start date, using default', e);
+        console.error("Error parsing start date, using default", e);
         setStartDate(today);
       }
-      
+
       try {
-        setEndDate(teamAssignment.endDate ? new Date(teamAssignment.endDate) : tomorrow);
+        setEndDate(
+          teamAssignment.endDate ? new Date(teamAssignment.endDate) : tomorrow
+        );
       } catch (e) {
-        console.error('Error parsing end date, using default', e);
+        console.error("Error parsing end date, using default", e);
         setEndDate(tomorrow);
       }
     } catch (error) {
-      console.error('Error preparing school assignments form:', error);
+      console.error("Error preparing school assignments form:", error);
       // Set safe defaults
       setSelectedSchools([]);
       setStartDate(new Date());
       setEndDate(new Date(new Date().setDate(new Date().getDate() + 1)));
     }
-    
+
     setShowModal(true);
-  }
+  };
   // Toggle school selection
   const toggleSchoolSelection = (schoolId: number) => {
-    setSelectedSchools(prev => {
+    setSelectedSchools((prev) => {
       if (prev.includes(schoolId)) {
-        return prev.filter(id => id !== schoolId);
+        return prev.filter((id) => id !== schoolId);
       } else {
         return [...prev, schoolId];
       }
@@ -171,49 +204,56 @@ const TeamAssignmentPage = () => {
   const handleSaveAssignments = () => {
     try {
       // Validate current team
-      if (!currentTeam || typeof currentTeam.id !== 'number') {
+      if (!currentTeam || typeof currentTeam.id !== "number") {
         alert("Invalid team selection");
         return;
       }
-      
+
       // Validate dates exist and are valid Date objects
-      if (!startDate || !(startDate instanceof Date) || isNaN(startDate.getTime())) {
+      if (
+        !startDate ||
+        !(startDate instanceof Date) ||
+        isNaN(startDate.getTime())
+      ) {
         alert("Please select a valid start date");
         return;
       }
-      
+
       if (!endDate || !(endDate instanceof Date) || isNaN(endDate.getTime())) {
         alert("Please select a valid end date");
         return;
       }
-      
+
       // Validate date range
       if (startDate >= endDate) {
         alert("End date must be after start date");
         return;
       }
-      
+
       // Validate schools selection
       if (!Array.isArray(selectedSchools) || selectedSchools.length === 0) {
         alert("Please select at least one school");
         return;
       }
-      
+
       // Update assigned schools with dates
       const updatedAssignments = {
         ...assignedSchools,
         [currentTeam.id]: {
           schoolIds: selectedSchools,
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
-        }
+          endDate: endDate.toISOString(),
+        },
       };
-      
+
       // Save to localStorage with error handling
       try {
-        localStorage.setItem('assignedSchools', JSON.stringify(updatedAssignments));
+        localStorage.setItem(
+          "assignedSchools",
+          JSON.stringify(updatedAssignments)
+        );
         setAssignedSchools(updatedAssignments);
-        
+
         // Close modal and reset form state
         setShowModal(false);
         setCurrentTeam(null);
@@ -221,47 +261,47 @@ const TeamAssignmentPage = () => {
         setStartDate(null);
         setEndDate(null);
       } catch (e) {
-        console.error('Error saving to localStorage:', e);
+        console.error("Error saving to localStorage:", e);
         alert("Failed to save assignments. Please try again.");
       }
     } catch (error) {
-      console.error('Error in handleSaveAssignments:', error);
+      console.error("Error in handleSaveAssignments:", error);
       alert("An unexpected error occurred. Please try again.");
     }
-  }
+  };
 
   // Get school names for display (used in tooltip or expanded view)
   const getSchoolNamesByIds = (schoolIds: number[]) => {
     if (!schoolIds || schoolIds.length === 0) {
-      return '';
+      return "";
     }
-    
+
     return schoolIds
-      .map(id => schoolsData.find(school => school.id === id)?.name)
+      .map((id) => schoolsData.find((school) => school.id === id)?.name)
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
   };
 
   // Format date for display
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Not set';
+    if (!dateString) return "Not set";
     try {
       return new Date(dateString).toLocaleDateString();
     } catch (e) {
-      return 'Invalid date';
+      return "Invalid date";
     }
   };
 
-  // Transform teams data for MantineReactTable
+  // Transform teams data for table
   const tableData = useMemo(() => {
-    return teams.map(team => {
+    return teams.map((team) => {
       const teamAssignment = assignedSchools[team.id] || {};
       return {
         id: team.id,
         name: team.name,
         members: team.members,
-        startDate: teamAssignment.startDate || '',
-        endDate: teamAssignment.endDate || '',
+        startDate: teamAssignment.startDate || "",
+        endDate: teamAssignment.endDate || "",
         schoolIds: teamAssignment.schoolIds || [],
         schoolsCount: teamAssignment.schoolIds?.length || 0,
         schools: getSchoolNamesByIds(teamAssignment.schoolIds || []),
@@ -269,130 +309,170 @@ const TeamAssignmentPage = () => {
     });
   }, [teams, assignedSchools]);
 
-  // Define the columns for MantineReactTable
-  const columns = useMemo<MRT_ColumnDef<any>[]>(
-    () => [
-      {
-        accessorKey: 'id',
-        header: 'Team ID',
-        size: 80,
-      },
-      {
-        accessorKey: 'name',
-        header: 'Team Name',
-        size: 180,
-      },
-      {
-        accessorKey: 'members',
-        header: 'Team Members',
-        size: 200,
-        Cell: ({ cell }) => {
-          const members = cell.getValue<TeamMember[]>();
+  // Handle sorting logic
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  // Define the columns for the reusable Table
+  const columns = [
+    {
+      key: "id",
+      header: "Team ID",
+      sortable: true,
+    },
+    {
+      key: "name",
+      header: "Team Name",
+      sortable: true,
+    },
+    {
+      key: "members",
+      header: "Team Members",
+      sortable: false,
+      render: (value: TeamMember[]) => (
+        <ul className="list-disc list-inside text-sm">
+          {value.map((member) => (
+            <li key={member.id}>{member.name}</li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      key: "startDate",
+      header: "Start Date",
+      sortable: true,
+      render: (value: string) => formatDate(value),
+    },
+    {
+      key: "endDate",
+      header: "End Date",
+      sortable: true,
+      render: (value: string) => formatDate(value),
+    },
+    {
+      key: "schoolsCount",
+      header: "Schools Count",
+      sortable: true,
+    },
+    {
+      key: "schools",
+      header: "Assigned Schools",
+      sortable: false,
+      render: (value: string, item: any) => {
+        const count = item.schoolsCount;
+
+        if (count === 0) {
           return (
-            <ul className="list-disc list-inside text-sm">
-              {members.map(member => (
-                <li key={member.id}>{member.name}</li>
-              ))}
-            </ul>
+            <span className="text-gray-400 text-sm">No schools assigned</span>
           );
-        },
-      },
-      {
-        accessorKey: 'startDate',
-        header: 'Start Date',
-        size: 130,
-        Cell: ({ cell }) => formatDate(cell.getValue<string>()),
-      },
-      {
-        accessorKey: 'endDate',
-        header: 'End Date',
-        size: 130,
-        Cell: ({ cell }) => formatDate(cell.getValue<string>()),
-      },
-      {
-        accessorKey: 'schoolsCount',
-        header: 'Schools Count',
-        size: 120,
-      },
-      {
-        accessorKey: 'schools',
-        header: 'Assigned Schools',
-        size: 80,
-        Cell: ({ cell, row }) => {
-          const schools = cell.getValue<string>();
-          const count = row.original.schoolsCount;
-          
-          if (count === 0) {
-            return <span className="text-gray-400 text-sm">No schools assigned</span>;
-          }
-          
-          // Show first school and +X more if many schools
-          const schoolsList = schools.split(', ');
-          const firstSchool = schoolsList[0];
-          
-          if (schoolsList.length > 1) {
-            return (
-              <div className="text-sm">
-                <span>{firstSchool}</span>
-                <span className="ml-1 text-blue-500">
-                  +{schoolsList.length - 1} more
-                </span>
-              </div>
-            );
-          }
-          
-          return <span className="text-sm">{schools}</span>;
-        },
-      },
-      {
+        }
 
-        header: 'Actions',
-        size: 80,
-        enableSorting: false,
-        enableColumnFilter: false,
-        Cell: ({ row }) => (
-          <Button
-            onClick={() => handleAssignSchools(teams.find(t => t.id === row.original.id) as Team)}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-          >
-            Assign Schools
-          </Button>
-        ),
-      },
-    ],
-    [teams]
-  );
+        // Show first school and +X more if many schools
+        const schoolsList = value.split(", ");
+        const firstSchool = schoolsList[0];
 
-  // Configure the Mantine React Table
-  const table = useMantineReactTable({
-    columns,
-    data: tableData,
-    enableColumnFilters: true,
-    enableSorting: true,
-    enablePagination: true,
-    initialState: {
-      pagination: { pageSize: 10, pageIndex: 0 },
-      sorting: [{ id: 'id', desc: false }],
+        if (schoolsList.length > 1) {
+          return (
+            <div className="text-sm">
+              <span>{firstSchool}</span>
+              <span className="ml-1 text-blue-500">
+                +{schoolsList.length - 1} more
+              </span>
+            </div>
+          );
+        }
+
+        return <span className="text-sm">{value}</span>;
+      },
     },
-    mantineTableProps: {
-      striped: true,
-      highlightOnHover: true,
+    {
+      key: "actions",
+      header: "Actions",
+      sortable: false,
+      render: (_: any, item: any) => (
+        <Button
+          onClick={() =>
+            handleAssignSchools(teams.find((t) => t.id === item.id) as Team)
+          }
+          className="px-3 py-1 bg-primary text-white rounded hover:hover:bg-primary/90 hover:cursor-pointer text-sm"
+        >
+          Assign Schools
+        </Button>
+      ),
     },
-   
-  });
+  ];
+
+  // Get the sorted and paginated data
+  const sortedData = useMemo(() => {
+    return [...tableData].sort((a, b) => {
+      const aValue = a[sortField as keyof typeof a];
+      const bValue = b[sortField as keyof typeof b];
+
+      if (sortField === "startDate" || sortField === "endDate") {
+        const dateA = aValue ? new Date(aValue as string).getTime() : 0;
+        const dateB = bValue ? new Date(bValue as string).getTime() : 0;
+        return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
+      }
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortDirection === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+
+      if (aValue === bValue) return 0;
+
+      if (sortDirection === "asc") {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  }, [tableData, sortField, sortDirection]);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Get paginated data based on current page
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return sortedData.slice(startIndex, endIndex);
+  }, [sortedData, currentPage, pageSize]);
 
   return (
-    <div className="p-6  mx-auto">
-
-      <h1 className="text-xl font-bold text-blue-500 py-6">Team Inspection Assignment</h1>
-
+    <div className="p-6 mx-auto">
+      <h1 className="text-xl font-bold text-blue-500 py-6">
+        Team Inspection Assignment
+      </h1>
 
       {teams.length === 0 ? (
         <div className="text-center py-10 bg-white rounded-lg shadow-md">
-          <p className="text-gray-500">No teams found. Please create teams first.</p>
+          <p className="text-gray-500">
+            No teams found. Please create teams first.
+          </p>
         </div>
       ) : (
-        <MantineReactTable table={table} />
+        <Table
+          data={paginatedData}
+          columns={columns}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          onSort={handleSort}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          totalItems={tableData.length}
+          emptyStateMessage="No teams found"
+        />
       )}
 
       {/* School Assignment Modal with Date Pickers */}
@@ -400,7 +480,7 @@ const TeamAssignmentPage = () => {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-blue-500">
+              <h2 className="text-xl font-bold text-primary">
                 Assign Schools to {currentTeam?.name}
               </h2>
               <button
@@ -413,40 +493,40 @@ const TeamAssignmentPage = () => {
 
             {/* Date Range Selector */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-  <DatePicker 
-    date={startDate} 
-    setDate={(date) => {
-      if (date) {
-        setStartDate(date);
-        // If end date is null or before start date, set it to day after start date
-        if (!endDate || date >= endDate) {
-          const newEndDate = new Date(date);
-          newEndDate.setDate(newEndDate.getDate() + 1);
-          setEndDate(newEndDate);
-        }
-      } else {
-        setStartDate(null);
-      }
-    }} 
-    label="Inspection Start Date" 
-  />
-  <DatePicker 
-    date={endDate} 
-    setDate={(date) => {
-      if (date) {
-        // Only allow end dates after start date
-        if (startDate && date <= startDate) {
-          alert("End date must be after start date");
-          return;
-        }
-        setEndDate(date);
-      } else {
-        setEndDate(null);
-      }
-    }} 
-    label="Inspection End Date" 
-  />
-</div>
+              <DatePicker
+                date={startDate}
+                setDate={(date) => {
+                  if (date) {
+                    setStartDate(date);
+                    // If end date is null or before start date, set it to day after start date
+                    if (!endDate || date >= endDate) {
+                      const newEndDate = new Date(date);
+                      newEndDate.setDate(newEndDate.getDate() + 1);
+                      setEndDate(newEndDate);
+                    }
+                  } else {
+                    setStartDate(null);
+                  }
+                }}
+                label="Inspection Start Date"
+              />
+              <DatePicker
+                date={endDate}
+                setDate={(date) => {
+                  if (date) {
+                    // Only allow end dates after start date
+                    if (startDate && date <= startDate) {
+                      alert("End date must be after start date");
+                      return;
+                    }
+                    setEndDate(date);
+                  } else {
+                    setEndDate(null);
+                  }
+                }}
+                label="Inspection End Date"
+              />
+            </div>
 
             <div className="mb-4">
               <input
@@ -490,10 +570,13 @@ const TeamAssignmentPage = () => {
                       </td>
                     </tr>
                   ))}
-                  
+
                   {filteredSchools.length === 0 && (
                     <tr>
-                      <td colSpan="4" className="py-4 text-center text-gray-500">
+                      <td
+                        colSpan="4"
+                        className="py-4 text-center text-gray-500"
+                      >
                         No schools match your search criteria
                       </td>
                     </tr>
@@ -515,8 +598,10 @@ const TeamAssignmentPage = () => {
                 </button>
                 <button
                   onClick={handleSaveAssignments}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  disabled={!startDate || !endDate || selectedSchools.length === 0}
+                  className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+                  disabled={
+                    !startDate || !endDate || selectedSchools.length === 0
+                  }
                 >
                   Save Assignments
                 </button>

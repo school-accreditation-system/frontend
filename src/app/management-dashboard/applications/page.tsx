@@ -1,19 +1,8 @@
+/* eslint-disable max-lines */
 "use client";
 
+import { Table } from "@/components/Table/Table";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
-import InspectionModal from "./InspectionModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,16 +11,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Search,
-  Filter,
-  PlusCircle,
-  ArrowDownUp,
-  CheckCircle2,
-  Clock,
-  ThumbsUp,
-} from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast"; // Assuming you have a toast component
+import { CheckCircle2, Clock, Filter, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import InspectionModal from "./InspectionModal";
 
 // Initial data - will be updated from localStorage if available
 const initialInspections = [
@@ -183,45 +168,33 @@ const Page = () => {
 
   const getEligibleRoles = (school) => {
     // First, find the current role in the hierarchy
-    const currentRole = rolesByDepartment.find(r => r.role === loggedInUserRole);
+    const currentRole = rolesByDepartment.find(
+      (r) => r.role === loggedInUserRole
+    );
     if (!currentRole) return [];
-    
+
     // Get the direct supervisor role
     const supervisorRole = currentRole.supervisor;
-    
+
     // Create the actual hierarchy map from the data
     const roleHierarchyOrder = [
-      "analyst",     // Level 0
-      "inspector",   // Level 1
-      "division",    // Level 2
-      "hod",         // Level 3
-      "director"     // Level 4
+      "analyst", // Level 0
+      "inspector", // Level 1
+      "division", // Level 2
+      "hod", // Level 3
+      "director", // Level 4
     ];
-    
+
     // Get current position in hierarchy
     const currentPositionIndex = roleHierarchyOrder.indexOf(loggedInUserRole);
-    
-    // Build list of eligible roles (only higher in hierarchy)
-    return rolesByDepartment.filter(role => {
-      // Don't allow submitting to yourself
-      if (role.role === loggedInUserRole) {
-        return false;
-      }
-      
-      // Get this role's position in hierarchy
-      const rolePositionIndex = roleHierarchyOrder.indexOf(role.role);
-      
-      // Only allow submission to higher roles in the hierarchy
-      // prioritizing the direct supervisor
-      return rolePositionIndex > currentPositionIndex;
-    }).sort((a, b) => {
-      // Prioritize direct supervisor at the top of the list
-      if (a.role === supervisorRole) return -1;
-      if (b.role === supervisorRole) return 1;
-      return 0;
+
+    // Only return the direct supervisor role (one level above)
+    return rolesByDepartment.filter((role) => {
+      // Only allow the direct supervisor role
+      return role.role === supervisorRole;
     });
   };
-  
+
   const handleInspectionRole = (schoolId, targetRole) => {
     try {
       // 1. Update the inspection with the role it was submitted to
@@ -244,7 +217,7 @@ const Page = () => {
         }
         return inspection;
       });
-  
+
       // 2. Update rolesByDepartment to mark which role received the submission
       const updatedRoles = rolesByDepartment.map((role) => {
         if (role.role === targetRole) {
@@ -255,15 +228,15 @@ const Page = () => {
         }
         return role;
       });
-  
+
       // 3. Save both updates to localStorage
       localStorage.setItem("inspections", JSON.stringify(updatedInspections));
       localStorage.setItem("rolesByDepartment", JSON.stringify(updatedRoles));
-  
+
       // 4. Update state
       setInspections(updatedInspections);
       setRolesByDepartment(updatedRoles);
-  
+
       // 5. Show success message
       toast({
         title: "Submission Complete",
@@ -276,12 +249,11 @@ const Page = () => {
       toast({
         title: "Submission Failed",
         description: "Failed to submit inspection. Please try again.",
-        status: "error", 
+        status: "error",
         duration: 3000,
       });
     }
   };
-  
 
   // New function to handle inspection approval by director
   const handleApproveInspection = (schoolId) => {
@@ -308,6 +280,7 @@ const Page = () => {
       if (typeof toast !== "undefined") {
         toast({
           title: "Inspection Approved",
+
           description: `The inspection has been successfully approved`,
           status: "success",
           duration: 3000,
@@ -320,21 +293,180 @@ const Page = () => {
       alert("Failed to approve inspection. Please try again.");
     }
   };
- // Updated canSubmitInspection based on the actual data structure
-const canSubmitInspection = (school) => {
-  // Case 1: New inspection not yet submitted
-  if (!school.submittedTo) {
-    return true;
-  }
-  
-  // Case 2: If the school is submitted to the current user, they can forward it
-  if (school.submittedTo === loggedInUserRole) {
-    return true;
-  }
-  
-  // Otherwise, user cannot submit/forward this inspection
-  return false;
-};
+  // Updated canSubmitInspection based on the actual data structure
+  const canSubmitInspection = (school) => {
+    // Case 1: New inspection not yet submitted
+    if (!school.submittedTo) {
+      return true;
+    }
+
+    // Case 2: If the school is submitted to the current user, they can forward it
+    if (school.submittedTo === loggedInUserRole) {
+      return true;
+    }
+
+    // Otherwise, user cannot submit/forward this inspection
+    return false;
+  };
+
+  // Define columns for the inspections table
+  const columns = useMemo(
+    () => [
+      {
+        key: "id",
+        header: "School ID",
+        render: (value: number) => (
+          <span className="text-sm text-gray-900">{value}</span>
+        ),
+      },
+      {
+        key: "name",
+        header: "School Name",
+        render: (value: string) => (
+          <span className="text-sm font-medium text-gray-900">{value}</span>
+        ),
+      },
+      {
+        key: "district",
+        header: "District",
+        render: (value: string) => (
+          <span className="text-sm text-gray-600">{value}</span>
+        ),
+      },
+      {
+        key: "type",
+        header: "Type",
+        render: (value: string) => (
+          <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+            {value}
+          </span>
+        ),
+      },
+      {
+        key: "status",
+        header: "Status",
+        render: (value: string) => (
+          <div className="flex items-center">
+            {value.toLowerCase() === "completed" ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 text-green-500 mr-1.5" />
+                <span className="text-sm font-medium text-green-700">
+                  Completed
+                </span>
+              </>
+            ) : (
+              <>
+                <Clock className="h-4 w-4 text-purple-500 mr-1.5" />
+                <span className="text-sm font-medium text-purple-700">
+                  In Progress
+                </span>
+              </>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: "approved",
+        header: "Approval Status",
+        render: (value: boolean) => (
+          <div className="flex items-center">
+            {value ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 text-green-500 mr-1.5" />
+                <span className="text-sm font-medium text-green-700">
+                  Approved
+                </span>
+              </>
+            ) : (
+              <>
+                <Clock className="h-4 w-4 text-amber-500 mr-1.5" />
+                <span className="text-sm font-medium text-amber-700">
+                  Not Approved
+                </span>
+              </>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: "submittedTo",
+        header: "Submitted To",
+        render: (value: string) =>
+          value ? (
+            <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+              {value.toUpperCase()}
+            </span>
+          ) : (
+            <span className="text-gray-400">Not submitted</span>
+          ),
+      },
+      {
+        key: "actions",
+        header: "Actions",
+        render: (_, school) => (
+          <div className="flex items-center justify-center gap-2">
+            {school.submittedTo &&
+              !school.approved &&
+              canSubmitInspection(school) && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 px-3 bg-white border-gray-200 text-sm"
+                    >
+                      {school.submittedTo === loggedInUserRole
+                        ? "Forward"
+                        : "Submit"}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuLabel>Submit to:</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {getEligibleRoles(school).map((role) => (
+                      <DropdownMenuItem
+                        key={role.id}
+                        className="cursor-pointer"
+                        onClick={() =>
+                          handleInspectionRole(school.id, role.role)
+                        }
+                      >
+                        {role.role.charAt(0).toUpperCase() + role.role.slice(1)}
+                      </DropdownMenuItem>
+                    ))}
+                    {getEligibleRoles(school).length === 0 && (
+                      <DropdownMenuItem disabled>
+                        No eligible roles
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+            {school.submittedTo && school.submittedTo !== loggedInUserRole && (
+              <span className="text-sm text-gray-500">
+                Submitted to {school.submittedTo.toUpperCase()}
+              </span>
+            )}
+
+            {loggedInUserRole === "director" &&
+              !school.approved &&
+              school.submittedTo === loggedInUserRole && (
+                <Button
+                  size="sm"
+                  className="h-8 bg-primary text-white"
+                  onClick={() => handleApproveInspection(school.id)}
+                >
+                  Approve
+                </Button>
+              )}
+          </div>
+        ),
+      },
+    ],
+    [loggedInUserRole, getEligibleRoles, canSubmitInspection]
+  );
+
   return (
     <div className="p-6  mx-auto">
       {/* Header with action button */}
@@ -346,7 +478,6 @@ const canSubmitInspection = (school) => {
           <p className="text-gray-500 mt-1">
             Manage and track inspection status
           </p>
-          
         </div>
       </div>
 
@@ -402,7 +533,7 @@ const canSubmitInspection = (school) => {
         handleSelfAssessment={handleSelfAssessment}
       />
 
-      {/* Table of inspections */}
+      {/* Replace table with reusable Table component */}
       <div className="bg-white rounded-lg overflow-hidden shadow-md">
         <div className="overflow-x-auto">
           <table className="min-w-full">

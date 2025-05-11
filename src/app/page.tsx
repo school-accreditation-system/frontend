@@ -5,12 +5,10 @@ import { ServicesSection } from '@/components/accreditation/ServicesSection';
 import { AboutSection } from '@/components/accreditation/AboutSection';
 import { Toaster } from '@/components/ui/toaster';
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <main className="flex flex-col min-h-screen">
-       <Toaster position="top-right" />
+    <main>
       <HeroSection />
-      <ProcessStepsSection />
       <RequestTypesSection />
       <ServicesSection />
       <AboutSection />

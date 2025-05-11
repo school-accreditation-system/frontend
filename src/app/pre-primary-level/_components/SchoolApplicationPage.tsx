@@ -19,7 +19,6 @@ const SchoolApplicationPage = () => {
   }, []);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-
   const filteredSchools =
     searchQuery.length > 2
       ? schools.filter((school) =>
@@ -27,29 +26,24 @@ const SchoolApplicationPage = () => {
         )
       : [];
 
-
   const handleSchoolSelect = (school) => {
     setSelectedSchool(school);
     setHasIdentification(school.schoolIdentification);
     setHasSelfAssessment(school.selfAssessment);
-    setHasOrdinaryLevel(school.hasOrdinaryLevel)
+    setHasOrdinaryLevel(school.hasOrdinaryLevel);
   };
-
 
   const navigateToIdentification = () => {
     router.push(`/school-identification?schoolId=${selectedSchool.id}`);
   };
 
-
   const navigateToSelfAssessment = () => {
     router.push(`/self-assessment?schoolId=${selectedSchool.id}`);
   };
 
-
   const navigateToOrdinaryLevel = () => {
     setShowSuccessModal(true);
   };
-
 
   const renderSearchResults = () => {
     if (searchQuery.length === 0) {
@@ -186,7 +180,7 @@ const SchoolApplicationPage = () => {
                 className={`w-full py-2 rounded-lg text-center font-medium ${
                   hasIdentification
                     ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-primary text-white hover:bg-primary/90"
                 }`}
               >
                 {hasIdentification
@@ -218,7 +212,7 @@ const SchoolApplicationPage = () => {
                 className={`w-full py-2 rounded-lg text-center font-medium ${
                   hasSelfAssessment
                     ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-primary text-white hover:bg-primary/90"
                 }`}
               >
                 {hasSelfAssessment
@@ -236,7 +230,7 @@ const SchoolApplicationPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-gray-800">
-                  Pre Primary Level Application
+                    Pre Primary Level Application
                   </h2>
                   <p className="text-gray-500">
                     Apply for Pre Primary Level certification and programs
@@ -249,7 +243,7 @@ const SchoolApplicationPage = () => {
                   className={`px-6 py-2 rounded-lg text-center font-medium ${
                     !hasIdentification
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
+                      : "bg-primary text-white hover:bg-primary/90"
                   }`}
                 >
                   {!hasIdentification
@@ -272,7 +266,6 @@ const SchoolApplicationPage = () => {
           </div>
         )}
       </div>
-
 
       {showSuccessModal && (
         <SuccessModal

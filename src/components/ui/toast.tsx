@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { Check, X, AlertTriangle, XCircle } from "lucide-react"; 
+import { Check, X, AlertTriangle, XCircle } from "lucide-react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -85,7 +85,7 @@ const Toast = React.forwardRef<
                 {
                   "bg-green-500": status === "success",
                   "bg-amber-500": status === "warning",
-                  "bg-blue-500": status === "info",
+                  "bg-primary": status === "info",
                   "bg-red-500": status === "error",
                 }
               )}
@@ -103,13 +103,6 @@ const Toast = React.forwardRef<
           </div>
           <div className="flex-grow">{children}</div>
         </div>
-        <ToastPrimitives.Close
-          className={`absolute right-2 ${
-            hasDescription ? "top-2" : "top-3"
-          } rounded-md p-1 text-gray-400 opacity-100 transition-opacity hover:text-gray-900 focus:opacity-100 focus:outline-none group-hover:opacity-100`}
-        >
-          <X className="h-5 w-5" />
-        </ToastPrimitives.Close>
       </ToastPrimitives.Root>
     </ToastContext.Provider>
   );

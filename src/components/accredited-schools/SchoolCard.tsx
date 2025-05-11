@@ -1,143 +1,97 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { ProcessedSchool } from '@/types/accredited-schools';
-import { Award, Building, Mail, Phone, Star } from 'lucide-react';
-import { formatDate, generateColorFromString } from './utils';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight, BadgeCheck, Mail, MapPin } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
-export const SchoolCard = ({ 
-  school, 
-  className 
-}: { 
-  school: ProcessedSchool, 
-  className?: string
-}) => { 
+export const SchoolCard = ({ school }) => {
+  // Calculate accreditation score color
+
+  // Generate a placeholder image if school doesn't have one
+  const schoolImage = school.image || `/nesa-logo.png`;
+
   return (
-    <div className="relative">
-      {/* Certificate Button */}
-      <div className="absolute -top-2 -right-2 z-10">
+    <div className="bg-white rounded-lg overflow-hidden hover:shadow-sm transition-shadow border border-gray-200 cursor-default">
+      <div className="p-4 flex flex-col gap-3">
+        <div className="flex justify-between gap-2">
+          <div className="flex items-start gap-4">
+            {/* School Image */}
+            <div className="w-14 h-14 rounded-full relative overflow-hidden flex-shrink-0">
+              <Image
+                src={schoolImage}
+                alt={school.name}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-full"
+              />
+            </div>
+            {/* School Name & Location*/}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                {school.name}
+              </h3>
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                <MapPin className="h-4 w-4 text-red-500" />
+                <span className="line-clamp-1">
+                  {`${school.district ? `${school.district},` : ""} ${
+                    school.province || "Rwanda"
+                  }`}
+                </span>
+              </div>
+            </div>
+          </div>
+          <BadgeCheck className="h-6 w-6 text-green-500" />
+        </div>
+
+        {/* Location & Date */}
+        <div className="flex flex-col gap-1">
+          <p className="text-base font-semibold text-gray-900 line-clamp-1">
+            Contact Info
+          </p>
+          <div className="flex items-center flex-wrap gap-2">
+            <div className="flex items-center gap-1 text-sm text-gray-500">
+              <Mail className="h-4 w-4 text-amber-500" />
+              <span className="line-clamp-1">schoolmail@gmail.com</span>
+            </div>
+            {/* <div className="flex items-center gap-1 text-sm text-gray-500">
+              <Phone className="h-4 w-4 text-primary" />
+              <span className="line-clamp-1">+250781234567</span>
+            </div> */}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p className="text-base font-semibold text-gray-900 line-clamp-1">
+            Accredited Combinations
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {school.combinations?.slice(0, 5).map((combination, index) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className="bg-blue-50 text-primary hover:bg-blue-100"
+              >
+                {combination.name}
+              </Badge>
+            ))}
+
+            {school.combinations?.length > 5 && (
+              <Badge variant="outline" className="bg-gray-50 text-gray-500">
+                +{school.combinations.length - 5} more
+              </Badge>
+            )}
+          </div>
+        </div>
       </div>
 
-      <Card className={cn(
-        "overflow-hidden border border-gray-200 rounded-xl bg-white flex flex-col relative",
-        className
-      )}>
-        {/* Status Banner */}
-        <div className="relative px-5 py-3 text-white bg-gradient-to-r from-primary to-secondary">
-          <div className="flex items-center justify-between">
-            <div>
-              <Badge className="px-2.5 py-1 text-xs font-medium rounded-full text-blue-50">
-                ACCREDITED
-              </Badge>
-            </div>
-          </div>
-          <Award className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white opacity-50 h-8 w-8" />
-        </div>
-        
-        {/* School header */}
-        <CardHeader className="pb-2 pt-4 px-5">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center min-w-0">
-              <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3 flex-shrink-0 border border-blue-200">
-                <Building className="h-6 w-6" />
-              </div>
-              <div className="min-w-0">
-                <CardTitle className="text-xl font-bold text-gray-800 leading-tight line-clamp-2">
-                  {school.name || 'Unnamed School'}
-                </CardTitle>
-              </div>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="pt-3 pb-2 px-5 flex-grow flex flex-col">
-          <div className="space-y-4 flex-grow">
-            {/* Accreditation badges */}
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <span className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2 border border-blue-200">
-                  <Star className="h-3.5 w-3.5" />
-                </span>
-                Accredited Combinations
-              </h4>
-              <div className="flex flex-wrap gap-1.5 ml-8">
-                {(school.combinations && school.combinations.length > 0) ? (
-                  <TooltipProvider>
-                    {school.combinations.map((combination, index) => {
-                      const colorClasses = generateColorFromString(combination.name);
-                      return (
-                        <div key={`${combination.name}-${index}`} className="mb-1">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Badge 
-                                className="text-xs py-1 px-2.5 rounded-md hover:opacity-90 transition-colors cursor-pointer"
-                                variant="outline"
-                                style={{
-                                  backgroundColor: colorClasses.bg,
-                                  color: colorClasses.text,
-                                  borderColor: colorClasses.border
-                                }}
-                              >
-                                {combination.name}
-                              </Badge>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{`${combination?.fullName && combination?.fullName}-${combination?.name}`} was accreddited on {formatDate(combination?.accreditationDate)}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                      );
-                    })}
-                  </TooltipProvider>
-                ) : (
-                  <p className="text-sm text-gray-500 italic">No accreditation fields available</p>
-                )}
-              </div>
-            </div>
-            
-            {/* Contact information */}
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <span className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2 border border-blue-200">
-                  <Phone className="h-3.5 w-3.5" />
-                </span>
-                Contact Information
-              </h4>
-              <div className="space-y-2 ml-8">
-                {school.email && (
-                  <p className="flex items-center text-sm text-gray-700 hover:text-blue-600 transition-colors group">
-                    <Mail className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0 group-hover:text-blue-600" />
-                    <span className="truncate group-hover:underline">{school.email}</span>
-                  </p>
-                )}
-                {school.phoneNumber && (
-                  <p className="flex items-center text-sm text-gray-700 hover:text-blue-600 transition-colors group">
-                    <Phone className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0 group-hover:text-blue-600" />
-                    <span className="group-hover:underline">{school.phoneNumber}</span>
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        
-        <CardFooter className="border-t border-gray-100 p-0 mt-auto">
-          {/* <div className="w-full">
-            <Button 
-              className="w-full bg-primary hover:bg-primary/90 hover:cursor-pointer text-white font-medium h-12 rounded-none flex items-center justify-center gap-2 transition-all shadow-sm"
-            >
-              View School Details
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </div> */}
-        </CardFooter>
-      </Card>
+      {/* Action Footer */}
+      <Link
+        href={`/accredited-schools/${school.id}`}
+        className="text-primary text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all ease-in-out duration-300 border-t bg-blue-50 border-gray-100  p-3 w-full"
+      >
+        View Details
+        <ArrowRight className="w-4 h-4" />
+      </Link>
     </div>
   );
 };

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 interface SubmitButtonProps {
   isSubmitting: boolean;
@@ -14,16 +14,12 @@ interface SubmitButtonProps {
 export const SubmitButton = ({
   isSubmitting,
   text,
-  loadingText = 'Submitting...',
-  className = 'w-full md:w-auto md:min-w-[200px] hover:cursor-pointer bg-primary hover:bg-primary/90 text-white',
-  showArrow = true
+  loadingText = "Submitting...",
+  className = "w-full md:w-auto md:min-w-[200px] hover:cursor-pointer bg-primary hover:hover:bg-primary/90 text-white",
+  showArrow = true,
 }: SubmitButtonProps) => {
   return (
-    <Button
-      type="submit"
-      className={className}
-      disabled={isSubmitting}
-    >
+    <Button type="submit" className={className} disabled={isSubmitting}>
       {isSubmitting ? (
         loadingText
       ) : (
@@ -34,4 +30,4 @@ export const SubmitButton = ({
       )}
     </Button>
   );
-}; 
+};

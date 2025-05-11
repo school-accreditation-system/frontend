@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 export const FormActions = ({ onBack, isSubmitting }) => {
   const router = useRouter();
-  
+
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -26,7 +26,7 @@ export const FormActions = ({ onBack, isSubmitting }) => {
       </button>
       <button
         type="submit"
-        className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50"
+        className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50"
         disabled={isSubmitting}
       >
         {isSubmitting ? "Processing..." : "Next"}
