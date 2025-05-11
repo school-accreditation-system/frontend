@@ -84,7 +84,7 @@ const AddCombinationPage = () => {
       setIsLoadingLevels(true);
       setError(null);
       try {
-        const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/getallLevels`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getallLevels`, {
           headers: {
             "qamis-request-key": "1234567890"
           }
@@ -121,7 +121,7 @@ const AddCombinationPage = () => {
       setIsLoadingCombinations(true);
       setError(null);
       try {
-        const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
           headers: {
             "qamis-request-key": "1234567890"
           }
@@ -194,7 +194,7 @@ const AddCombinationPage = () => {
     setSuccess(null);
     
     try {
-      const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/save-combination?parentId=${selectedLevel}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/save-combination?parentId=${selectedLevel}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -225,7 +225,7 @@ const AddCombinationPage = () => {
       toast.success("Combination saved successfully!");
       
       // Refresh the combinations list
-      const refreshResponse = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
+      const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,{
         headers:{
           "qamis-request-key": "1234567890"
         }
@@ -290,7 +290,7 @@ const handleSubmitIndicator = async (e: React.FormEvent) => {
   setSuccess(null);
   
   try {
-    const response = await fetch(`${NEXT_PUBLIC_API_URL}/api/qamis/options/save-option?indicatorId=${selectedCombination}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qamis/options/save-option?indicatorId=${selectedCombination}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
