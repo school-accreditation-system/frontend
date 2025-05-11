@@ -1,5 +1,5 @@
 "use client";
-import { useState,,useEffect } from "react";
+import { useState,useEffect } from "react";
 import { handlePrintCertificate } from "../verify-certificate/_components/printCertificate";
 
 const AccreditationStatusPage = () => {
