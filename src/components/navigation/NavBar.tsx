@@ -13,8 +13,8 @@ export const NavBar = () => {
 
   const links = [
     { href: "/", label: "Home", icon: Home },
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/profile", label: "Profile", icon: User },
+    // { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    // { href: "/profile", label: "Profile", icon: User },
   ];
 
   return (

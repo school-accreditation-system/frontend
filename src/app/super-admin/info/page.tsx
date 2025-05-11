@@ -77,7 +77,7 @@ const CombinationManagementPage = () => {
       setError(null);
       try {
         const response = await fetch(
-          "http://localhost:8081/api/qamis/combination/getallLevels",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getallLevels`,
           {
             headers: {
               "qamis-request-key": "1234567890",
@@ -116,7 +116,7 @@ const CombinationManagementPage = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`,
           {
             headers: {
               "qamis-request-key": "1234567890",
@@ -162,7 +162,7 @@ const CombinationManagementPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8081/api/qamis/combination/save-combination?parentId=${selectedLevel}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/save-combination?parentId=${selectedLevel}`,
         {
           method: "POST",
           headers: {
@@ -196,7 +196,7 @@ const CombinationManagementPage = () => {
 
       // Refresh the combinations list
       const refreshResponse = await fetch(
-        `http://localhost:8081/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${selectedLevel}`
       );
       if (refreshResponse.ok) {
         const data = await refreshResponse.json();
