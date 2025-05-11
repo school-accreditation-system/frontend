@@ -20,18 +20,18 @@ import { cn } from "@/lib/utils"; // Make sure you have this utility
 import  DatePicker  from "./DatePicker"; 
 
 // Sample school data
-const schoolsData = [
-  { id: 1, name: "College Saint Andre", district: "Kigali", type: "MPC" },
-  { id: 2, name: "Lycée de Kigali", district: "Kigali", type: "Science" },
-  { id: 3, name: "FAWE Girls School", district: "Gasabo", type: "Science" },
-  { id: 4, name: "Groupe Scolaire Officiel de Butare", district: "Huye", type: "Liberal Arts" },
-  { id: 5, name: "Ecole Technique Saint Joseph", district: "Muhanga", type: "Technical" },
-  { id: 6, name: "Green Hills Academy", district: "Kigali", type: "International" },
-  { id: 7, name: "Rwanda Leading Institute", district: "Kicukiro", type: "Engineering" },
-  { id: 8, name: "Riviera High School", district: "Gasabo", type: "Languages" },
-  { id: 9, name: "Wellspring Academy", district: "Nyarugenge", type: "Primary" },
-  { id: 10, name: "Kigali International Community School", district: "Kigali", type: "International" },
-];
+// const schoolsData = [
+//   { id: 1, name: "College Saint Andre", district: "Kigali", type: "MPC" },
+//   { id: 2, name: "Lycée de Kigali", district: "Kigali", type: "Science" },
+//   { id: 3, name: "FAWE Girls School", district: "Gasabo", type: "Science" },
+//   { id: 4, name: "Groupe Scolaire Officiel de Butare", district: "Huye", type: "Liberal Arts" },
+//   { id: 5, name: "Ecole Technique Saint Joseph", district: "Muhanga", type: "Technical" },
+//   { id: 6, name: "Green Hills Academy", district: "Kigali", type: "International" },
+//   { id: 7, name: "Rwanda Leading Institute", district: "Kicukiro", type: "Engineering" },
+//   { id: 8, name: "Riviera High School", district: "Gasabo", type: "Languages" },
+//   { id: 9, name: "Wellspring Academy", district: "Nyarugenge", type: "Primary" },
+//   { id: 10, name: "Kigali International Community School", district: "Kigali", type: "International" },
+// ];
 
 // Define the type for team and assignment data
 type TeamMember = {
@@ -68,6 +68,7 @@ const TeamAssignmentPage = () => {
   const [selectedSchools, setSelectedSchools] = useState<number[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const[schoolsData,setSchoolsData] = useState([]);
 
   // Load teams from localStorage
   useEffect(() => {
@@ -82,6 +83,19 @@ const TeamAssignmentPage = () => {
         }
       } catch (error) {
         console.error('Error loading teams:', error);
+      }
+    };
+    const loadSchoolData = () => {
+      try {
+        const schoolJson = localStorage.getItem('inspections');
+        if (schoolJson) {
+          const parsedInspections = JSON.parse(schoolJson);
+          if (Array.isArray(parsedInspections)) {
+            setSchoolsData(parsedInspections);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading inspections:', error);
       }
     };
 
@@ -100,14 +114,15 @@ const TeamAssignmentPage = () => {
 
     loadTeams();
     loadAssignedSchools();
+    loadSchoolData();
   }, []);
 
   // Filter schools based on search term
-  const filteredSchools = schoolsData.filter(school => 
-    school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    school.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    school.type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredSchools = schoolsData.filter(school => 
+  //   school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   school.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   school.type.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const handleAssignSchools = (team: Team) => {
     if (!team || typeof team.id !== 'number') {
@@ -235,9 +250,8 @@ const TeamAssignmentPage = () => {
     if (!schoolIds || schoolIds.length === 0) {
       return '';
     }
-    
     return schoolIds
-      .map(id => schoolsData.find(school => school.id === id)?.name)
+      .map(id => schoolsData.find(school => school.id === id).assessment.school.schoolName) 
       .filter(Boolean)
       .join(', ');
   };
@@ -329,6 +343,7 @@ const TeamAssignmentPage = () => {
           // Show first school and +X more if many schools
           const schoolsList = schools.split(', ');
           const firstSchool = schoolsList[0];
+
           
           if (schoolsList.length > 1) {
             return (
@@ -464,12 +479,12 @@ const TeamAssignmentPage = () => {
                   <tr>
                     <th className="py-2 px-4 text-left">Select</th>
                     <th className="py-2 px-4 text-left">School Name</th>
-                    <th className="py-2 px-4 text-left">District</th>
+                    {/* <th className="py-2 px-4 text-left">District</th> */}
                     <th className="py-2 px-4 text-left">Type</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredSchools.map((school) => (
+                  {schoolsData.map((school) => (
                     <tr key={school.id} className="border-t hover:bg-blue-50">
                       <td className="py-2 px-4">
                         <label className="inline-flex items-center">
@@ -481,17 +496,17 @@ const TeamAssignmentPage = () => {
                           />
                         </label>
                       </td>
-                      <td className="py-2 px-4 font-medium">{school.name}</td>
-                      <td className="py-2 px-4">{school.district}</td>
+                      <td className="py-2 px-4 font-medium">{school.assessment.school.schoolName}</td>
+                      {/* <td className="py-2 px-4">{school.district}</td> */}
                       <td className="py-2 px-4">
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                          {school.type}
+                          {school.assessment.combination.combinationType}
                         </span>
                       </td>
                     </tr>
                   ))}
                   
-                  {filteredSchools.length === 0 && (
+                  {schoolsData.length === 0 && (
                     <tr>
                       <td colSpan="4" className="py-4 text-center text-gray-500">
                         No schools match your search criteria

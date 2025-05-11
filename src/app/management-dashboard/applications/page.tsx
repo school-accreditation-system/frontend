@@ -81,7 +81,7 @@ const Page = () => {
   const [loggedInUserRole, setLoggedInUserRole] = useState("");
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortField, setSortField] = useState("id");
-  const [inspections, setInspections] = useState(initialInspections);
+  const [inspections, setInspections] = useState([]);
   const [rolesByDepartment, setRolesByDepartment] = useState(
     initialRolesByDepartment
   );
@@ -137,22 +137,22 @@ const Page = () => {
   }, []);
 
   // Filter and sort schools
-  const filteredAndSortedInspections = [...inspections]
-    .filter(
-      (school) =>
-        school?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school?.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school?.status.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      // Basic sorting
-      if (sortDirection === "asc") {
-        return a[sortField] > b[sortField] ? 1 : -1;
-      } else {
-        return a[sortField] < b[sortField] ? 1 : -1;
-      }
-    });
+  // const filteredAndSortedInspections = [...inspections]
+  //   .filter(
+  //     (school) =>
+  //       school?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       school?.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       school?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       school?.status.toLowerCase().includes(searchTerm.toLowerCase())
+  //   )
+  //   .sort((a, b) => {
+  //     // Basic sorting
+  //     if (sortDirection === "asc") {
+  //       return a[sortField] > b[sortField] ? 1 : -1;
+  //     } else {
+  //       return a[sortField] < b[sortField] ? 1 : -1;
+  //     }
+  //   });
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -457,7 +457,7 @@ const canSubmitInspection = (school) => {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {filteredAndSortedInspections.map((school) => (
+              {inspections.map((school) => (
                 <tr
                   key={school.id}
                   className="hover:bg-gray-50 transition-colors"
@@ -586,7 +586,7 @@ const canSubmitInspection = (school) => {
                 </tr>
               ))}
 
-              {filteredAndSortedInspections.length === 0 && (
+              {inspections.length === 0 && (
                 <tr>
                   <td colSpan="8" className="py-8 text-center text-gray-500">
                     <div className="flex flex-col items-center">
