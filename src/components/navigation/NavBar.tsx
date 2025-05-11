@@ -74,9 +74,9 @@ export const NavBar = () => {
             );
           })}
         </nav>
-        <button className="hidden md:flex items-center gap-2 justify-center text-white capitalize font-medium hover:bg-white/10 px-4 py-2 rounded-md hover:cursor-pointer">
+        {/* <button className="hidden md:flex items-center gap-2 justify-center text-white capitalize font-medium hover:bg-white/10 px-4 py-2 rounded-md hover:cursor-pointer">
           <LogOut size={20} /> logout
-        </button>
+        </button> */}
       </div>
 
       {/* Mobile menu */}
