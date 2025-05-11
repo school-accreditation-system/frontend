@@ -33,6 +33,7 @@ const RequestDirectoryPage = () => {
         }
         const data = await response.json();
         setRequestData(data);
+        localStorage.setItem("inspections", JSON.stringify(data));
         console.log("Request data loaded:", data);
       } catch (error) {
         console.error("Error fetching request data:", error);

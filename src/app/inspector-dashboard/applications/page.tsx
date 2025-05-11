@@ -167,7 +167,7 @@ const hardcodedTeam = {
 // Hardcoded assigned schools for testing
 const hardcodedAssignedSchools = {
   4: {
-    schoolIds: [1, 2, 3],
+    schoolIds: ["03c3dfce-859b-4feb-bd14-f62b891c4ede", "c5e7225f-8cce-43ec-8d13-6dd258b4f744", "404fd2b1-92b6-466a-a03d-b0a3d6051446","eb27e889-9f2d-4613-9e02-d8b357045b7d"],
     startDate: "2023-04-16T00:00:00.000Z",
     endDate: "2025-09-20T00:00:00.000Z",
   },
@@ -186,7 +186,7 @@ const TeamSchoolsPage = () => {
   const [rolesByDepartment, setRolesByDepartment] = useState(
     initialRolesByDepartment
   );
-  const [inspections, setInspections] = useState(initialInspections);
+  const [inspections, setInspections] = useState([]);
 
   // Load data from localStorage on component mount
   useEffect(() => {
@@ -356,12 +356,12 @@ const TeamSchoolsPage = () => {
   // Create the filtered school data based on assigned IDs
   const assignedSchoolsData = useMemo(() => {
     // Merge school data with inspection status
-    return schoolsData
+    return inspections
       .filter((school) => assignedSchools.includes(school.id))
       .map((school) => {
         // Find corresponding inspection data
         const inspectionData =
-          inspections.find((insp) => insp.id === school.id) || {};
+          inspections?.find((insp) => insp.id === school.id) || {};
         return {
           ...school,
           status: inspectionData.status || "Not Started",
@@ -372,6 +372,8 @@ const TeamSchoolsPage = () => {
         };
       });
   }, [assignedSchools, inspections]);
+
+  console.log("assignedSchoolsData", assignedSchoolsData);
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -407,36 +409,61 @@ const TeamSchoolsPage = () => {
     }
   };
 
-  // Update columns definition for the reusable Table component
-  const columns = useMemo(
-    () => [
-      {
-        key: "id",
-        header: "School ID",
-      },
-      {
-        key: "name",
-        header: "School Name",
-      },
-      {
-        key: "district",
-        header: "District",
-      },
-      {
-        key: "type",
-        header: "Type",
-        render: (value: string) => (
-          <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-            {value}
+  // Define columns for the MantineReactTable with applicationId instead of id
+const columns = useMemo<MRT_ColumnDef<any>[]>(
+  () => [
+    {
+      accessorKey: "applicationId",
+      header: "Application ID",
+      size: 120,
+      Cell: ({ cell }) => {
+        const applicationId = cell.getValue<string>();
+        return (
+          <span className="font-medium text-blue-600">
+            {applicationId || `APP-${cell.row.original.id}`}
           </span>
-        ),
+        );
       },
-      {
-        key: "status",
-        header: "Status",
-        render: (value: string) => {
-          let bgColor = "bg-gray-100";
-          let textColor = "text-gray-700";
+    },
+    {
+      accessorKey: "assessment",
+      header: "School Name",
+      size: 160,
+      Cell: ({ cell }) => {
+        const assessment = cell.getValue();
+        console.log("name", assessment);
+        return (
+          <span className="font-medium text-blue-600">
+            {assessment.school.schoolName}
+          </span>
+        );
+      },
+    },
+    // {
+    //   accessorKey: "district",
+    //   header: "District",
+    //   size: 100,
+    // },
+    // {
+    //   accessorKey: "assessment.combination",
+    //   header: "Type",
+    //   size: 120,
+    //   Cell: ({ cell }) => {
+    //    const combination = cell.getValue();
+    //    console.log("combination", combination.combinationType);
+    //    <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+    //       {combination.combinationType}
+    //     </span>
+    //   },
+    // },
+    {
+      accessorKey: "status",
+      header: "Status",
+      size: 120,
+      Cell: ({ cell }) => {
+        const status = cell.getValue<string>();
+        let bgColor = "bg-gray-100";
+        let textColor = "text-gray-700";
 
           switch (value) {
             case "Completed":

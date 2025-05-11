@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast"; // Assuming you have a toast component
-import { CheckCircle2, Clock, Filter, Search } from "lucide-react";
+import { ArrowDownUp, CheckCircle2, Clock, Filter, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import InspectionModal from "./InspectionModal";
@@ -66,7 +66,7 @@ const Page = () => {
   const [loggedInUserRole, setLoggedInUserRole] = useState("");
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortField, setSortField] = useState("id");
-  const [inspections, setInspections] = useState(initialInspections);
+  const [inspections, setInspections] = useState([]);
   const [rolesByDepartment, setRolesByDepartment] = useState(
     initialRolesByDepartment
   );
@@ -122,22 +122,22 @@ const Page = () => {
   }, []);
 
   // Filter and sort schools
-  const filteredAndSortedInspections = [...inspections]
-    .filter(
-      (school) =>
-        school?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school?.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school?.status.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      // Basic sorting
-      if (sortDirection === "asc") {
-        return a[sortField] > b[sortField] ? 1 : -1;
-      } else {
-        return a[sortField] < b[sortField] ? 1 : -1;
-      }
-    });
+  // const filteredAndSortedInspections = [...inspections]
+  //   .filter(
+  //     (school) =>
+  //       school?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       school?.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       school?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       school?.status.toLowerCase().includes(searchTerm.toLowerCase())
+  //   )
+  //   .sort((a, b) => {
+  //     // Basic sorting
+  //     if (sortDirection === "asc") {
+  //       return a[sortField] > b[sortField] ? 1 : -1;
+  //     } else {
+  //       return a[sortField] < b[sortField] ? 1 : -1;
+  //     }
+  //   });
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -535,18 +535,201 @@ const Page = () => {
 
       {/* Replace table with reusable Table component */}
       <div className="bg-white rounded-lg overflow-hidden shadow-md">
-        <Table
-          data={filteredAndSortedInspections}
-          columns={columns}
-          emptyStateMessage={
-            <div className="flex flex-col items-center py-8">
-              <Search className="h-8 w-8 text-gray-300 mb-2" />
-              <p className="text-gray-500">
-                No inspections match your search criteria
-              </p>
-            </div>
-          }
-        />
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="bg-gray-50 text-gray-700 border-b">
+              <tr>
+                <th
+                  className="py-3.5 px-4 text-left text-sm font-medium cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort("id")}
+                >
+                  <div className="flex items-center gap-2">
+                    School ID
+                    {sortField === "id" && (
+                      <ArrowDownUp className="h-4 w-4 text-gray-500" />
+                    )}
+                  </div>
+                </th>
+                <th
+                  className="py-3.5 px-4 text-left text-sm font-medium cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort("name")}
+                >
+                  <div className="flex items-center gap-2">
+                    School Name
+                    {sortField === "name" && (
+                      <ArrowDownUp className="h-4 w-4 text-gray-500" />
+                    )}
+                  </div>
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  District
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Type
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Status
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Status
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Status
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Approval Status
+                </th>
+                <th className="py-3.5 px-4 text-left text-sm font-medium">
+                  Submitted To
+                </th>
+                <th className="py-3.5 px-4 text-center text-sm font-medium">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {inspections.map((school) => (
+                <tr
+                  key={school.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="py-4 px-4 text-sm text-gray-900">
+                    {school.id}
+                  </td>
+                  <td className="py-4 px-4 text-sm font-medium text-gray-900">
+                    {school.name}
+                  </td>
+                  <td className="py-4 px-4 text-sm text-gray-600">
+                    {school.district}
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                      {school.type}
+                    </span>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="flex items-center">
+                      {school.status.toLowerCase() === "completed" ? (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-1.5" />
+                          <span className="text-sm font-medium text-green-700">
+                            Completed
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Clock className="h-4 w-4 text-purple-500 mr-1.5" />
+                          <span className="text-sm font-medium text-purple-700">
+                            In Progress
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td>{school.ranking}</td>
+                  <td>{school.score}</td>
+                  <td className="py-4 px-4">
+                    <div className="flex items-center">
+                      {school.approved ? (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-1.5" />
+                          <span className="text-sm font-medium text-green-700">
+                            Approved
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Clock className="h-4 w-4 text-amber-500 mr-1.5" />
+                          <span className="text-sm font-medium text-amber-700">
+                            Not Approved
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-4 px-4 text-sm text-gray-600">
+                    {school.submittedTo ? (
+                      <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+                        {school.submittedTo.toUpperCase()}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">Not submitted</span>
+                    )}
+                  </td>
+                  <td className="py-4 px-4 text-center">
+  <div className="flex items-center justify-center gap-2">
+    {/* Submission dropdown */}
+    { school.submittedTo && !school.approved && canSubmitInspection(school) && (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 px-3 bg-white border-gray-200 text-sm"
+          >
+            {school.submittedTo === loggedInUserRole ? "Forward" : "Submit"}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuLabel>Submit to:</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {getEligibleRoles(school).map((role) => (
+            <DropdownMenuItem
+              key={role.id}
+              className="cursor-pointer"
+              onClick={() => handleInspectionRole(school.id, role.role)}
+            >
+              {role.role.charAt(0).toUpperCase() + role.role.slice(1)}
+            </DropdownMenuItem>
+          ))}
+          {getEligibleRoles(school).length === 0 && (
+            <DropdownMenuItem disabled>
+              No eligible roles
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )}
+
+    {/* Show status message if already submitted but not to current user */}
+    {school.submittedTo && school.submittedTo !== loggedInUserRole && (
+      <span className="text-sm text-gray-500">
+        Submitted to {school.submittedTo.toUpperCase()}
+      </span>
+    )}
+
+    {/* Approve button only for directors */}
+    {loggedInUserRole === "director" &&
+      !school.approved &&
+      school.submittedTo === loggedInUserRole && (
+      <Button
+        variant="default"
+        size="sm"
+        className="h-8 bg-green-600 hover:bg-green-700 text-white"
+        onClick={() => handleApproveInspection(school.id)}
+      >
+        Approve
+      </Button>
+    )}
+  </div>
+</td>
+
+                </tr>
+              ))}
+
+              {inspections.length === 0 && (
+                <tr>
+                  <td colSpan="8" className="py-8 text-center text-gray-500">
+                    <div className="flex flex-col items-center">
+                      <Search className="h-8 w-8 text-gray-300 mb-2" />
+                      <p>No inspections match your search criteria</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
