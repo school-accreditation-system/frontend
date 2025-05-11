@@ -26,7 +26,7 @@ const RequestDirectoryPage = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/qamis/request/getAllRequests`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/request/getAllRequests`
         );
         if (!response.ok) {
           throw new Error(`API responded with status: ${response.status}`);
