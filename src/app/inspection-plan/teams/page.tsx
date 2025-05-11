@@ -8,48 +8,48 @@ import { Button } from "@/components/ui/button";
 import DatePicker from "./DatePicker";
 
 // Sample school data
-// const schoolsData = [
-//   { id: 1, name: "College Saint Andre", district: "Kigali", type: "MPC" },
-//   { id: 2, name: "Lycée de Kigali", district: "Kigali", type: "Science" },
-//   { id: 3, name: "FAWE Girls School", district: "Gasabo", type: "Science" },
-//   {
+const schoolsData = [
+  { id: 1, name: "College Saint Andre", district: "Kigali", type: "MPC" },
+  { id: 2, name: "Lycée de Kigali", district: "Kigali", type: "Science" },
+  { id: 3, name: "FAWE Girls School", district: "Gasabo", type: "Science" },
+  {
     id: 4,
     name: "Groupe Scolaire Officiel de Butare",
     district: "Huye",
     type: "Liberal Arts",
   },
-//   {
+  {
     id: 5,
     name: "Ecole Technique Saint Joseph",
     district: "Muhanga",
     type: "Technical",
   },
-//   {
+  {
     id: 6,
     name: "Green Hills Academy",
     district: "Kigali",
     type: "International",
   },
-//   {
+  {
     id: 7,
     name: "Rwanda Leading Institute",
     district: "Kicukiro",
     type: "Engineering",
   },
-//   { id: 8, name: "Riviera High School", district: "Gasabo", type: "Languages" },
-//   {
+  { id: 8, name: "Riviera High School", district: "Gasabo", type: "Languages" },
+  {
     id: 9,
     name: "Wellspring Academy",
     district: "Nyarugenge",
     type: "Primary",
   },
-//   {
+  {
     id: 10,
     name: "Kigali International Community School",
     district: "Kigali",
     type: "International",
   },
-// ];
+];
 
 // Define the type for team and assignment data
 type TeamMember = {
@@ -139,7 +139,7 @@ const TeamAssignmentPage = () => {
 
   // Filter schools based on search term
   // const filteredSchools = schoolsData.filter(
-    (school) =>
+    // (school) =>
     //   school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     //   school.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
     //   school.type.toLowerCase().includes(searchTerm.toLowerCase())
