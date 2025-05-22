@@ -12,113 +12,70 @@ import {
   Pagination,
 } from "@/components/accredited-schools";
 import { motion } from "framer-motion";
-import { useQueryState, parseAsString } from "nuqs";
 import { z } from "zod";
 import { useGetAccreditedSchools } from "@/hooks/useGetAccreditedSchools";
 import { useToast } from "@/components/ui/use-toast";
-import { generateDummySchools } from "@/utils/mockData";
+import { useSchoolFilters } from "./useSchoolFilters";
+import { FilterOption } from "@/components/accredited-schools/FilterItem";
+import { useGetProvinces, useGetLocationByType } from "@/hooks/useLocation";
 
-// Zod schema for validating search parameters
 const SearchParamsSchema = z.object({
   query: z.string().max(100).optional(),
-  province: z.string().max(30).optional(),
-  district: z.string().max(30).optional(),
-  schoolType: z.string().max(20).optional(),
-  combination: z.string().max(50).optional(),
+  provinces: z.array(z.string()).optional(),
+  districts: z.array(z.string()).optional(),
+  sectors: z.array(z.string()).optional(),
+  schoolTypes: z.array(z.string()).optional(),
+  combinations: z.array(z.string()).optional(),
 });
 
 export default function AccreditedSchoolsPage() {
   const [filteredSchools, setFilteredSchools] = useState([]);
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useQueryState("q", parseAsString, {
-    defaultValue: "",
-  });
-  const [provinceFilter, setProvinceFilter] = useQueryState(
-    "province",
-    parseAsString,
-    { defaultValue: "all-provinces" }
-  );
-  const [districtFilter, setDistrictFilter] = useQueryState(
-    "district",
-    parseAsString,
-    { defaultValue: "all-districts" }
-  );
-  const [schoolTypeFilter, setSchoolTypeFilter] = useQueryState(
-    "type",
-    parseAsString,
-    { defaultValue: "all-types" }
-  );
-  const [combinationFilter, setCombinationFilter] = useQueryState(
-    "combination",
-    parseAsString,
-    { defaultValue: "all-combinations" }
-  );
-  const [currentPage, setCurrentPage] = useQueryState("page", {
-    parse: (value) => {
-      const parsed = parseInt(value || "1", 10);
-      return isNaN(parsed) || parsed < 1 ? 1 : parsed;
-    },
-    serialize: (value) => String(value),
-    defaultValue: 1,
-  });
+  const { data: provinceData, isLoading: isProvincesLoading } = useGetProvinces();
+  const { data: districtData, isLoading: isDistrictsLoading } = useGetLocationByType("DISTRICT");
+  const { data: sectorData, isLoading: isSectorsLoading } = useGetLocationByType("SECTOR");
 
-  // Mock districts data - in a real app, this would likely come from an API
-  const districts = [
-    { id: "nyarugenge", name: "Nyarugenge", provinceId: "kigali" },
-    { id: "gasabo", name: "Gasabo", provinceId: "kigali" },
-    { id: "kicukiro", name: "Kicukiro", provinceId: "kigali" },
-    { id: "rwamagana", name: "Rwamagana", provinceId: "eastern" },
-    { id: "nyagatare", name: "Nyagatare", provinceId: "eastern" },
-    { id: "bugesera", name: "Bugesera", provinceId: "eastern" },
-    { id: "rubavu", name: "Rubavu", provinceId: "western" },
-    { id: "karongi", name: "Karongi", provinceId: "western" },
-    { id: "rusizi", name: "Rusizi", provinceId: "western" },
-    { id: "musanze", name: "Musanze", provinceId: "northern" },
-    { id: "gicumbi", name: "Gicumbi", provinceId: "northern" },
-    { id: "burera", name: "Burera", provinceId: "northern" },
-    { id: "huye", name: "Huye", provinceId: "southern" },
-    { id: "nyamagabe", name: "Nyamagabe", provinceId: "southern" },
-    { id: "muhanga", name: "Muhanga", provinceId: "southern" },
+  const {
+    selectedValues,
+    checkboxes,
+    currentPage,
+    handleCheckbox,
+    handleSelectedValue,
+    handleSearchQuery,
+    handlePageChange,
+    clearFilters,
+    hasSelectedValues,
+  } = useSchoolFilters();
+
+  const provinces: FilterOption[] = useMemo(() => provinceData?.map((province) => ({
+    id: province.locationName,
+    name: province.locationName,
+  })) || [], [provinceData]);
+
+  const schoolTypes: FilterOption[] = [
+    { id: "public", name: "Public" },
+    { id: "private", name: "Private" },
+    { id: "boarding", name: "Boarding" },
+    { id: "day", name: "Day School" },
   ];
 
-  // Here we'll use our dummy data if the real data has issues
+  const districts: FilterOption[] = useMemo(() => districtData?.map((district) => ({
+    id: district.locationName,
+    name: district.locationName,
+  })) || [], [districtData]);
+
+  const sectors: FilterOption[] = useMemo(() => sectorData?.map((sector) => ({
+    id: sector.locationName,
+    name: sector.locationName,
+  })) || [], [sectorData]);
+
   const {
-    data: apiSchools = [],
-    uniqueCombinations: apiCombinations = [],
+    data: schools = [],
+    uniqueCombinations = [],
     isLoading: isApiLoading,
     error: apiError,
   } = useGetAccreditedSchools();
 
-  // Generate dummy schools for development
-  const dummySchools = useMemo(() => generateDummySchools(24), []);
-  const dummyCombinations = useMemo(
-    () => [
-      ...new Set(
-        dummySchools.flatMap((school) =>
-          school.combinations.map((combo) => combo.name)
-        )
-      ),
-    ],
-    [dummySchools]
-  );
-
-  // Use API data if available, otherwise fall back to dummy data
-  const schools = useMemo(
-    () => (apiError || apiSchools.length === 0 ? dummySchools : apiSchools),
-    [apiSchools, dummySchools, apiError]
-  );
-
-  const uniqueCombinations = useMemo(
-    () =>
-      apiError || apiCombinations.length === 0
-        ? dummyCombinations
-        : apiCombinations,
-    [apiCombinations, dummyCombinations, apiError]
-  );
-
-  const isLoading = isApiLoading && schools.length === 0;
-
-  // Create memoized fields to prevent unnecessary re-renders
   const accreditationFields: AccreditationField[] = useMemo(() => {
     return uniqueCombinations.map((combo) => ({
       id: combo,
@@ -129,46 +86,30 @@ export default function AccreditedSchoolsPage() {
 
   // Apply filters when search parameters or schools data changes
   useEffect(() => {
-    // Don't run this effect if schools aren't loaded yet or data is loading
-    if (isLoading || !schools.length) {
+    if (!schools.length) {
       return;
     }
 
-    // Only validate when we have actual query parameters
-    const hasQueryParams =
-      searchQuery?.trim() ||
-      "" ||
-      provinceFilter !== "all-provinces" ||
-      districtFilter !== "all-districts" ||
-      schoolTypeFilter !== "all-types" ||
-      combinationFilter !== "all-combinations";
+    const validatedParams = SearchParamsSchema.safeParse({
+      query: selectedValues.query,
+      provinces: selectedValues.provinces,
+      districts: selectedValues.districts,
+      sectors: selectedValues.sectors,
+      schoolTypes: selectedValues.schoolTypes,
+      combinations: selectedValues.combinations,
+    });
 
-    if (hasQueryParams) {
-      const validatedParams = SearchParamsSchema.safeParse({
-        query: searchQuery,
-        province: provinceFilter,
-        district: districtFilter,
-        schoolType: schoolTypeFilter,
-        combination: combinationFilter,
-      });
-
-      if (!validatedParams.success) {
-        // Reset to valid defaults
-        setSearchQuery("");
-        setProvinceFilter("all-provinces");
-        setDistrictFilter("all-districts");
-        setSchoolTypeFilter("all-types");
-        setCombinationFilter("all-combinations");
-        return;
-      }
+    if (!validatedParams.success) {
+      clearFilters();
+      return;
     }
 
     // Apply filters
     let filtered = [...schools];
 
     // Search query filtering
-    if (searchQuery?.trim()) {
-      const normalizedQuery = searchQuery.toLowerCase().trim();
+    if (selectedValues.query?.trim()) {
+      const normalizedQuery = selectedValues.query.toLowerCase().trim();
       filtered = filtered.filter(
         (school) =>
           school.name.toLowerCase().includes(normalizedQuery) ||
@@ -181,120 +122,43 @@ export default function AccreditedSchoolsPage() {
     }
 
     // Province filter
-    if (provinceFilter && provinceFilter !== "all-provinces") {
-      filtered = filtered.filter(
-        (school) =>
-          school.province === provinceFilter ||
-          // For mockup data, simulate province filtering
-          school.location?.toLowerCase().includes(provinceFilter)
+    if (selectedValues?.provinces?.length > 0) {
+      filtered = filtered.filter((school) =>
+        selectedValues.provinces.includes(school.schoolLocation.province)
       );
     }
 
-    // District filter - only apply if a district is selected
-    if (districtFilter && districtFilter !== "all-districts") {
-      filtered = filtered.filter(
-        (school) =>
-          school.district === districtFilter ||
-          // For mockup data, simulate district filtering
-          school.location?.toLowerCase().includes(districtFilter)
+    // District filter
+    if (selectedValues?.districts?.length > 0) {
+      filtered = filtered.filter((school) =>
+        selectedValues.districts.includes(school.schoolLocation.district)
+      );
+    }
+
+    if (selectedValues?.sectors?.length > 0) {
+      filtered = filtered.filter((school) =>
+        selectedValues.sectors.includes(school.schoolLocation.sector)
       );
     }
 
     // School type filter
-    if (schoolTypeFilter && schoolTypeFilter !== "all-types") {
-      filtered = filtered.filter(
-        (school) =>
-          school.type === schoolTypeFilter ||
-          // For mockup data, simulate school type filtering
-          (schoolTypeFilter === "public" && school.isPublic) ||
-          (schoolTypeFilter === "private" && !school.isPublic) ||
-          (schoolTypeFilter === "boarding" && school.isBoarding) ||
-          (schoolTypeFilter === "day" && !school.isBoarding)
+    if (selectedValues?.schoolTypes?.length > 0) {
+      filtered = filtered.filter((school) =>
+        selectedValues.schoolTypes.includes(school.type)
       );
     }
 
     // Combination filter
-    if (combinationFilter && combinationFilter !== "all-combinations") {
-      filtered = filtered.filter((school) => {
-        return school.combinations.some(
-          (combination) =>
-            combination.name.toUpperCase() === combinationFilter.toUpperCase()
-        );
-      });
+    if (selectedValues?.combinations?.length > 0) {
+      filtered = filtered.filter((school) =>
+        school.combinations.some((combination) =>
+          selectedValues?.combinations.includes(combination.name)
+        )
+      );
     }
 
     setFilteredSchools(filtered);
-
-    // Reset page to 1 if filters change and we're not on page 1
-    if (hasQueryParams && currentPage > 1 && filtered.length <= 6) {
-      setCurrentPage(1);
-    }
-  }, [
-    searchQuery,
-    provinceFilter,
-    districtFilter,
-    schoolTypeFilter,
-    combinationFilter,
-    schools,
-    isLoading,
-    toast,
-    currentPage,
-    setCurrentPage,
-  ]);
-
-  // Handle pagination separately to avoid circular dependencies
-  useEffect(() => {
-    // Check if we need to update the page number (e.g., if we have fewer results than the current page)
-    if (filteredSchools.length > 0) {
-      const maxPage = Math.ceil(filteredSchools.length / 6); // 6 is itemsPerPage
-      if (currentPage > maxPage) {
-        setCurrentPage(maxPage);
-      }
-    }
-  }, [filteredSchools.length, currentPage, setCurrentPage]);
-
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query || undefined);
-    if (currentPage > 1) setCurrentPage(1);
-  };
-
-  const handleProvinceChange = (province: string) => {
-    setProvinceFilter(province);
-    // Reset district when province changes
-    if (province !== "all-provinces") {
-      setDistrictFilter("all-districts");
-    }
-    if (currentPage > 1) setCurrentPage(1);
-  };
-
-  const handleDistrictChange = (district: string) => {
-    setDistrictFilter(district);
-    if (currentPage > 1) setCurrentPage(1);
-  };
-
-  const handleSchoolTypeChange = (type: string) => {
-    setSchoolTypeFilter(type);
-    if (currentPage > 1) setCurrentPage(1);
-  };
-
-  const handleCombinationChange = (combination: string) => {
-    setCombinationFilter(combination);
-    if (currentPage > 1) setCurrentPage(1);
-  };
-
-  const clearFilters = () => {
-    setSearchQuery(undefined);
-    setProvinceFilter("all-provinces");
-    setDistrictFilter("all-districts");
-    setSchoolTypeFilter("all-types");
-    setCombinationFilter("all-combinations");
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, [selectedValues, schools, clearFilters]);
 
   // Pagination settings
   const itemsPerPage = 6;
@@ -303,47 +167,70 @@ export default function AccreditedSchoolsPage() {
   // Calculate displayed schools based on current page
   const displayedSchools = useMemo(() => {
     return filteredSchools.slice(
-      ((currentPage || 1) - 1) * itemsPerPage,
-      (currentPage || 1) * itemsPerPage
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
     );
   }, [filteredSchools, currentPage, itemsPerPage]);
+
+  // Loading state - true if any of the required data is loading
+  const isLoading = isApiLoading || isProvincesLoading || isDistrictsLoading;
 
   return (
     <div className="p-4 flex flex-col gap-4 relative">
       {/* Search Filters */}
       <SearchFilters
-        searchQuery={searchQuery || ""}
-        selectedProvince={provinceFilter || "all-provinces"}
-        selectedDistrict={districtFilter || "all-districts"}
-        selectedSchoolType={schoolTypeFilter || "all-types"}
-        selectedCombination={combinationFilter || "all-combinations"}
-        accreditationFields={accreditationFields}
-        onSearchChange={handleSearchChange}
-        onProvinceChange={handleProvinceChange}
-        onDistrictChange={handleDistrictChange}
-        onSchoolTypeChange={handleSchoolTypeChange}
-        onCombinationChange={handleCombinationChange}
-        clearFilters={clearFilters}
+        searchQuery={selectedValues.query || ""}
+        provinces={provinces}
         districts={districts}
+        sectors={sectors}
+        schoolTypes={schoolTypes}
+        accreditationFields={accreditationFields}
+        selectedValues={selectedValues}
+        checkboxes={checkboxes}
+        onSearchChange={handleSearchQuery}
+        onProvinceChange={(values) => handleSelectedValue("provinces", values)}
+        onDistrictChange={(values) => handleSelectedValue("districts", values)}
+        onSectorChange={(values) => handleSelectedValue("sectors", values)}
+        onSchoolTypeChange={(values) => handleSelectedValue("schoolTypes", values)}
+        onCombinationChange={(values) => handleSelectedValue("combinations", values)}
+        onCheckboxChange={handleCheckbox}
+        clearFilters={clearFilters}
       />
 
       {/* Main content area */}
       <div>
         {/* Loading State */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center gap-3 bg-white rounded-lg shadow-sm py-8 px-5 text-center border border-gray-200">
-            <div className="animate-spin h-8 w-8 border-4 border-primary rounded-full border-t-transparent"></div>
-            <h3 className="text-xl font-semibold text-gray-800">
-              Loading Schools
-            </h3>
-            <p className="text-gray-600">
-              Please wait while we fetch the latest accredited schools data...
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 animate-pulse"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-12 w-12 bg-gray-200 rounded-full" />
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="h-3 bg-gray-200 rounded w-full" />
+                  <div className="h-3 bg-gray-200 rounded w-5/6" />
+                  <div className="h-3 bg-gray-200 rounded w-4/6" />
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-6 w-16 bg-gray-200 rounded" />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
         {/* Error State */}
-        {apiError && !isLoading && !schools.length && (
+        {apiError && !isLoading && (
           <div className="flex flex-col items-center justify-center gap-3 bg-white rounded-lg shadow-sm py-8 px-5 text-center border border-red-100">
             <div className="h-16 w-16 bg-red-50 rounded-full flex items-center justify-center">
               <SearchIcon className="h-8 w-8 text-red-500" />
@@ -407,7 +294,7 @@ export default function AccreditedSchoolsPage() {
             {/* Bottom Pagination */}
             <div className="flex justify-center">
               <Pagination
-                currentPage={currentPage || 1}
+                currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
               />

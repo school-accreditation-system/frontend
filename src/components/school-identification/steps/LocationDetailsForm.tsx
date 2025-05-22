@@ -16,7 +16,7 @@ import { useLocationForm } from "../hooks/useLocationForm";
 
 export const LocationDetailsForm = () => {
   const { formData, updateFormData, formErrors } = useFormContext();
-  
+
   const {
     form,
     isAtSchool,
@@ -29,14 +29,13 @@ export const LocationDetailsForm = () => {
 
   return (
     <Form {...form}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Geolocation Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="border-t pt-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-base font-medium text-gray-900">Geographical Coordinates</h3>
             <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="isAtSchool" 
+              <Checkbox
+                id="isAtSchool"
                 checked={isAtSchool}
                 onCheckedChange={handleIsAtSchoolChange}
                 disabled={isGettingLocation}
@@ -55,30 +54,30 @@ export const LocationDetailsForm = () => {
               </label>
             </div>
           </div>
-          
+
           {locationError && (
             <div className="mb-4 p-2 bg-red-50 border border-red-100 rounded text-sm text-red-600">
               {locationError}
             </div>
           )}
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <FormField
                 control={form.control}
                 name="latitude"
-                render={({ field }) =>   (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Latitude</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input 
-                          placeholder="e.g., -1.9545" 
+                        <Input
+                          placeholder="e.g., -1.9545"
                           {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             onFieldChange("latitude", e.target.value);
-                          }} 
+                          }}
                           className={`pl-9 ${hasFieldError("latitude") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           disabled={isGettingLocation}
                         />
@@ -90,7 +89,7 @@ export const LocationDetailsForm = () => {
                 )}
               />
             </div>
-            
+
             <div>
               <FormField
                 control={form.control}
@@ -100,13 +99,13 @@ export const LocationDetailsForm = () => {
                     <FormLabel>Longitude</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input 
-                          placeholder="e.g., 30.0574" 
+                        <Input
+                          placeholder="e.g., 30.0574"
                           {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             onFieldChange("longitude", e.target.value);
-                          }} 
+                          }}
                           className={`pl-9 ${hasFieldError("longitude") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                           disabled={isGettingLocation}
                         />
@@ -119,9 +118,9 @@ export const LocationDetailsForm = () => {
               />
             </div>
           </div>
-          
+
           <p className="mt-2 text-xs text-muted-foreground">
-            These coordinates help us accurately locate the school on mapping systems. If you are physically at the school, 
+            These coordinates help us accurately locate the school on mapping systems. If you are physically at the school,
             click &quot;I am at the school location&quot; to automatically fill these fields.
           </p>
         </div>
