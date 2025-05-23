@@ -9,7 +9,7 @@ export const useGetProvinces = () => {
     queryKey: ["provinces"],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/locations/provinces`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/locations/provinces`
       );
       return response.data;
     },
@@ -24,7 +24,7 @@ export const useGetLocationByType = (
     queryKey: ["locations", type],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/locations/${type}`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/locations/${type}`
       );
       console.log("response.data", response.data);
       return response.data;
@@ -39,7 +39,7 @@ export const useGetLocationsByParentCode = (parentCode: string) => {
     queryKey: ["locations", parentCode],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/locations/getLocaitonsByParent?parentCode=${parentCode}`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/locations/getLocaitonsByParent?parentCode=${parentCode}`
       );
       return response.data;
     },

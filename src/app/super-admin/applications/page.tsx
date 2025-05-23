@@ -30,7 +30,7 @@ const RequestDirectoryPage = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/request/getAllRequests`
+          `${process.env.NEXT_PUBLIC_API_URL}/qamis/request/getAllRequests`
         );
         if (!response.ok) {
           throw new Error(`API responded with status: ${response.status}`);
@@ -489,7 +489,7 @@ const RequestDirectoryPage = () => {
                       <div>
                         <p className="text-sm text-gray-500">Options</p>
                         {selectedRequest.assessment.options &&
-                        selectedRequest.assessment.options.length > 0 ? (
+                          selectedRequest.assessment.options.length > 0 ? (
                           <ul className="list-disc pl-5">
                             {selectedRequest.assessment.options.map(
                               (option, index) => (

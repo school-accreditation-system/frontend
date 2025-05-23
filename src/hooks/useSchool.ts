@@ -29,7 +29,7 @@ export const useAddSchool = () => {
       locationCode: string;
     }) => {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school/add-school?locationCode=${data.locationCode}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/school/add-school?locationCode=${data.locationCode}`,
         {
           school: data.school,
           headTeacher: data.headTeacher,
@@ -48,7 +48,7 @@ export const useGetSchool = (schoolId?: string) => {
     queryFn: async () => {
       if (!schoolId) throw new Error("School ID is required");
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school/get-school/${schoolId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/school/get-school/${schoolId}`
       );
       return response.data;
     },
@@ -61,7 +61,7 @@ export const useGetSchools = (searchKey: string) => {
     queryKey: ["ALL_SCHOOLS", searchKey],
     queryFn: async () => {
       const response = await axios.get<School[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school/searchSchool?schoolName=${searchKey}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/school/searchSchool?schoolName=${searchKey}`,
         {
           headers: {
             "qamis-request-key": process.env.NEXT_PUBLIC_QAMIS_REQUEST_KEY,

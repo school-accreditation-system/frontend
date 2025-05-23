@@ -78,7 +78,7 @@ const useGetAccreditationRequests = () => {
     queryKey: ["accreditationRequests"],
     queryFn: async (): Promise<AccreditationRequest[]> => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/request/getAllRequests`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/request/getAllRequests`
       );
       console.log("response.data==>", response.data);
       return response.data;

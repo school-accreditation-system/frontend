@@ -10,7 +10,7 @@ export const useGetAreas = () => {
     queryKey: ["AREAS"],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/standard/findAreas`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/standard/findAreas`
       );
       return response.data;
     },
@@ -24,9 +24,9 @@ export const useGetCriteriaByAreaId = (areaId: string) => {
     queryKey: ["criteria", areaId],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/standard/findByArea?indicator=${areaId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/standard/findByArea?indicator=${areaId}`
       );
-      console.log("response ==>", response)
+      console.log("response ==>", response);
       return response.data;
     },
     enabled: !!areaId,
@@ -40,7 +40,7 @@ export const useGetIndicatorsByCriteriaId = (criteriaId: string) => {
     queryKey: ["indicators", criteriaId],
     queryFn: async () => {
       const response = await axios.get<any[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/standard/findByArea?indicator=${criteriaId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/standard/findByArea?indicator=${criteriaId}`,
         {
           headers: {
             "qamis-request-key": process.env.NEXT_PUBLIC_QAMIS_REQUEST_KEY,

@@ -57,7 +57,7 @@ export const useSubmitAccreditation = () => {
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/self-assessement/submit-accreditation?combinationId=${submission.combinationId}&schoolId=${submission.schoolId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/self-assessement/submit-accreditation?combinationId=${submission.combinationId}&schoolId=${submission.schoolId}`,
         submission,
         {
           headers: {

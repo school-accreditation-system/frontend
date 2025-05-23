@@ -92,7 +92,7 @@ export const useSaveSchoolIdentification = (schoolId: string) => {
 
       // Make the POST request with the transformed data
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school-identification/saveschool-identification?schoolId=${backendData.school.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/school-identification/saveschool-identification?schoolId=${backendData.school.id}`,
         backendData
       );
 
@@ -167,7 +167,7 @@ export const useGetSchoolIdentification = (schoolId: string) => {
       const response = await axios.get<
         ApiResponse<SchoolIdentificationFormValues> | ErrorResponse
       >(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school-identification/get-school-identification?schoolId=${schoolId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/school-identification/get-school-identification?schoolId=${schoolId}`
       );
       if (response.data.data) {
         const mappedData = mapToFrontendFormat(response.data.data);
@@ -184,7 +184,7 @@ export const useUpdateSchoolIdentification = (schoolId: string) => {
     mutationFn: async (data: SchoolIdentificationFormValues) => {
       const backendData = mapToBackendFormat(data, schoolId);
       const response = await axios.put<string>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school-identification/update-school-identification?schoolId=${schoolId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/school-identification/update-school-identification?schoolId=${schoolId}`,
         backendData
       );
       console.log("Response from update school identification", response.data);

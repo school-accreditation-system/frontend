@@ -58,7 +58,7 @@ export const useGetAccreditedSchools = () => {
     queryKey: ["ACCREDITED_SCHOOLS", apiParams.toString()],
     queryFn: async () => {
       const response = await axios.get<ProcessedSchoolDTO[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school/allAccreditedSchool`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/school/allAccreditedSchool`,
         {
           headers: {
             "qamis-request-key":
