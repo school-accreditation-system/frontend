@@ -493,7 +493,7 @@ export const LandOwnershipForm = ({
             const criteriaIndicators = await (async () => {
               try {
                 const response = await axios.get(
-                  `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/standard/findByArea?indicator=${criterion.id}`,
+                  `${process.env.NEXT_PUBLIC_API_URL}/qamis/standard/findByArea?indicator=${criterion.id}`,
                   {
                     headers: {
                       "qamis-request-key":
@@ -797,22 +797,20 @@ export const LandOwnershipForm = ({
                   <div
                     key={criterion.id}
                     className={`flex items-center gap-3 p-3 md:p-4 bg-white/80 rounded-xs cursor-pointer hover:bg-gray-50 
-                                        ${
-                                          selectedCriteria === criterion.name
-                                            ? "ring-2 ring-primary"
-                                            : ""
-                                        }`}
+                                        ${selectedCriteria === criterion.name
+                        ? "ring-2 ring-primary"
+                        : ""
+                      }`}
                     onClick={() =>
                       handleCriteriaChange(criterion.name, criterion.id)
                     }
                   >
                     <div
                       className={`flex items-center justify-center w-7 h-7 md:w-8 md:h-8 min-w-[28px] md:min-w-[32px] rounded-full
-                                        ${
-                                          selectedCriteria === criterion.name
-                                            ? "bg-primary text-white"
-                                            : "bg-blue-100 text-primary"
-                                        } 
+                                        ${selectedCriteria === criterion.name
+                          ? "bg-primary text-white"
+                          : "bg-blue-100 text-primary"
+                        } 
                                         font-semibold`}
                     >
                       {criterion.name === "Classrooms" ? (
@@ -844,11 +842,11 @@ export const LandOwnershipForm = ({
                   className="flex items-center gap-1.5 text-sm py-2 px-3 md:px-4"
                 >
                   {isLastCriteriaGroup() &&
-                  currentIndicator === getIndicatorCountForCriteria() - 1
+                    currentIndicator === getIndicatorCountForCriteria() - 1
                     ? "Next Step"
                     : currentIndicator < getIndicatorCountForCriteria() - 1
-                    ? "Next Question"
-                    : "Next Criteria"}{" "}
+                      ? "Next Question"
+                      : "Next Criteria"}{" "}
                   <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 </Button>
               </div>

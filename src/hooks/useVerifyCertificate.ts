@@ -15,7 +15,7 @@ export const useVerifyCertificate = (certificateId: string) => {
     queryKey: ["verify-certificate", certificateId],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/schoolCombination/get-certificate-info/${certificateId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/schoolCombination/get-certificate-info/${certificateId}`
       );
       return response.data;
     },

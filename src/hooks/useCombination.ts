@@ -8,7 +8,7 @@ export const useGetCombinations = () => {
     queryKey: ["Combinations"],
     queryFn: async () => {
       const response = await axios.get<Combination[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getallLevels`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/combination/getallLevels`,
         {
           headers: {
             "qamis-request-key": process.env.NEXT_PUBLIC_QAMIS_REQUEST_KEY,
@@ -28,7 +28,7 @@ export const useGetCombinationByLevels = (combinationId: string) => {
     queryKey: ["CombinationByLevels", combinationId],
     queryFn: async () => {
       const response = await axios.get<Combination[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/combination/getCombinationsBylevel?combinationId=${combinationId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/qamis/combination/getCombinationsBylevel?combinationId=${combinationId}`,
         {
           headers: {
             "qamis-request-key": process.env.NEXT_PUBLIC_QAMIS_REQUEST_KEY,
