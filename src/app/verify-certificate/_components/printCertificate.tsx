@@ -279,7 +279,7 @@ export const handlePrintCertificate = async ({
                   This is to certify that
                   <div class="school-name">${schoolName}</div>
                   is granted<br>
-                  <strong class="year">A one year Accreditation</strong><br>
+                  <strong class="year">Accreditation</strong><br>
                   for offering the ${schoolType}.
                 </div>
                 

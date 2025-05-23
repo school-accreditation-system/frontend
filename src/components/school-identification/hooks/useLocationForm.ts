@@ -33,12 +33,12 @@ export const useLocationForm = ({
     mode: "onChange",
   });
 
-  // Sync form data on component mount and when formData changes
   useEffect(() => {
     // Only reset the form if there's actual data
     if (Object.keys(formData).length > 0) {
       form.reset(
         {
+          latitude: formData.latitude || "",
           longitude: formData.longitude || "",
         },
         { keepValues: true }
@@ -59,19 +59,16 @@ export const useLocationForm = ({
 
   const onFieldChange = useCallback(
     (name: keyof LocationDetailsFormValues, value: any) => {
-      // For non-location dropdown fields (like latitude/longitude)
-      if (name !== "latitude" && name !== "longitude") {
-        const updatedData = {
-          [name]: value,
-        } as Partial<LocationDetailsFormValues>;
-        form.setValue(name, value, { shouldValidate: true });
-        updateFormData("location-details", updatedData);
-      }
+      // Update form data for all fields including latitude and longitude
+      const updatedData = {
+        [name]: value,
+      } as Partial<LocationDetailsFormValues>;
+      form.setValue(name, value, { shouldValidate: true });
+      updateFormData("location-details", updatedData);
     },
     [form, updateFormData]
   );
 
-  // Handle checkbox change for geolocation
   const handleIsAtSchoolChange = useCallback(
     (checked: boolean) => {
       setIsAtSchool(checked);
@@ -152,7 +149,6 @@ export const useLocationForm = ({
     [form, updateFormData]
   );
 
-  // Check if a field has validation errors
   const hasFieldError = useCallback(
     (fieldName: keyof LocationDetailsFormValues) => {
       return (

@@ -1,4 +1,5 @@
 import React from "react";
+import LoadingSkeleton from "./LoadingSkeleton";
 
 interface Column<T> {
   key: keyof T;
@@ -20,6 +21,7 @@ interface TableProps<T> {
   currentPage?: number;
   onPageChange?: (page: number) => void;
   totalItems?: number;
+  isLoading?: boolean;
 }
 
 export function Table<T>({
@@ -33,9 +35,9 @@ export function Table<T>({
   pageSize = 10,
   currentPage = 1,
   onPageChange,
+  isLoading = false,
   totalItems,
 }: TableProps<T>) {
-  // Calculate pagination values
   const totalPages = totalItems ? Math.ceil(totalItems / pageSize) : 1;
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, data.length);
@@ -57,6 +59,10 @@ export function Table<T>({
     return pages;
   };
 
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border rounded-lg overflow-hidden">
@@ -65,9 +71,8 @@ export function Table<T>({
             {columns.map((column, index) => (
               <th
                 key={index}
-                className={`py-3 px-4 text-left ${
-                  column.sortable ? "cursor-pointer" : ""
-                }`}
+                className={`py-3 px-4 text-left ${column.sortable ? "cursor-pointer" : ""
+                  }`}
                 onClick={() => column.sortable && onSort?.(column.key)}
               >
                 {column.header}{" "}
@@ -116,11 +121,10 @@ export function Table<T>({
             <button
               onClick={() => onPageChange?.(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`px-3 py-1 rounded ${
-                currentPage === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-50 border"
-              }`}
+              className={`px-3 py-1 rounded ${currentPage === 1
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-50 border"
+                }`}
             >
               Previous
             </button>
@@ -128,11 +132,10 @@ export function Table<T>({
               <button
                 key={pageNum}
                 onClick={() => onPageChange?.(pageNum)}
-                className={`px-3 py-1 rounded ${
-                  currentPage === pageNum
-                    ? "bg-primary text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50 border"
-                }`}
+                className={`px-3 py-1 rounded ${currentPage === pageNum
+                  ? "bg-primary text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border"
+                  }`}
               >
                 {pageNum}
               </button>
@@ -140,11 +143,10 @@ export function Table<T>({
             <button
               onClick={() => onPageChange?.(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded ${
-                currentPage === totalPages
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-50 border"
-              }`}
+              className={`px-3 py-1 rounded ${currentPage === totalPages
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-50 border"
+                }`}
             >
               Next
             </button>

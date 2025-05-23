@@ -1,22 +1,63 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
+import { ProcessedSchoolDTO } from "@/types/accredited-schools";
 import axios from "axios";
-import {
-  AccreditedSchoolDTO,
-  ProcessedSchool,
-} from "@/types/accredited-schools";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
-/**
- * Custom hook to fetch accredited schools
- * Processes the data to group schools by name with their combinations
- */
 export const useGetAccreditedSchools = () => {
-  const result = useQuery<ProcessedSchool[], Error>({
-    queryKey: ["ACCREDITED_SCHOOLS"],
+  const searchParams = useSearchParams();
+
+  // Create a properly formatted params object for the API
+  const apiParams = useMemo(() => {
+    const params = new URLSearchParams();
+
+    const query = searchParams.get("q");
+    const provinces = searchParams.get("provinces");
+    const districts = searchParams.get("districts");
+    const schoolTypes = searchParams.get("schoolTypes");
+    const combinations = searchParams.get("combinations");
+    const sectors = searchParams.get("sectors");
+    const page = searchParams.get("page") || "1";
+
+    // Only add parameters that have values
+    if (query) params.append("query", query);
+
+    // For array parameters, split by comma and append each value
+    if (provinces && provinces.length > 0) {
+      provinces.split(",").forEach((province) => {
+        params.append("provinces", province.trim());
+      });
+    }
+
+    if (districts && districts.length > 0) {
+      districts.split(",").forEach((district) => {
+        params.append("districts", district.trim());
+      });
+    }
+
+    if (schoolTypes && schoolTypes.length > 0) {
+      schoolTypes.split(",").forEach((type) => {
+        params.append("schoolTypes", type.trim());
+      });
+    }
+
+    if (combinations && combinations.length > 0) {
+      combinations.split(",").forEach((combination) => {
+        params.append("combinations", combination.trim());
+      });
+    }
+
+    // params.append("page", page);
+
+    return params;
+  }, [searchParams]);
+
+  console.log("apiParams", apiParams.toString());
+
+  const result = useQuery<ProcessedSchoolDTO[], Error>({
+    queryKey: ["ACCREDITED_SCHOOLS", apiParams.toString()],
     queryFn: async () => {
-      const response = await axios.get<AccreditedSchoolDTO[]>(
+      const response = await axios.get<ProcessedSchoolDTO[]>(
         `${process.env.NEXT_PUBLIC_API_URL}/api/qamis/school/allAccreditedSchool`,
         {
           headers: {
@@ -24,70 +65,30 @@ export const useGetAccreditedSchools = () => {
               process.env.NEXT_PUBLIC_QAMIS_REQUEST_KEY || "",
             "Content-Type": "application/json",
           },
+          // params: Object.fromEntries(apiParams.entries()),
+          // paramsSerializer: {
+          //   indexes: null,
+          // },
         }
       );
-
-      console.log("accredited schools ===->", response.data);
-      // Process data to group by school name
-      const schoolsMap = new Map<string, ProcessedSchool>();
-
-      response.data.forEach((item) => {
-        const schoolId = item.schoolName.toLowerCase().replace(/\s+/g, "-");
-
-        if (!schoolsMap.has(schoolId)) {
-          schoolsMap.set(schoolId, {
-            id: schoolId,
-            name: item.schoolName,
-            email: item.schoolEmail,
-            phoneNumber: item.schoolPhoneNumber,
-            combinations: [],
-          });
-        }
-
-        // Add combination to the school
-        const school = schoolsMap.get(schoolId);
-        if (school) {
-          // Check if combination already exists to avoid duplicates
-          const combinationExists = school.combinations.some(
-            (c) => c.name === item.combinationShortName
-          );
-          console.log("fullname", item.combinationFullName);
-          if (!combinationExists) {
-            school.combinations.push({
-              name: item.combinationShortName,
-              accreditationDate: item.accrediateDate,
-              fullName: item.combinationFullName,
-            });
-          }
-        }
-      });
-
-      // Convert map to array
-      return Array.from(schoolsMap.values());
+      return response.data;
     },
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
   });
 
-  // Getting unique combinations from all schools
   const uniqueCombinations = useMemo(() => {
     if (!result.data) return [];
 
     const combinationsSet = new Set<string>();
 
-    // Extracting combinations using a single-level forEach to avoid nesting
-    const extractCombinations = () => {
-      if (!result.data) return;
-
-      for (const school of result.data) {
-        for (const combination of school.combinations) {
-          combinationsSet.add(combination.name);
-        }
-      }
-    };
-
-    extractCombinations();
+    // Extracting combinations using a single-level forEach
+    result.data.forEach((school) => {
+      school.combinations.forEach((combination) => {
+        combinationsSet.add(combination.name);
+      });
+    });
 
     return Array.from(combinationsSet).sort();
   }, [result.data]);

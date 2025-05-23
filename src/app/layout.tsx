@@ -16,11 +16,6 @@ const ibmPlexSans = IBM_Plex_Sans({
   variable: '--font-ibm-plex-sans',
 });
 
-export const metadata: Metadata = {
-  title: "SchoolAccreditation System",
-  description: "Portal for school accreditation management",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{

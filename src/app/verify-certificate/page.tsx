@@ -1,122 +1,61 @@
 "use client";
 import React, { useState } from "react";
 import { handlePrintCertificate } from "./_components/printCertificate";
+import { useVerifyCertificate, CertificateInfo } from "@/hooks/useVerifyCertificate";
 
 const CertificateVerificationPage = () => {
   // State for the certificate ID input
   const [certificateId, setCertificateId] = useState("");
-  // State for storing the certificate details
-  const [certificate, setCertificate] = useState(null);
-  // State for loading indicator
-  const [isLoading, setIsLoading] = useState(false);
-  // State for error message
-  const [error, setError] = useState("");
-  // State for verification method
   const [verificationMethod, setVerificationMethod] = useState("id");
+  const [searchTriggered, setSearchTriggered] = useState(false);
+  const { data: certificate, isLoading, error } = useVerifyCertificate(
+    searchTriggered ? certificateId : ""
+  );
 
-  // Mock data for demonstration - in a real app, this would come from an API
-  const mockCertificates = {
-    "CERT-SEC-2025-001": {
-      institutionName: "Excellence Secondary School",
-      certificateType: "Full Accreditation",
-      issuedDate: "2025-01-15",
-      expiryDate: "2030-01-14",
-      level: "Secondary",
-      address: "123 Education Avenue, Capital City",
-      director: "Dr. Jane Smith",
-      status: "Valid",
-      verificationQR: "https://example.com/qr/CERT-SEC-2025-001",
-    },
-    "CERT-PRI-2025-002": {
-      institutionName: "Bright Future Primary School",
-      certificateType: "Provisional Accreditation",
-      issuedDate: "2025-02-10",
-      expiryDate: "2027-02-09",
-      level: "Primary",
-      address: "456 Learning Street, Education District",
-      director: "Prof. John Doe",
-      status: "Valid",
-      verificationQR: "https://example.com/qr/CERT-PRI-2025-002",
-    },
-    "CERT-TVT-2024-003": {
-      institutionName: "Technical Skills Institute",
-      certificateType: "Full Accreditation",
-      issuedDate: "2024-11-20",
-      expiryDate: "2029-11-19",
-      level: "TVET",
-      address: "789 Vocational Road, Industrial Zone",
-      director: "Dr. Robert Johnson",
-      status: "Valid",
-      verificationQR: "https://example.com/qr/CERT-TVT-2024-003",
-    },
-    "CERT-ORD-2023-004": {
-      institutionName: "Community Ordinary School",
-      certificateType: "Full Accreditation",
-      issuedDate: "2023-09-05",
-      expiryDate: "2023-09-04",
-      level: "Ordinary",
-      address: "101 Community Lane, Rural District",
-      director: "Ms. Sarah Williams",
-      status: "Expired",
-      verificationQR: "https://example.com/qr/CERT-ORD-2023-004",
-    },
-  };
-
-  // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Reset states
-    setCertificate(null);
-    setError("");
-
-    // Validate input
     if (!certificateId.trim()) {
-      setError("Please enter a certificate ID");
       return;
     }
+    setSearchTriggered(true);
+  };
+  const clearSearch = () => {
+    setCertificateId("");
+    setSearchTriggered(false);
+  };
 
-    // Show loading state
-    setIsLoading(true);
+  const getCertificateStatus = (certificate: CertificateInfo): "Valid" | "Expired" => {
+    const currentDate = new Date();
+    const endDate = new Date(certificate.endDate);
+    return currentDate <= endDate ? "Valid" : "Expired";
+  };
 
-    // Simulate API call delay
-    setTimeout(() => {
-      const foundCertificate = mockCertificates[certificateId];
-
-      if (foundCertificate) {
-        setCertificate(foundCertificate);
-      } else {
-        setError("Certificate not found. Please check the ID and try again.");
-      }
-
-      setIsLoading(false);
-    }, 800);
+  // Function to format date string for display
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString; // Return original string if parsing fails
+    }
   };
 
   // Function to handle file upload for QR code
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    setIsLoading(true);
-    setError("");
-    setCertificate(null);
-
     // In a real application, you would process the QR code image here
-    // For this demo, we'll just simulate finding a certificate after a delay
-    setTimeout(() => {
-      // Randomly select a certificate for demonstration
-      const certificateIds = Object.keys(mockCertificates);
-      const randomId =
-        certificateIds[Math.floor(Math.random() * certificateIds.length)];
-      setCertificate(mockCertificates[randomId]);
-      setCertificateId(randomId);
-      setIsLoading(false);
-    }, 1500);
+    // For now, we'll just show a message that this feature is not implemented
+    alert("QR code scanning feature is not yet implemented. Please use Certificate ID verification.");
   };
 
   // Status badge component with color coding
-  const StatusBadge = ({ status }) => {
+  const StatusBadge = ({ status }: { status: "Valid" | "Expired" }) => {
     const colorClass = status === "Valid" ? "bg-green-500" : "bg-red-500";
 
     return (
@@ -148,11 +87,10 @@ const CertificateVerificationPage = () => {
             </label>
             <div className="grid grid-cols-2 gap-4">
               <button
-                className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  verificationMethod === "id"
-                    ? "bg-primary text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${verificationMethod === "id"
+                  ? "bg-primary text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
                 onClick={() => setVerificationMethod("id")}
               >
                 Certificate ID
@@ -191,13 +129,26 @@ const CertificateVerificationPage = () => {
                   />
                   <button
                     type="submit"
-                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                    disabled={isLoading}
+                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                    disabled={isLoading || !certificateId.trim()}
                   >
                     {isLoading ? "Verifying..." : "Verify"}
                   </button>
                 </div>
-                {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+                {/* Error Display */}
+                {error && searchTriggered && !isLoading && (
+                  <p className="mt-2 text-sm text-red-600">
+                    {error.response?.status === 404
+                      ? "Certificate not found. Please check the ID and try again."
+                      : "An error occurred while verifying the certificate. Please try again."}
+                  </p>
+                )}
+                {/* Empty state when no certificate found */}
+                {!certificate && !isLoading && searchTriggered && !error && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    No certificate found for ID: {certificateId}
+                  </p>
+                )}
               </div>
             </form>
           )}
@@ -263,7 +214,7 @@ const CertificateVerificationPage = () => {
                 <h3 className="text-lg font-medium text-gray-900">
                   Certificate Information
                 </h3>
-                <StatusBadge status={certificate.status} />
+                <StatusBadge status={getCertificateStatus(certificate)} />
               </div>
               <div className="px-6 py-5 divide-y divide-gray-200">
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -271,51 +222,31 @@ const CertificateVerificationPage = () => {
                     Institution Name
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificate.institutionName}
+                    {certificate.schoolName}
                   </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">
-                    Certificate Type
+                    Combination
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificate.certificateType}
-                  </dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Level</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificate.level}
+                    {certificate.combinationName} ({certificate.combinationAbbreviation})
                   </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">
-                    Issued Date
+                    Valid From
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificate.issuedDate}
+                    {formatDate(certificate.startDate)}
                   </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">
-                    Expiry Date
+                    Valid Until
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificate.expiryDate}
-                  </dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Address</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificate.address}
-                  </dd>
-                </div>
-                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">
-                    Director
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificate.director}
+                    {formatDate(certificate.endDate)}
                   </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -323,38 +254,38 @@ const CertificateVerificationPage = () => {
                     Certificate ID
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {certificateId}
+                    {certificate.certificateId}
                   </dd>
                 </div>
                 <div className="py-4">
-                  <div className="flex justify-end space-x-3">
-                    <a
-                      href="#"
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                      onClick={() =>
-                        handlePrintCertificate({
-                          logo: "/nesalogo-removebg.png",
-                          sealImage: "/accredited-logo.jpg",
-                          waterMark: "/nesa-logo.png",
-                          schoolName: "Ecole Primaire et Maternelle LADIVINE",
-                          schoolType: "Primary Level Education",
-                          issuerName: "Names...",
-                          issuerPosition: "Director General",
-                          validFromDate: "April 2025",
-                          validToDate: "31st August 2026",
-                          certificateNumber: "NESA/2025/0001",
-                        })
-                      }
+                  <div className="flex justify-between items-center">
+                    <button
+                      onClick={clearSearch}
+                      className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                     >
-                      Print Verification
-                    </a>
-                    {/* <a
-                      href="#"
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Download PDF
-                    </a> */}
+                      Search Another
+                    </button>
+                    <div className="flex space-x-3">
+                      <button
+                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        onClick={() =>
+                          handlePrintCertificate({
+                            logo: "/nesalogo-removebg.png",
+                            sealImage: "/accredited-logo.jpg",
+                            waterMark: "/nesa-logo.png",
+                            schoolName: certificate.schoolName,
+                            schoolType: certificate.combinationName,
+                            issuerName: "NESA",
+                            issuerPosition: "Director General",
+                            validFromDate: formatDate(certificate.startDate),
+                            validToDate: formatDate(certificate.endDate),
+                            certificateNumber: certificate.certificateId,
+                          })
+                        }
+                      >
+                        Print Verification
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -382,46 +313,13 @@ const CertificateVerificationPage = () => {
                 </div>
                 <div className="ml-3 flex-1 md:flex md:justify-between">
                   <p className="text-sm text-blue-700">
-                    Enter a certificate ID or upload a QR code to verify the
-                    authenticity of a school accreditation certificate.
+                    Enter a certificate ID to verify the authenticity of a school accreditation certificate.
+                    The certificate ID follows the format: ACCERT-XXX-YYYY-NNNNN
                   </p>
                 </div>
               </div>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Sample IDs for Testing */}
-      <div className="max-w-3xl mx-auto mt-6 bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-6 py-4">
-          <h3 className="font-medium text-gray-900">
-            Sample Certificate IDs for Testing:
-          </h3>
-          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">
-                Secondary (Valid)
-              </p>
-              <p className="text-sm">CERT-SEC-2025-001</p>
-            </div>
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">
-                Primary (Provisional)
-              </p>
-              <p className="text-sm">CERT-PRI-2025-002</p>
-            </div>
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">TVET (Valid)</p>
-              <p className="text-sm">CERT-TVT-2024-003</p>
-            </div>
-            <div className="bg-gray-100 p-2 rounded">
-              <p className="text-xs font-medium text-gray-500">
-                Ordinary (Expired)
-              </p>
-              <p className="text-sm">CERT-ORD-2023-004</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>

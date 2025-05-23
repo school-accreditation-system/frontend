@@ -1,15 +1,13 @@
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 import { ArrowRight, BadgeCheck, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 export const SchoolCard = ({ school }) => {
-  // Calculate accreditation score color
-
-  // Generate a placeholder image if school doesn't have one
-  const schoolImage = school.image || `/nesa-logo.png`;
-
+  const [schoolImage, setSchoolImage] = useState(school.image || `/nesa-logo.png`);
+  console.log("school", school);
   return (
     <div className="bg-white rounded-lg overflow-hidden hover:shadow-sm transition-shadow border border-gray-200 cursor-default">
       <div className="p-4 flex flex-col gap-3">
@@ -33,9 +31,7 @@ export const SchoolCard = ({ school }) => {
               <div className="flex items-center gap-1 text-sm text-gray-500">
                 <MapPin className="h-4 w-4 text-red-500" />
                 <span className="line-clamp-1">
-                  {`${school.district ? `${school.district},` : ""} ${
-                    school.province || "Rwanda"
-                  }`}
+                  {`${school?.schoolLocation?.district}, ${school?.schoolLocation?.province}, Rwanda`}
                 </span>
               </div>
             </div>
@@ -51,7 +47,7 @@ export const SchoolCard = ({ school }) => {
           <div className="flex items-center flex-wrap gap-2">
             <div className="flex items-center gap-1 text-sm text-gray-500">
               <Mail className="h-4 w-4 text-amber-500" />
-              <span className="line-clamp-1">schoolmail@gmail.com</span>
+              <span className="line-clamp-1">{school?.email}</span>
             </div>
             {/* <div className="flex items-center gap-1 text-sm text-gray-500">
               <Phone className="h-4 w-4 text-primary" />

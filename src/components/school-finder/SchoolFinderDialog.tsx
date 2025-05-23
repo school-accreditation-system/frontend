@@ -43,7 +43,7 @@ export const SchoolFinderDialog = ({
   useEffect(() => {
     if (isOpen && school) {
       onOpenChange(false);
-    }
+        }
   }, [isOpen, school, onOpenChange]);
 
   const handleClose = () => {
@@ -71,7 +71,7 @@ export const SchoolFinderDialog = ({
     console.log('Selected school:==>', school);
     if (school) {
       setSchool(school);
-      onSchoolSelect(school);
+        onSchoolSelect(school);
     }
     handleClose();
   };
